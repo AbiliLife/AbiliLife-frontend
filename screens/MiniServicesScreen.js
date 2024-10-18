@@ -16,26 +16,34 @@ const ServicesScreen = () => {
   ];
 
   const frequents = [
-    { id: 1, title: 'GlobalPay', icon: 'shopping', screen: 'Finance' },
-    { id: 2, title: 'eZawadi', icon: 'gift', screen: 'Finance' },
-    { id: 3, title: 'Buy gift vouchers', icon: 'card-giftcard', screen: 'Finance' },
-    { id: 4, title: 'Hustler Fund', icon: 'account-balance-wallet', screen: 'Finance' },
-  ];
+  { id: 1, title: 'My Insurance', icon: 'shield-check', screen: 'Insurance' },
+  { id: 2, title: 'Telemedicine', icon: 'video', screen: 'Healthcare' },
+  { id: 3, title: 'Assistive Tech', icon: 'wheelchair-accessibility', screen: 'AssistiveTech' },
+  { id: 4, title: 'Financial Services', icon: 'bank', screen: 'Finance' },
+];
 
-  const discover = [
-    { id: 1, title: 'DEVICE COVER', icon: 'phone-iphone', webview: 'https://example.com/device-cover' },
-    { id: 2, title: 'BOOK A FLIGHT', icon: 'flight', webview: 'https://example.com/book-flight' },
-    { id: 3, title: 'CHARGE-ON-THE-GO', icon: 'battery-charging-full', screen: 'Services' },
-    { id: 4, title: 'MPESA GO', icon: 'phone-android', screen: 'Finance' },
-    { id: 5, title: 'THE STANDARD', icon: 'newspaper', webview: 'https://www.standardmedia.co.ke/' },
-    { id: 6, title: 'GLOBAL DUKA', icon: 'store', webview: 'https://example.com/global-duka' },
-    { id: 7, title: 'MAJIAPP', icon: 'water', screen: 'Services' },
-    { id: 8, title: 'SHELL CLUB', icon: 'local-gas-station', webview: 'https://example.com/shell-club' },
-    { id: 9, title: 'MARINE CARGO', icon: 'directions-boat', screen: 'Services' },
-    { id: 10, title: 'M-PESA RATIBA', icon: 'schedule', screen: 'Finance' },
-    { id: 11, title: 'TAAM TRAVEL', icon: 'flight-takeoff', webview: 'https://example.com/taam-travel' },
-    { id: 12, title: 'MDAKTARI', icon: 'local-hospital', webview: 'https://example.com/mdaktari' },
-  ];
+const discover = [
+  { id: 1, title: 'Tailored Coverage', icon: 'shield-plus', screen: 'Insurance' },
+  { id: 2, title: 'File Claim', icon: 'file-document-edit', screen: 'Insurance' },
+  { id: 3, title: 'Premium Payment', icon: 'credit-card', screen: 'Finance' },
+  { id: 4, title: 'Insurance Eligibility', icon: 'clipboard-check', screen: 'Insurance' },
+  { id: 5, title: 'Doctor Consultation', icon: 'doctor', webview: 'https://example.com/telemedicine' },
+  { id: 6, title: 'Health Tracker', icon: 'heart-pulse', screen: 'Healthcare' },
+  { id: 7, title: 'Medical Records', icon: 'folder-medical', screen: 'Healthcare' },
+  { id: 8, title: 'Prescription Manager', icon: 'pill', screen: 'Healthcare' },
+  { id: 9, title: 'Assistive Devices', icon: 'shopping-outline', screen: 'AssistiveTech' },
+  { id: 10, title: 'Device Financing', icon: 'cash-multiple', screen: 'Finance' },
+  { id: 11, title: 'Virtual Try-On', icon: 'augmented-reality', screen: 'AssistiveTech' },
+  { id: 12, title: 'Apply for Loan', icon: 'hand-coin', screen: 'Finance' },
+  { id: 13, title: 'Budget Planner', icon: 'calculator-variant', screen: 'Finance' },
+  { id: 14, title: 'Support Groups', icon: 'account-group', webview: 'https://example.com/support-groups' },
+  { id: 15, title: 'Accessibility Ratings', icon: 'star-check', screen: 'Accessibility' },
+  { id: 16, title: 'Legal Resources', icon: 'gavel', screen: 'Advocacy' },
+  { id: 17, title: 'Events & Workshops', icon: 'calendar-clock', webview: 'https://example.com/events' },
+  { id: 18, title: 'Job Opportunities', icon: 'briefcase-search', screen: 'Employment' },
+  { id: 19, title: 'PWD News', icon: 'newspaper-variant', webview: 'https://example.com/pwd-news' },
+  { id: 20, title: 'Emergency Contact', icon: 'phone-alert', screen: 'Emergency' },
+];
 
   const ServiceItem = ({ title, icon, screen, webview }) => (
     <TouchableOpacity 
