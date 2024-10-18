@@ -1,4 +1,3 @@
-// App.js
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -12,17 +11,53 @@ import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import SplashScreen from './screens/SplashScreen';
 import OnboardingScreen from './screens/OnboardingScreen';
 import HomeScreen from './screens/HomeScreen';
-import InsuranceScreen from './screens/InsuranceScreen';
 import HealthcareScreen from './screens/HealthcareScreen';
 import AssistiveTechScreen from './screens/AssistiveTechScreen';
 import FinanceScreen from './screens/FinanceScreen';
 import ServicesScreen from './screens/MiniServicesScreen';
-import WebViewScreen from './screens/WebViewScreen'; // Add this import
+import EducationScreen from './screens/EducationScreen';
+import EntertainmentScreen from './screens/EntertainmentScreen';
+import InsuranceScreen from './screens/InsuranceScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+const ServicesStack = createStackNavigator();
 
 const AnimatedIcon = Animated.createAnimatedComponent(Icon);
+
+const ServicesStackScreen = () => (
+  <ServicesStack.Navigator>
+    <ServicesStack.Screen 
+      name="ServicesMain" 
+      component={ServicesScreen}
+      options={{ headerShown: false }}
+    />
+    <ServicesStack.Screen 
+      name="Education" 
+      component={EducationScreen}
+      options={{ 
+        headerShown: true,
+        title: 'Education Services'
+      }}
+    />
+    <ServicesStack.Screen 
+      name="Entertainment" 
+      component={EntertainmentScreen}
+      options={{ 
+        headerShown: true,
+        title: 'Entertainment'
+      }}
+    />
+    <ServicesStack.Screen 
+      name="Insurance" 
+      component={InsuranceScreen}
+      options={{ 
+        headerShown: true,
+        title: 'Insurance Services'
+      }}
+    />
+  </ServicesStack.Navigator>
+);
 
 const MainTabs = () => (
   <Tab.Navigator
@@ -52,32 +87,43 @@ const MainTabs = () => (
           />
         );
       },
+      tabBarActiveTintColor: '#007AFF',
+      tabBarInactiveTintColor: 'gray',
+      tabBarStyle: {
+        backgroundColor: '#000000',
+        borderTopColor: '#333333',
+      },
+      tabBarLabelStyle: {
+        fontSize: 12,
+      },
     })}
   >
-    <Tab.Screen name="Home" component={HomeScreen} />
-    <Tab.Screen name="Services" component={ServicesScreen} />
-    <Tab.Screen name="Healthcare" component={HealthcareScreen} />
-    <Tab.Screen name="Assistive Tech" component={AssistiveTechScreen} />
-    <Tab.Screen name="Finance" component={FinanceScreen} />
-  </Tab.Navigator>
-);
-
-const MainStack = () => (
-  <Stack.Navigator
-    screenOptions={{
-      headerShown: false,
-    }}
-  >
-    <Stack.Screen name="MainTabs" component={MainTabs} />
-    <Stack.Screen 
-      name="WebView" 
-      component={WebViewScreen}
-      options={({ route }) => ({ 
-        headerShown: true,
-        title: route.params.title || 'WebView',
-      })}
+    <Tab.Screen 
+      name="Home" 
+      component={HomeScreen}
+      options={{ headerShown: false }}
     />
-  </Stack.Navigator>
+    <Tab.Screen 
+      name="Services" 
+      component={ServicesStackScreen}
+      options={{ headerShown: false }}
+    />
+    <Tab.Screen 
+      name="Healthcare" 
+      component={HealthcareScreen}
+      options={{ headerShown: false }}
+    />
+    <Tab.Screen 
+      name="Assistive Tech" 
+      component={AssistiveTechScreen}
+      options={{ headerShown: false }}
+    />
+    <Tab.Screen 
+      name="Finance" 
+      component={FinanceScreen}
+      options={{ headerShown: false }}
+    />
+  </Tab.Navigator>
 );
 
 const App = () => {
@@ -98,7 +144,7 @@ const App = () => {
           >
             <Stack.Screen name="Splash" component={SplashScreen} />
             <Stack.Screen name="Onboarding" component={OnboardingScreen} />
-            <Stack.Screen name="Main" component={MainStack} />
+            <Stack.Screen name="Main" component={MainTabs} />
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaProvider>
