@@ -15,7 +15,7 @@ const SplashScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>PWD Super App</Text>
+      <Text style={styles.title}>AbiliLife</Text>
     </View>
   );
 };

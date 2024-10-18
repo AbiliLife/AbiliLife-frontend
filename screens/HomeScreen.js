@@ -6,7 +6,7 @@ import { Text, Card, Title, Paragraph } from 'react-native-paper';
 const HomeScreen = () => {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Welcome to PWD Super App</Text>
+      <Text style={styles.title}>Welcome to AbiliLife</Text>
       <Card>
         <Card.Content>
           <Title>Quick Access</Title>
