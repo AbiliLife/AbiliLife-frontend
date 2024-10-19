@@ -16,10 +16,12 @@ const ServicesScreen = () => {
   ];
 
   const frequents = [
-  { id: 1, title: 'My Insurance', icon: 'shield-check', screen: 'Insurance' },
+  { id: 1, title: 'My Insurance', icon: 'shield-check', webview: 'https://inclusive-insurance-pwds.vercel.app/' },
   { id: 2, title: 'Telemedicine', icon: 'video', screen: 'Healthcare' },
-  { id: 3, title: 'Assistive Tech', icon: 'wheelchair-accessibility', screen: 'AssistiveTech' },
+  { id: 3, title: 'Assistive Tech', icon: 'wheelchair-accessibility', webview: 'https://assistive-technologies-for-pwd.vercel.app/' },
   { id: 4, title: 'Financial Services', icon: 'bank', screen: 'Finance' },
+  { id: 5, title: 'Emergency Contact', icon: 'phone-alert', screen: 'Emergency' },
+  { id: 6, title: 'Prothea', icon: 'doctor', webview: 'https://www.prothea.co.ke/' }, 
 ];
 
 const discover = [
@@ -42,7 +44,6 @@ const discover = [
   { id: 17, title: 'Events & Workshops', icon: 'calendar-clock', webview: 'https://example.com/events' },
   { id: 18, title: 'Job Opportunities', icon: 'briefcase-search', screen: 'Employment' },
   { id: 19, title: 'PWD News', icon: 'newspaper-variant', webview: 'https://example.com/pwd-news' },
-  { id: 20, title: 'Emergency Contact', icon: 'phone-alert', screen: 'Emergency' },
 ];
 
   const ServiceItem = ({ title, icon, screen, webview }) => (
@@ -100,6 +101,7 @@ const discover = [
                 title={item.title} 
                 icon={item.icon} 
                 screen={item.screen}
+                webview={item.webview}
               />
             ))}
           </View>
