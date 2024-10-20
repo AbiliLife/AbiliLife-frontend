@@ -12,7 +12,6 @@ import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import SplashScreen from './screens/SplashScreen';
 import OnboardingScreen from './screens/OnboardingScreen';
 import HomeScreen from './screens/HomeScreen';
-import InsuranceScreen from './screens/InsuranceScreen';
 import HealthcareScreen from './screens/HealthcareScreen';
 import AssistiveTechScreen from './screens/AssistiveTechScreen';
 import FinanceScreen from './screens/FinanceScreen';

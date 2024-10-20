@@ -17,7 +17,6 @@ import FinanceScreen from './screens/FinanceScreen';
 import ServicesScreen from './screens/MiniServicesScreen';
 import EducationScreen from './screens/EducationScreen';
 import EntertainmentScreen from './screens/EntertainmentScreen';
-import InsuranceScreen from './screens/InsuranceScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
