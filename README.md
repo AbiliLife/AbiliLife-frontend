@@ -1,6 +1,6 @@
 # 🦸‍♂️ AbiliLife - Super App for People with Disabilities (PWDs)
 
-[![AbiliLife Demo](https://logodix.com/logo/2002387.jpg)](https://drive.google.com/file/d/1ZeFDOUDRe2uafilDUGRvceAnJmlpvBEh/view?usp=drive_link)
+[![AbiliLife Demo](https://logodix.com/logo/2002377.jpg)](https://drive.google.com/file/d/1ZeFDOUDRe2uafilDUGRvceAnJmlpvBEh/view?usp=drive_link)
 *Click the image above to watch the Pitch Video and demo video*
 
 ---
