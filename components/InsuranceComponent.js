@@ -1,4 +1,4 @@
-// screens/InsuranceScreen.js
+// components/InsuranceComponent.js
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text, Card, Title, Paragraph } from 'react-native-paper';
