@@ -1,5 +1,5 @@
-// navigation/AppNavigator.js
-import React from 'react';
+import React, { useState, useRef } from 'react';
+import { View, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -19,10 +19,19 @@ import FinanceScreen from '../screens/FinanceScreen';
 import ServicesScreen from '../screens/MiniServicesScreen';
 import WebViewScreen from '../screens/WebViewScreen';
 
+// Import VoiceCommandButton
+import VoiceCommandButton from '../components/VoiceCommandButton';
+
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 const AnimatedIcon = Animated.createAnimatedComponent(Icon);
+
+// Global Voice Command Context
+export const VoiceCommandContext = React.createContext({
+  startVoiceCommand: () => {},
+  stopVoiceCommand: () => {},
+});
 
 const MainTabs = () => (
   <Tab.Navigator
@@ -83,27 +92,65 @@ const MainStack = () => (
 );
 
 const App = () => {
+  const [isVoiceCommandActive, setIsVoiceCommandActive] = useState(false);
+  const voiceCommandRef = useRef(null);
+
+  const startVoiceCommand = () => {
+    setIsVoiceCommandActive(true);
+    // Implement global voice command logic here
+    console.log('Global voice command started');
+  };
+
+  const stopVoiceCommand = () => {
+    setIsVoiceCommandActive(false);
+    // Implement global voice command stop logic here
+    console.log('Global voice command stopped');
+  };
+
+  const handleVoiceCommand = (isListening) => {
+    if (isListening) {
+      startVoiceCommand();
+    } else {
+      stopVoiceCommand();
+    }
+  };
+
   return (
-    <PaperProvider>
-      <SafeAreaProvider>
-        <NavigationContainer>
-          <Stack.Navigator
-            initialRouteName={ROUTES.SPLASH}
-            screenOptions={{
-              headerShown: false,
-              cardStyleInterpolator: ({ current: { progress } }) => ({
-                cardStyle: { opacity: progress },
-              }),
-            }}
-          >
-            <Stack.Screen name={ROUTES.SPLASH} component={SplashScreen} />
-            <Stack.Screen name={ROUTES.ONBOARDING} component={OnboardingScreen} />
-            <Stack.Screen name={ROUTES.MAIN} component={MainStack} />
-          </Stack.Navigator>
-        </NavigationContainer>
-      </SafeAreaProvider>
-    </PaperProvider>
+    <VoiceCommandContext.Provider value={{ startVoiceCommand, stopVoiceCommand }}>
+      <PaperProvider>
+        <SafeAreaProvider style={styles.container}>
+          <NavigationContainer>
+            <Stack.Navigator
+              initialRouteName={ROUTES.SPLASH}
+              screenOptions={{
+                headerShown: false,
+                cardStyleInterpolator: ({ current: { progress } }) => ({
+                  cardStyle: { opacity: progress },
+                }),
+              }}
+            >
+              <Stack.Screen name={ROUTES.SPLASH} component={SplashScreen} />
+              <Stack.Screen name={ROUTES.ONBOARDING} component={OnboardingScreen} />
+              <Stack.Screen name={ROUTES.MAIN} component={MainStack} />
+            </Stack.Navigator>
+            
+            {/* Global Voice Command Button */}
+            <VoiceCommandButton 
+              ref={voiceCommandRef}
+              onVoiceCommand={handleVoiceCommand} 
+            />
+          </NavigationContainer>
+        </SafeAreaProvider>
+      </PaperProvider>
+    </VoiceCommandContext.Provider>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    position: 'relative',
+  },
+});
 
 export default App;

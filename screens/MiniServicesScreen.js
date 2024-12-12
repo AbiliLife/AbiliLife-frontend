@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { ScrollView, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { Linking, ScrollView, View, StyleSheet, TouchableOpacity } from 'react-native';
 import {
   Surface,
   Text,
@@ -29,7 +29,12 @@ const ServicesScreen = () => {
       icon: 'finance',
       screen: 'Finance',
     },
-    { id: 5, title: 'Insurance Services', icon: 'shield', screen: 'Healthcare' },
+    {
+      id: 5,
+      title: 'Insurance Services',
+      icon: 'shield',
+      screen: 'Healthcare',
+    },
   ];
 
   const frequents = [
@@ -58,6 +63,12 @@ const ServicesScreen = () => {
       title: 'Prothea Prosthetics',
       icon: 'doctor',
       webview: 'https://www.prothea.co.ke/',
+    },
+    {
+      id: 7,
+      title: 'USSD Service',
+      icon: 'cellphone',
+      dialCode: '*789*9085644#',
     },
   ];
 
@@ -174,14 +185,18 @@ const ServicesScreen = () => {
 
   // // Memoize filtered results
   const filteredFrequents = useMemo(
-    () => filterItems(frequents), [searchQuery]
+    () => filterItems(frequents),
+    [searchQuery]
   );
   const filteredDiscover = useMemo(() => filterItems(discover), [searchQuery]);
 
-  const ServiceItem = ({ title, icon, screen, webview }) => (
+  const ServiceItem = ({ title, icon, screen, webview, dialCode }) => (
     <TouchableOpacity
       onPress={() => {
-        if (webview) {
+        if (dialCode) {
+          // Open dialer with the given USSD code
+          Linking.openURL(`tel:${dialCode}`);
+        } else if (webview) {
           navigation.navigate('WebView', { url: webview, title });
         } else if (screen) {
           navigation.navigate(screen);
@@ -222,8 +237,7 @@ const ServicesScreen = () => {
   );
 
   const hasResults =
-    filteredFrequents.length > 0 ||
-    filteredDiscover.length > 0;
+    filteredFrequents.length > 0 || filteredDiscover.length > 0;
 
   return (
     <View
@@ -242,17 +256,16 @@ const ServicesScreen = () => {
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View style={styles.horizontalGrid}>
               {services_categories.map((item) => (
-                <ServiceItem 
-                  key={item.id} 
-                  title={item.title} 
-                  icon={item.icon} 
+                <ServiceItem
+                  key={item.id}
+                  title={item.title}
+                  icon={item.icon}
                   screen={item.screen}
                 />
               ))}
             </View>
           </ScrollView>
         </View>
-
 
         {/* Only show sections if there are filtered results or no search query */}
         {(filteredFrequents.length > 0 || !searchQuery) && (
@@ -270,6 +283,7 @@ const ServicesScreen = () => {
                     icon={item.icon}
                     screen={item.screen}
                     webview={item.webview}
+                    dialCode={item.dialCode}
                   />
                 ))}
               </View>
