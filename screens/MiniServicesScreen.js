@@ -1,3 +1,4 @@
+// screens/MiniServicesScreen.js
 import React, { useState, useMemo } from 'react';
 import { Linking, ScrollView, View, StyleSheet, TouchableOpacity } from 'react-native';
 import {
@@ -69,6 +70,18 @@ const ServicesScreen = () => {
       title: 'USSD Service',
       icon: 'cellphone',
       dialCode: '*789*9085644#',
+    },
+    {
+      id: 8,
+      title: 'WebView n Native Comms',
+      icon: 'sign-caution',
+      webview: 'https://webview-native-communication.vercel.app/',
+    },
+    {
+      id: 9,
+      title: 'WebView n Native Comms 2',
+      icon: 'sign-caution',
+      webview: 'https://webview-native-communication-nine.vercel.app/',
     },
   ];
 
@@ -194,10 +207,15 @@ const ServicesScreen = () => {
     <TouchableOpacity
       onPress={() => {
         if (dialCode) {
-          // Open dialer with the given USSD code
+          // Open dialer with the given USSD code or Phone Number
           Linking.openURL(`tel:${dialCode}`);
         } else if (webview) {
-          navigation.navigate('WebView', { url: webview, title });
+          navigation.navigate('WebView', {
+            url: webview,
+            title,
+            // Enable messaging for specific webviews that need communication
+            enableMessaging: webview.includes('webview-native-communication'),
+          });
         } else if (screen) {
           navigation.navigate(screen);
         }
@@ -267,6 +285,7 @@ const ServicesScreen = () => {
           </ScrollView>
         </View>
 
+        {/* Frequents Section */}
         {/* Only show sections if there are filtered results or no search query */}
         {(filteredFrequents.length > 0 || !searchQuery) && (
           <>
@@ -291,6 +310,7 @@ const ServicesScreen = () => {
           </>
         )}
 
+        {/* Discover Section */}
         {(filteredDiscover.length > 0 || !searchQuery) && (
           <>
             <SectionTitle

@@ -1,3 +1,4 @@
+// navigation/AppNavigation.js
 import React, { useState, useRef } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
@@ -21,6 +22,8 @@ import WebViewScreen from '../screens/WebViewScreen';
 
 // Import VoiceCommandButton
 import VoiceCommandButton from '../components/VoiceCommandButton';
+
+import { SnackbarProvider } from '../context/SnackbarContext';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -119,27 +122,29 @@ const App = () => {
     <VoiceCommandContext.Provider value={{ startVoiceCommand, stopVoiceCommand }}>
       <PaperProvider>
         <SafeAreaProvider style={styles.container}>
-          <NavigationContainer>
-            <Stack.Navigator
-              initialRouteName={ROUTES.SPLASH}
-              screenOptions={{
-                headerShown: false,
-                cardStyleInterpolator: ({ current: { progress } }) => ({
-                  cardStyle: { opacity: progress },
-                }),
-              }}
-            >
-              <Stack.Screen name={ROUTES.SPLASH} component={SplashScreen} />
-              <Stack.Screen name={ROUTES.ONBOARDING} component={OnboardingScreen} />
-              <Stack.Screen name={ROUTES.MAIN} component={MainStack} />
-            </Stack.Navigator>
-            
-            {/* Global Voice Command Button */}
-            <VoiceCommandButton 
-              ref={voiceCommandRef}
-              onVoiceCommand={handleVoiceCommand} 
-            />
-          </NavigationContainer>
+          <SnackbarProvider>
+            <NavigationContainer>
+              <Stack.Navigator
+                initialRouteName={ROUTES.SPLASH}
+                screenOptions={{
+                  headerShown: false,
+                  cardStyleInterpolator: ({ current: { progress } }) => ({
+                    cardStyle: { opacity: progress },
+                  }),
+                }}
+              >
+                <Stack.Screen name={ROUTES.SPLASH} component={SplashScreen} />
+                <Stack.Screen name={ROUTES.ONBOARDING} component={OnboardingScreen} />
+                <Stack.Screen name={ROUTES.MAIN} component={MainStack} />
+              </Stack.Navigator>
+              
+              {/* Global Voice Command Button */}
+              <VoiceCommandButton 
+                ref={voiceCommandRef}
+                onVoiceCommand={handleVoiceCommand} 
+              />
+            </NavigationContainer>
+          </SnackbarProvider>
         </SafeAreaProvider>
       </PaperProvider>
     </VoiceCommandContext.Provider>

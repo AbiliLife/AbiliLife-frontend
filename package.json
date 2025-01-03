@@ -8,13 +8,13 @@
     "web": "expo start --web"
   },
   "dependencies": {
-    "expo": "~52.0.18",
+    "expo": "~52.0.23",
     "expo-status-bar": "~2.0.0",
     "react": "18.3.1",
     "react-native": "0.76.5",
     "@expo/vector-icons": "^14.0.2",
     "react-native-paper": "5.12.3",
-    "react-native-screens": "~4.1.0",
+    "react-native-screens": "~4.4.0",
     "react-native-webview": "13.12.2",
     "@react-navigation/stack": "*",
     "react-native-reanimated": "~3.16.1",
