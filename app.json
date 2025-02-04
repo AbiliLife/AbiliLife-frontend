@@ -1,17 +1,12 @@
 {
   "expo": {
-    "name": "abililife",
-    "slug": "abililife",
-    "version": "1.0.2",
+    "name": "AbiliLife-frontend",
+    "slug": "AbiliLife-frontend",
+    "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
-    "splash": {
-      "image": "./assets/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
     "ios": {
       "supportsTablet": true
     },
@@ -23,7 +18,6 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    },
-    "description": "Empowering Persons with Disabilities (PWDs) through innovation and inclusivity. The AbiliLife Super App is a comprehensive platform that integrates inclusive insurance, healthcare, assistive technologies, financial services, social support networks, and more. Our mission is to enhance accessibility, independence, and quality of life for PWDs worldwide by creating an ecosystem of tailored services and opportunities"
+    }
   }
 }
