@@ -6,7 +6,8 @@ export default function Intro3() {
   return (
     <View style={styles.container}>
       <Image 
-      source={images.intro} 
+      source={images.marketplace}
+      style={{width: 350, height: 350, borderRadius: 100}} 
       />
       <Text style={styles.titleText}>Assistive Tech</Text>
       <Text style={styles.subtitleText}>Marketplace & Financing</Text>

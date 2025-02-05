@@ -6,7 +6,9 @@ export default function Intro4() {
   return (
     <View style={styles.container}>
       <Image 
-      source={images.intro} 
+      source={images.community}
+      style={{width: 350, height: 350, borderRadius: 100}}
+      alt='community' 
       />
       <Text style={styles.titleText}>Community</Text>
       <Text style={styles.subtitleText}>Support & Advocacy</Text>

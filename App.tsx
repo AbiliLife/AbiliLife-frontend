@@ -1,6 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import React from 'react';
+import store from './store/store';
+import { Provider } from 'react-redux';
+
 import StackNavigator from './navigation/StackNavigator';
 import Splash from './screens/Splash';
 
@@ -14,7 +17,7 @@ export default function App() {
   }, []);
 
   return (
-    <>
+    <Provider store={store}>
       <StatusBar style="auto" />
       <NavigationContainer>
         {isShowSplash ? (
@@ -23,6 +26,6 @@ export default function App() {
           <StackNavigator />
         )}
       </NavigationContainer>
-    </>
+    </Provider>
   );
 }

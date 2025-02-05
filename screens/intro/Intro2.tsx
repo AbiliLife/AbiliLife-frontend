@@ -6,7 +6,9 @@ export default function Intro2() {
   return (
     <View style={styles.container}>
       <Image 
-      source={images.intro} 
+      source={images.healthcare}
+      style={{width: 350, height: 350, borderRadius: 100}} 
+      alt='healthcare'
       />
       <Text style={styles.titleText}>HealthCare</Text>
       <Text style={styles.subtitleText}>TeleMedicine & Monitoring</Text>
