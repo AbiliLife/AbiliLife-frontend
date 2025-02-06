@@ -4,7 +4,10 @@ import React from 'react'
 const Splash = () => {
     return (
         <View style={styles.container}>
-            <View style={styles.box}></View>
+            {/* Logo Placeholder */}
+            <View style={styles.logoContainer}>
+                <View style={styles.logo} />
+            </View>
         </View>
     )
 }
@@ -18,14 +21,14 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
-    box: {
-        width: 150,
-        height: 150,
+    logoContainer: {
+        alignItems: 'center',
+        marginTop: '30%',
+    },
+    logo: {
+        width: 120,
+        height: 120,
         backgroundColor: 'black',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.8,
-        shadowRadius: 2,
-        elevation: 5,
-    }
+        borderRadius: 24,
+    },
 })
