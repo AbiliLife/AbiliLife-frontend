@@ -36,7 +36,7 @@ export default function TabLayout() {
         options={{
           title: 'Services',
           tabBarIcon: ({ color }) => <TabBarIcon name="grid" color={color} />,
-          header: () => <Header title="Services" />,
+          headerShown: false,
         }}
       />
       <Tabs.Screen
