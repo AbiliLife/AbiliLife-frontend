@@ -39,6 +39,7 @@ interface ServiceCategory {
   icon: string;
   iconType: 'ionicons' | 'materialcommunity' | 'fontawesome';
   iconColor: string;
+  path?: '/healthcare' | '/insurance' | '/education' | '/employment';
 }
 
 const allServices: ServiceCategory[] = [
@@ -48,6 +49,7 @@ const allServices: ServiceCategory[] = [
     icon: 'heart-outline',
     iconType: 'ionicons',
     iconColor: '#F44336', // Red color
+    path: '/healthcare',
   },
   {
     id: 'insurance',
@@ -55,6 +57,7 @@ const allServices: ServiceCategory[] = [
     icon: 'shield',
     iconType: 'materialcommunity',
     iconColor: '#9C27B0', // Purple color
+    path: '/insurance',
   },
   {
     id: 'education',
@@ -62,6 +65,7 @@ const allServices: ServiceCategory[] = [
     icon: 'book',
     iconType: 'ionicons',
     iconColor: '#2196F3', // Blue color
+    path: '/education',
   },
   {
     id: 'jobs',
@@ -69,6 +73,7 @@ const allServices: ServiceCategory[] = [
     icon: 'briefcase-outline',
     iconType: 'materialcommunity',
     iconColor: '#4CAF50', // Green color
+    path: '/employment',
   },
   {
     id: 'marketplace',
@@ -313,7 +318,7 @@ export default function ServicesScreen() {
             <TouchableOpacity
               key={category.id}
               style={[styles.serviceCard, { backgroundColor: colorScheme === 'dark' ? '#333' : '#fff' }]}
-              onPress={() => console.log(`${category.title} pressed`)}
+              onPress={() => router.push(category.path || '/services')}
               activeOpacity={0.5}
             >
               <View style={styles.iconContainer}>
@@ -431,14 +436,6 @@ export default function ServicesScreen() {
         </RNView>
       </Modal>
 
-      {/* Accessibility Settings Button (fixed position) */}
-      <TouchableOpacity
-        style={styles.accessibilityButton}
-        onPress={toggleAccessibilityDrawer}
-        activeOpacity={0.9}
-      >
-        <Ionicons name="settings-outline" size={24} color="#fff" />
-      </TouchableOpacity>
 
       {/* Accessibility Settings Button (fixed position) */}
       <TouchableOpacity
@@ -446,7 +443,7 @@ export default function ServicesScreen() {
         onPress={toggleAccessibilityDrawer}
         activeOpacity={0.9}
       >
-        <Ionicons name="settings-outline" size={24} color="#fff" />
+        <Ionicons name="accessibility-outline" size={24} color="#fff" />
       </TouchableOpacity>
 
       {/* Accessibility Drawer */}
