@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { FontAwesome5, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
 import { router } from 'expo-router'
 import { useThemeColor } from '@/components/Themed'
+import SearchBar from '@/components/SearchBar'
 
 // Interface for available insurance services
 interface ServiceCategory {
@@ -142,13 +143,21 @@ const EducationModule = () => {
           <View>
             <Text style={[styles.headerTitle, { color: 'white' }]}>Education</Text>
             <Text style={[styles.headerSubtitle, { color: 'white' }]}>
-            Find and access education services
+              Find and access education services
             </Text>
           </View>
         </View>
       </View>
 
       <ScrollView contentContainerStyle={[styles.container, { backgroundColor }]}>
+        {/* Search Bar */}
+        <SearchBar
+          placeholder="Search for education services..."
+          value=""
+          onChangeText={() => { }}
+          onPress={() => { }}
+        />
+
         {/* Services Available Section Header */}
         <View style={styles.sectionHeader}>
           <Text style={[styles.sectionTitle, { color: textColor }]}>
@@ -182,61 +191,61 @@ const EducationModule = () => {
 
         {/* Popular Courses List */}
         <View style={styles.coursesContainer}>
-  {popularCourses.map((course) => (
-    <TouchableOpacity
-      key={course.id}
-      style={[styles.courseCard, { backgroundColor: cardBackgroundColor }]}
-      onPress={() => console.log(`Selected course: ${course.title}`)}
-      activeOpacity={0.8}
-    >
-      <View style={styles.courseInfo}>
-        {/* Course Icon/Avatar */}
-        <View style={styles.courseAvatar}>
-          <Ionicons name="school" size={24} color="#7135B1" />
-        </View>
-        
-        {/* Course Details */}
-        <View style={styles.courseDetails}>
-          <Text style={[styles.courseTitle, { color: textColor }]}>
-            {course.title}
-          </Text>
-          <Text style={styles.courseDescription}>
-            {course.description}
-          </Text>
-          
-          {/* Duration and Price Info */}
-          <View style={styles.infoContainer}>
-            <View style={styles.duration}>
-              <Ionicons name="time-outline" size={16} color="#7135B1" />
-              <Text style={styles.durationText}>{course.duration}</Text>
-            </View>
-            <View style={styles.price}>
-              <Ionicons name="pricetag-outline" size={16} color="#7135B1" />
-              <Text style={styles.priceText}>{course.price}</Text>
-            </View>
-          </View>
-          
-          {/* Course Features */}
-          <View style={styles.featureContainer}>
-            {course.features.map((feature) => (
-              <View 
-                key={feature.id} 
-                style={[
-                  styles.featureBadge, 
-                  { backgroundColor: feature.backgroundColor }
-                ]}
-              >
-                <Text style={[styles.featureText, { color: feature.color }]}>
-                  {feature.title}
-                </Text>
+          {popularCourses.map((course) => (
+            <TouchableOpacity
+              key={course.id}
+              style={[styles.courseCard, { backgroundColor: cardBackgroundColor }]}
+              onPress={() => console.log(`Selected course: ${course.title}`)}
+              activeOpacity={0.8}
+            >
+              <View style={styles.courseInfo}>
+                {/* Course Icon/Avatar */}
+                <View style={styles.courseAvatar}>
+                  <Ionicons name="school" size={24} color="#7135B1" />
+                </View>
+
+                {/* Course Details */}
+                <View style={styles.courseDetails}>
+                  <Text style={[styles.courseTitle, { color: textColor }]}>
+                    {course.title}
+                  </Text>
+                  <Text style={styles.courseDescription}>
+                    {course.description}
+                  </Text>
+
+                  {/* Duration and Price Info */}
+                  <View style={styles.infoContainer}>
+                    <View style={styles.duration}>
+                      <Ionicons name="time-outline" size={16} color="#7135B1" />
+                      <Text style={styles.durationText}>{course.duration}</Text>
+                    </View>
+                    <View style={styles.price}>
+                      <Ionicons name="pricetag-outline" size={16} color="#7135B1" />
+                      <Text style={styles.priceText}>{course.price}</Text>
+                    </View>
+                  </View>
+
+                  {/* Course Features */}
+                  <View style={styles.featureContainer}>
+                    {course.features.map((feature) => (
+                      <View
+                        key={feature.id}
+                        style={[
+                          styles.featureBadge,
+                          { backgroundColor: feature.backgroundColor }
+                        ]}
+                      >
+                        <Text style={[styles.featureText, { color: feature.color }]}>
+                          {feature.title}
+                        </Text>
+                      </View>
+                    ))}
+                  </View>
+                </View>
               </View>
-            ))}
-          </View>
+            </TouchableOpacity>
+          ))}
         </View>
-      </View>
-    </TouchableOpacity>
-  ))}
-</View>
       </ScrollView>
 
       {/* Accessibility Settings Button (fixed position) */}

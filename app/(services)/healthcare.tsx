@@ -4,6 +4,7 @@ import { FontAwesome5, Ionicons, MaterialCommunityIcons } from '@expo/vector-ico
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useThemeColor } from '@/components/Themed';
 import { router } from 'expo-router';
+import SearchBar from '@/components/SearchBar';
 
 
 // Interface for available healthcare services
@@ -179,6 +180,14 @@ const HealthcareModule = () => {
             </View>
 
             <ScrollView contentContainerStyle={[styles.container, { backgroundColor }]}>
+                {/* Search Bar */}
+                <SearchBar
+                    placeholder="Search for services or doctors..."
+                    value=""
+                    onChangeText={() => { }}
+                    onPress={() => { }}
+                />
+
                 {/* Services Available Section Header */}
                 <View style={styles.sectionHeader}>
                     <Text style={[styles.sectionTitle, { color: textColor }]}>
@@ -209,7 +218,7 @@ const HealthcareModule = () => {
                     </Text>
                 </View>
 
-                     {/* Available Doctors List */}
+                {/* Available Doctors List */}
                 <View style={styles.doctorsContainer}>
                     {availableDoctors.map((doctor) => (
                         <TouchableOpacity
@@ -222,7 +231,7 @@ const HealthcareModule = () => {
                                 <View style={styles.doctorAvatar}>
                                     <Ionicons name="person" size={24} color="#7135B1" />
                                 </View>
-                                
+
                                 {/* Doctor Details */}
                                 <View style={styles.doctorDetails}>
                                     <Text style={[styles.doctorName, { color: textColor }]}>
@@ -231,7 +240,7 @@ const HealthcareModule = () => {
                                     <Text style={styles.doctorSpecialty}>
                                         {doctor.specialty} • {doctor.distance}
                                     </Text>
-                                    
+
                                     {/* Rating and Availability */}
                                     <View style={styles.ratingContainer}>
                                         <View style={styles.rating}>
@@ -243,14 +252,14 @@ const HealthcareModule = () => {
                                             <Text style={styles.availabilityText}>{doctor.availability.text}</Text>
                                         </View>
                                     </View>
-                                    
+
                                     {/* Doctor Features */}
                                     <View style={styles.featureContainer}>
                                         {doctor.features.map((feature) => (
-                                            <View 
-                                                key={feature.id} 
+                                            <View
+                                                key={feature.id}
                                                 style={[
-                                                    styles.featureBadge, 
+                                                    styles.featureBadge,
                                                     { backgroundColor: feature.backgroundColor }
                                                 ]}
                                             >

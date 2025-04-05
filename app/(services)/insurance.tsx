@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { FontAwesome5, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
 import { router } from 'expo-router'
 import { useThemeColor } from '@/components/Themed'
+import SearchBar from '@/components/SearchBar'
 
 // Interface for available insurance services
 interface ServiceCategory {
@@ -149,6 +150,14 @@ const InsuranceModule = () => {
       </View>
 
       <ScrollView contentContainerStyle={[styles.container, { backgroundColor }]}>
+        {/* Search Bar */}
+        <SearchBar
+          placeholder="Search for insurance services..."
+          value=""
+          onChangeText={() => { }}
+          onPress={() => { }}
+        />
+
         {/* Services Available Section Header */}
         <View style={styles.sectionHeader}>
           <Text style={[styles.sectionTitle, { color: textColor }]}>
