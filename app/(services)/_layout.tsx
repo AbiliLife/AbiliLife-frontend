@@ -7,6 +7,7 @@ export default function ServicesLayout() {
           <Stack.Screen name="education" options={{ headerShown: false }} />
           <Stack.Screen name="employment" options={{ headerShown: false }} />
           <Stack.Screen name="insurance" options={{ headerShown: false }} />
+          <Stack.Screen name="doctors/[doc]" options={{ headerShown: false, title: "Doctor Details" }} />
         </Stack>
     );
 }

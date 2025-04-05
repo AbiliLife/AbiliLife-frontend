@@ -1,0 +1,161 @@
+import { Doctor } from '@/types/doctor';
+
+// Mock database for doctors (in production, this would be fetched from an API)
+const doctorsData: Record<string, Doctor> = {
+    'dr1': {
+        id: 'dr1',
+        name: 'Dr. Sarah Mwangi',
+        specialty: 'Pediatrician',
+        distance: '2.5 km away',
+        rating: 4.8,
+        reviewCount: 24,
+        availability: {
+            status: 'available',
+            text: 'Available today'
+        },
+        about: 'Dr. Sarah is a compassionate pediatrician with extensive experience working with children with special needs. Her clinic is fully wheelchair accessible and she is fluent in sign language.',
+        experience: '8 years',
+        languages: ['English', 'Swahili', 'Sign Language'],
+        features: [
+            {
+                id: 'sign',
+                name: 'Sign Language',
+                color: '#7135B1',
+                backgroundColor: '#f0e6ff'
+            },
+            {
+                id: 'wheelchair',
+                name: 'Wheelchair Accessible',
+                color: '#06b6d4',
+                backgroundColor: '#e0f7fa'
+            }
+        ],
+        location: {
+            name: 'Nairobi Medical Center',
+            address: 'Karen Road'
+        },
+        reviews: [
+            {
+                id: 'rev1',
+                name: 'Mary K.',
+                rating: 5,
+                text: 'Dr. Sarah was very patient and understanding with my son who has autism. Highly recommend!'
+            },
+            {
+                id: 'rev2',
+                name: 'John M.',
+                rating: 4,
+                text: 'Very professional and knowledgeable. The clinic is accessible and staff are helpful.'
+            }
+        ]
+    },
+    'dr2': {
+        id: 'dr2',
+        name: 'Dr. James Omondi',
+        specialty: 'General Practitioner',
+        distance: '4.8 km away',
+        rating: 4.6,
+        reviewCount: 18,
+        availability: {
+            status: 'next',
+            text: 'Next available: Tomorrow'
+        },
+        about: 'Dr. James specializes in family medicine with a focus on accessible healthcare. He offers home visits for patients with mobility challenges.',
+        experience: '12 years',
+        languages: ['English', 'Swahili'],
+        features: [
+            {
+                id: 'home',
+                name: 'Home Visits',
+                color: '#06b6d4',
+                backgroundColor: '#e0f7fa'
+            }
+        ],
+        location: {
+            name: 'Westlands Health Center',
+            address: 'Waiyaki Way'
+        },
+        reviews: [
+            {
+                id: 'rev1',
+                name: 'Peter O.',
+                rating: 5,
+                text: 'Dr. James came to our home for my father who is bedridden. Very professional service.'
+            },
+            {
+                id: 'rev2',
+                name: 'Grace W.',
+                rating: 4,
+                text: 'Good doctor with great communication skills.'
+            }
+        ]
+    },
+    'dr3': {
+        id: 'dr3',
+        name: 'Dr. Janet Kamau',
+        specialty: 'Neurologist',
+        distance: '3.2 km away',
+        rating: 4.9,
+        reviewCount: 35,
+        availability: {
+            status: 'available',
+            text: 'Available today'
+        },
+        about: 'Dr. Janet is a specialist in neurodevelopmental disorders and has extensive experience working with patients with autism, ADHD, and other neurological conditions.',
+        experience: '15 years',
+        languages: ['English', 'Swahili', 'French'],
+        features: [
+            {
+                id: 'cognitive',
+                name: 'Cognitive Rehabilitation',
+                color: '#8e44ad',
+                backgroundColor: '#f5eef8'
+            },
+            {
+                id: 'wheelchair',
+                name: 'Wheelchair Accessible',
+                color: '#06b6d4',
+                backgroundColor: '#e0f7fa'
+            }
+        ],
+        location: {
+            name: 'Aga Khan University Hospital',
+            address: 'Limuru Road'
+        },
+        reviews: [
+            {
+                id: 'rev1',
+                name: 'David O.',
+                rating: 5,
+                text: 'Dr. Janet provided excellent care for my daughter who has autism. Her approach is patient-centered and thorough.'
+            },
+            {
+                id: 'rev2',
+                name: 'Sarah M.',
+                rating: 5,
+                text: 'Exceptional doctor with deep knowledge and compassion for neurological conditions.'
+            }
+        ]
+    }
+};
+
+export const getDoctors = (): Doctor[] => {
+    return Object.values(doctorsData);
+};
+
+export const getDoctorById = (id: string): Doctor | undefined => {
+    return doctorsData[id];
+};
+
+// For production, this would be an async function that fetches from an API
+export const fetchDoctors = async (): Promise<Doctor[]> => {
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+    return getDoctors();
+};
+
+export const fetchDoctorById = async (id: string): Promise<Doctor | undefined> => {
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 300));
+    return getDoctorById(id);
+};

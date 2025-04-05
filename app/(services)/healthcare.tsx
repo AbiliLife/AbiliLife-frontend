@@ -1,10 +1,19 @@
-import { Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, useColorScheme, View } from 'react-native'
 import React from 'react'
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, useColorScheme, View } from 'react-native'
 import { FontAwesome5, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useThemeColor } from '@/components/Themed';
 import { router } from 'expo-router';
+
+// Components
 import SearchBar from '@/components/SearchBar';
+import { DoctorCard } from '@/components/doctors/DoctorCard';
+
+// Types
+import { Doctor } from '@/types/doctor';
+
+// Services
+import { fetchDoctors } from '@/services/doctorsService';
 
 
 // Interface for available healthcare services
@@ -14,26 +23,6 @@ interface ServiceCategory {
     icon: string;
     iconType: 'ionicons' | 'materialcommunity' | 'fontawesome';
     iconColor: string;
-}
-
-// Interface for doctor data
-interface Doctor {
-    id: string;
-    name: string;
-    specialty: string;
-    distance: string;
-    details: '/doc1' | '/doc2';
-    rating: number;
-    availability: {
-        status: 'available' | 'next';
-        text: string;
-    };
-    features: {
-        id: string;
-        name: string;
-        color: string;
-        backgroundColor: string;
-    }[];
 }
 
 const servicesAvailble: ServiceCategory[] = [
@@ -81,58 +70,14 @@ const servicesAvailble: ServiceCategory[] = [
     },
 ]
 
-// Available doctors data
-const availableDoctors: Doctor[] = [
-    {
-        id: 'dr1',
-        name: 'Dr. Sarah Mwangi',
-        specialty: 'Pediatrician',
-        distance: '2.5 km away',
-        details: '/doc1',
-        rating: 4.8,
-        availability: {
-            status: 'available',
-            text: 'Available today'
-        },
-        features: [
-            {
-                id: 'sign',
-                name: 'Sign Language',
-                color: '#7135B1',
-                backgroundColor: '#f0e6ff'
-            },
-            {
-                id: 'wheelchair',
-                name: 'Wheelchair Accessible',
-                color: '#06b6d4',
-                backgroundColor: '#e0f7fa'
-            }
-        ]
-    },
-    {
-        id: 'dr2',
-        name: 'Dr. James Omondi',
-        specialty: 'General Practitioner',
-        distance: '4.8 km away',
-        details: '/doc2',
-        rating: 4.6,
-        availability: {
-            status: 'next',
-            text: 'Next available: Tomorrow'
-        },
-        features: [
-            {
-                id: 'home',
-                name: 'Home Visits',
-                color: '#06b6d4',
-                backgroundColor: '#e0f7fa'
-            }
-        ]
-    }
-]
 
 const HealthcareModule = () => {
     const colorScheme = useColorScheme();
+
+    // State for doctors data
+    const [availableDoctors, setAvailableDoctors] = React.useState<Doctor[]>([]);
+    const [loading, setLoading] = React.useState(true);
+    const [error, setError] = React.useState<string | null>(null);
 
     const [accessibilityDrawerVisible, setAccessibilityDrawerVisible] = React.useState(false);
 
@@ -144,7 +89,23 @@ const HealthcareModule = () => {
     const primaryColor = useThemeColor({ light: '#7135B1', dark: '#9C68E7' }, 'text');
     const backgroundColor = useThemeColor({}, 'background');
     const textColor = useThemeColor({ light: '#46216E', dark: '#fff' }, 'text');
-    const cardBackgroundColor = useThemeColor({ light: '#fff', dark: '#333' }, 'background');
+
+    // Fetch available doctors on component mount
+    React.useEffect(() => {
+        const fetchDoctorsData = async () => {
+            try {
+                setLoading(true);
+                const doctors = await fetchDoctors();
+                setAvailableDoctors(doctors);
+            } catch (err) {
+                setError('Failed to load doctors data.');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchDoctorsData();
+    }, []);
 
     // Function to render the appropriate icon for service categories
     const renderServiceIcon = (category: ServiceCategory) => {
@@ -220,59 +181,36 @@ const HealthcareModule = () => {
 
                 {/* Available Doctors List */}
                 <View style={styles.doctorsContainer}>
-                    {availableDoctors.map((doctor) => (
-                        <TouchableOpacity
-                            key={doctor.id}
-                            style={[styles.doctorCard, { backgroundColor: cardBackgroundColor }]}
-                            onPress={() => router.push(doctor.details)}
-                        >
-                            <View style={styles.doctorInfo}>
-                                {/* Doctor Avatar */}
-                                <View style={styles.doctorAvatar}>
-                                    <Ionicons name="person" size={24} color="#7135B1" />
-                                </View>
-
-                                {/* Doctor Details */}
-                                <View style={styles.doctorDetails}>
-                                    <Text style={[styles.doctorName, { color: textColor }]}>
-                                        {doctor.name}
-                                    </Text>
-                                    <Text style={styles.doctorSpecialty}>
-                                        {doctor.specialty} • {doctor.distance}
-                                    </Text>
-
-                                    {/* Rating and Availability */}
-                                    <View style={styles.ratingContainer}>
-                                        <View style={styles.rating}>
-                                            <Ionicons name="star" size={16} color="#FFD700" />
-                                            <Text style={styles.ratingText}>{doctor.rating}</Text>
-                                        </View>
-                                        <View style={styles.availability}>
-                                            <Ionicons name="time-outline" size={16} color="#7135B1" />
-                                            <Text style={styles.availabilityText}>{doctor.availability.text}</Text>
-                                        </View>
-                                    </View>
-
-                                    {/* Doctor Features */}
-                                    <View style={styles.featureContainer}>
-                                        {doctor.features.map((feature) => (
-                                            <View
-                                                key={feature.id}
-                                                style={[
-                                                    styles.featureBadge,
-                                                    { backgroundColor: feature.backgroundColor }
-                                                ]}
-                                            >
-                                                <Text style={[styles.featureText, { color: feature.color }]}>
-                                                    {feature.name}
-                                                </Text>
-                                            </View>
-                                        ))}
-                                    </View>
-                                </View>
+                    {
+                        loading ? (
+                            <View style={styles.loadingContainer}>
+                                <ActivityIndicator size="large" color={primaryColor} />
+                                <Text style={{ marginTop: 8, color: textColor }}>Loading doctors...</Text>
                             </View>
-                        </TouchableOpacity>
-                    ))}
+                        ) : error ? (
+                            <View style={styles.errorContainer}>
+                                <Ionicons name="alert-circle-outline" size={48} color={primaryColor} />
+                                <Text style={{ marginTop: 8, color: textColor }}>{error}</Text>
+                                <TouchableOpacity
+                                    style={styles.retryButton}
+                                    onPress={() => fetchDoctors().then(setAvailableDoctors)}
+                                >
+                                    <Text style={styles.retryButtonText}>Retry</Text>
+                                </TouchableOpacity>
+                            </View>
+                        ) : availableDoctors.length === 0 ? (
+                            <Text style={{ textAlign: 'center', marginTop: 20, color: textColor }}>
+                                No doctors available at the moment
+                            </Text>
+                        ) : (
+                            availableDoctors.map((doctor) => (
+                                <DoctorCard
+                                    key={doctor.id}
+                                    doctor={doctor}
+                                />
+                            ))
+                        )
+                    }
                 </View>
 
             </ScrollView>
@@ -408,80 +346,24 @@ const styles = StyleSheet.create({
     doctorsContainer: {
         backgroundColor: 'transparent',
     },
-    doctorCard: {
-        borderRadius: 16,
-        marginBottom: 16,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 2,
-        overflow: 'hidden',
-    },
-    doctorInfo: {
-        flexDirection: 'row',
-        padding: 16,
+    loadingContainer: {
         alignItems: 'center',
+        paddingVertical: 30,
     },
-    doctorAvatar: {
-        width: 56,
-        height: 56,
-        borderRadius: 28,
-        backgroundColor: '#f0e6ff',
-        justifyContent: 'center',
+    errorContainer: {
         alignItems: 'center',
-        marginRight: 16,
+        paddingVertical: 30,
     },
-    doctorDetails: {
-        flex: 1,
+    retryButton: {
+        marginTop: 16,
+        backgroundColor: '#7135B1',
+        paddingHorizontal: 20,
+        paddingVertical: 8,
+        borderRadius: 8,
     },
-    doctorName: {
-        fontSize: 16,
+    retryButtonText: {
+        color: 'white',
         fontWeight: 'bold',
-    },
-    doctorSpecialty: {
-        fontSize: 14,
-        color: '#666',
-        marginTop: 2,
-        marginBottom: 8,
-    },
-    ratingContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 10,
-    },
-    rating: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginRight: 16,
-    },
-    ratingText: {
-        fontSize: 14,
-        color: '#666',
-        marginLeft: 4,
-    },
-    availability: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    availabilityText: {
-        fontSize: 14,
-        color: '#666',
-        marginLeft: 4,
-    },
-    featureContainer: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-    },
-    featureBadge: {
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-        borderRadius: 16,
-        marginRight: 8,
-        marginBottom: 4,
-    },
-    featureText: {
-        fontSize: 14,
     },
     // Accessibility Button Styles
     accessibilityButton: {
