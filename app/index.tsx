@@ -43,7 +43,7 @@ export default function Splash() {
 
     // Navigate to the login screen after animation
     const navigationTimer = setTimeout(() => {
-      router.replace('/(auth)/login');
+      router.replace('/(onboarding)/onboard');
     }, 2500);
 
     return () => {
