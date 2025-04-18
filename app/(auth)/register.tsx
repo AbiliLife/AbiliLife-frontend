@@ -1,8 +1,8 @@
 import React from 'react'
 import { ScrollView, StyleSheet, TouchableOpacity, useColorScheme } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Link } from 'expo-router';
-
+import { Link, router } from 'expo-router';
+import { useNavigation } from '@react-navigation/native'; // Import useNavigation
 
 import { useThemeColor, View, Text } from '@/components/Themed';
 import FormField from '@/components/common/FormField'
@@ -10,6 +10,7 @@ import CustomButton from '@/components/common/CustomButton';
 
 export default function RegisterScreen() {
     const colorScheme = useColorScheme();
+    const navigation = useNavigation(); // Initialize navigation
 
     // State for the form fields
     const [username, setUsername] = React.useState('');
@@ -35,6 +36,9 @@ export default function RegisterScreen() {
                 </Text>
             </View>
 
+                
+            
+            <ScrollView contentContainerStyle={styles.container}>
                 {/* Welcome Text */}
                 <Text style={[styles.title, { color: textColor }]}>
                     Create Account
@@ -42,9 +46,6 @@ export default function RegisterScreen() {
                 <Text style={[styles.subTitle, { color: colorScheme === 'dark' ? '#888' : '#46216E' }]}>
                     Join us to unlock a world of possibilities and support for your unique journey.
                 </Text>
-            
-            <ScrollView contentContainerStyle={styles.container}>
-
 
                 {/* Form Fields */}
                 <View style={styles.formContainer}>
@@ -118,7 +119,10 @@ export default function RegisterScreen() {
             </ScrollView>
                 <CustomButton
                     title="Create Account"
-                    handlePress={() => { }}
+                    handlePress={() => {
+                        // navigation.navigate('NextScreen'); // Replace 'NextScreen' with the actual screen name
+                        router.replace('/(tabs)');
+                    }}
                     containerStyle={{
                         backgroundColor: primaryColor,
                         paddingVertical: 15,
