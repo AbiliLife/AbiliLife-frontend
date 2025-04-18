@@ -2,7 +2,6 @@ import React from 'react'
 import { ScrollView, StyleSheet, TouchableOpacity, useColorScheme } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Link, router } from 'expo-router';
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation
 
 import { useThemeColor, View, Text } from '@/components/Themed';
 import FormField from '@/components/common/FormField'
@@ -10,7 +9,6 @@ import CustomButton from '@/components/common/CustomButton';
 
 export default function RegisterScreen() {
     const colorScheme = useColorScheme();
-    const navigation = useNavigation(); // Initialize navigation
 
     // State for the form fields
     const [username, setUsername] = React.useState('');
@@ -120,7 +118,6 @@ export default function RegisterScreen() {
                 <CustomButton
                     title="Create Account"
                     handlePress={() => {
-                        // navigation.navigate('NextScreen'); // Replace 'NextScreen' with the actual screen name
                         router.replace('/(tabs)');
                     }}
                     containerStyle={{

@@ -1,7 +1,7 @@
 import React from 'react'
 import { ScrollView, StyleSheet, TouchableOpacity, useColorScheme } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 
 
 import { useThemeColor, View, Text } from '@/components/Themed';
@@ -83,7 +83,7 @@ export default function LoginScreen() {
 
                 <CustomButton
                     title="Login"
-                    handlePress={() => { }}
+                    handlePress={() => router.replace("/(tabs)")}
                     containerStyle={{
                         backgroundColor: primaryColor,
                         paddingVertical: 15,
