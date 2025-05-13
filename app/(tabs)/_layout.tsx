@@ -1,10 +1,9 @@
 import React from 'react';
-import { Link, Tabs } from 'expo-router';
+import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
-import { useColorScheme } from '@/components/useColorScheme';
-import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 import Header from '@/components/Header';
+import { useColorScheme } from 'react-native';
 
 
 function TabBarIcon(props: {
@@ -21,7 +20,7 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: colorScheme === 'dark' ? '#fff' : '#5E35B1',
-        headerShown: useClientOnlyValue(false, true),
+        headerShown: false,
       }}>
       <Tabs.Screen
         name="index"
