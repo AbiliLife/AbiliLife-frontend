@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { FontAwesome5, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
 import { router } from 'expo-router'
 import { useThemeColor } from '@/components/Themed'
-import SearchBar from '@/components/SearchBar'
+import SearchBar from '@/components/common/SearchBar'
 
 // Interface for available insurance services
 interface ServiceCategory {

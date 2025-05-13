@@ -6,7 +6,7 @@ import { useThemeColor } from '@/components/Themed';
 import { router } from 'expo-router';
 
 // Components
-import SearchBar from '@/components/SearchBar';
+import SearchBar from '@/components/common/SearchBar';
 import { DoctorCard } from '@/components/doctors/DoctorCard';
 
 // Types

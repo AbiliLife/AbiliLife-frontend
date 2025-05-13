@@ -16,7 +16,7 @@ import { Ionicons, MaterialIcons, FontAwesome5, MaterialCommunityIcons } from '@
 import { router } from 'expo-router';
 
 import { View, Text, useThemeColor } from '@/components/Themed';
-import SearchBar from '@/components/SearchBar';
+import SearchBar from '@/components/common/SearchBar';
 
 // Dimensions for the sidebar
 const SCREEN_WIDTH = Dimensions.get('window').width;

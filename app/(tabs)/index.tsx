@@ -2,7 +2,7 @@ import React from 'react';
 import { Pressable, ScrollView, StyleSheet, TouchableOpacity, useColorScheme } from 'react-native';
 
 import { Text, useThemeColor, View } from '@/components/Themed';
-import SearchBar from '@/components/SearchBar';
+import SearchBar from '@/components/common/SearchBar';
 import { FontAwesome5, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 
 // Interface for service categories
