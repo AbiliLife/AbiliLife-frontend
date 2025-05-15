@@ -141,9 +141,11 @@ const EducationModule = () => {
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
           <Ionicons name="book" size={28} color="white" />
           <View>
-            <Text style={[styles.headerTitle, { color: 'white' }]}>Education</Text>
+            <Text style={[styles.headerTitle, { color: 'white' }]}>
+              AbiliLife Learn
+            </Text>
             <Text style={[styles.headerSubtitle, { color: 'white' }]}>
-              Find and access education services
+              Inclusive Education & Skills Training
             </Text>
           </View>
         </View>

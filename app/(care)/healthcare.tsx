@@ -1,6 +1,7 @@
 import React from 'react'
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, useColorScheme, View } from 'react-native'
 import { FontAwesome5, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { ChevronLeft } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useThemeColor } from '@/components/Themed';
 import { router } from 'expo-router';
@@ -125,14 +126,16 @@ const HealthcareModule = () => {
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor }} edges={['top', 'left', 'right']}>
             {/* Header */}
-            <View style={[styles.headerContainer, { backgroundColor: primaryColor }]}>
+            <View style={styles.headerContainer}>
                 <TouchableOpacity style={styles.headerButton} onPress={() => router.back()}>
-                    <Ionicons name="arrow-back" size={28} color="white" />
+                    <ChevronLeft size={32} color="white" />
                 </TouchableOpacity>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                     <Ionicons name="heart-outline" size={40} color="white" />
                     <View>
-                        <Text style={[styles.headerTitle, { color: 'white' }]}>HealthCare</Text>
+                        <Text style={[styles.headerTitle, { color: 'white' }]}>
+                            AbiliLife Care
+                        </Text>
                         <Text style={[styles.headerSubtitle, { color: 'white' }]}>
                             Find and access healthcare services easily
                         </Text>
@@ -213,6 +216,13 @@ const HealthcareModule = () => {
                     }
                 </View>
 
+                {/* Upcoming Appointments Section Header */}
+                <View style={styles.sectionHeader}>
+                    <Text style={[styles.sectionTitle, { color: textColor }]}>
+                        Upcoming Appointments
+                    </Text>
+                </View>
+
             </ScrollView>
 
             {/* Accessibility Settings Button (fixed position) */}
@@ -284,7 +294,9 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomEndRadius: 20,
         borderBottomStartRadius: 20,
+        borderBottomColor: '#F44336', // Red color
         marginBottom: 16,
+        backgroundColor: '#F44336', // Red color
     },
     headerButton: {
         width: 40,

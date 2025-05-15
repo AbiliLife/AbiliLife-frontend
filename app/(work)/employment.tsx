@@ -2,6 +2,7 @@ import { Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, useColorSche
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { FontAwesome5, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
+import { ChevronLeft } from 'lucide-react-native'
 import { router } from 'expo-router'
 import { useThemeColor } from '@/components/Themed'
 import SearchBar from '@/components/common/SearchBar'
@@ -137,9 +138,9 @@ const EmploymentModule = () => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor }} edges={['top', 'left', 'right']}>
       {/* Header */}
-      <View style={[styles.headerContainer, { backgroundColor: primaryColor }]}>
+      <View style={styles.headerContainer}>
         <TouchableOpacity style={styles.headerButton} onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={28} color="white" />
+          <ChevronLeft size={32} color="white" />
         </TouchableOpacity>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
           <MaterialCommunityIcons name="briefcase-outline" size={40} color="white" />
@@ -330,7 +331,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomEndRadius: 20,
     borderBottomStartRadius: 20,
+    borderBottomColor: '#4CAF50', // Green color
     marginBottom: 16,
+    backgroundColor: '#4CAF50', // Green color
   },
   headerButton: {
     width: 40,
