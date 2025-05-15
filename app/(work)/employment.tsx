@@ -1,11 +1,14 @@
-import { Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, useColorScheme, View } from 'react-native'
+import { ScrollView, StyleSheet, TouchableOpacity, useColorScheme } from 'react-native'
 import React from 'react'
+import { router } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { FontAwesome5, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
 import { ChevronLeft } from 'lucide-react-native'
-import { router } from 'expo-router'
-import { useThemeColor } from '@/components/Themed'
+
+import { Text, useThemeColor, View } from '@/components/Themed'
 import SearchBar from '@/components/common/SearchBar'
+import AccessibilityDrawer from '@/components/accessibility/AccessibilityDrawer'
+import AccessibilityOption from '@/components/accessibility/AccessibilityOption'
 
 // Interface for available insurance services
 interface ServiceCategory {
@@ -38,42 +41,42 @@ const servicesAvailble: ServiceCategory[] = [
     title: 'Accessible Job Listings',
     icon: 'briefcase-search',
     iconType: 'materialcommunity',
-    iconColor: '#9C27B0', // Purple color
+    iconColor: '#4CAF50', // Green color
   },
   {
     id: 'resume-builder',
     title: 'Resume Builder',
     icon: 'file-document-edit',
     iconType: 'materialcommunity',
-    iconColor: '#9C27B0', // Purple color
+    iconColor: '#4CAF50', // Green color
   },
   {
     id: 'interview',
     title: 'Interview Prep',
     icon: 'account-question',
     iconType: 'materialcommunity',
-    iconColor: '#9C27B0', // Purple color
+    iconColor: '#4CAF50', // Green color
   },
   {
     id: 'networking',
     title: 'Networking Opportunities',
     icon: 'account-network',
     iconType: 'materialcommunity',
-    iconColor: '#9C27B0', // Purple color
+    iconColor: '#4CAF50', // Green color
   },
   {
     id: 'counseling',
     title: 'Career Counseling',
     icon: 'account-cog',
     iconType: 'materialcommunity',
-    iconColor: '#9C27B0', // Purple color
+    iconColor: '#4CAF50', // Green color
   },
   {
     id: 'job-alerts',
     title: 'Job Alerts',
     icon: 'bell-ring',
     iconType: 'materialcommunity',
-    iconColor: '#9C27B0', // Purple color
+    iconColor: '#4CAF50', // Green color
   },
 ]
 
@@ -142,9 +145,9 @@ const EmploymentModule = () => {
         <TouchableOpacity style={styles.headerButton} onPress={() => router.back()}>
           <ChevronLeft size={32} color="white" />
         </TouchableOpacity>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: 'transparent' }}>
           <MaterialCommunityIcons name="briefcase-outline" size={40} color="white" />
-          <View>
+          <View style={{ backgroundColor: 'transparent' }}>
             <Text style={[styles.headerTitle, { color: 'white' }]}>Jobs</Text>
             <Text style={[styles.headerSubtitle, { color: 'white' }]}>
               Find and access employment services
@@ -204,7 +207,7 @@ const EmploymentModule = () => {
               <View style={styles.jobInfo}>
                 {/* Job Icon/Avatar */}
                 <View style={styles.jobAvatar}>
-                  <MaterialCommunityIcons name="briefcase-outline" size={24} color="#7135B1" />
+                  <MaterialCommunityIcons name="briefcase-outline" size={24} color='#4CAF50' />
                 </View>
 
                 {/* Job Details */}
@@ -219,13 +222,13 @@ const EmploymentModule = () => {
                   {/* Location and Date Info */}
                   <View style={styles.infoContainer}>
                     <View style={styles.location}>
-                      <Ionicons name="location-outline" size={16} color="#7135B1" />
+                      <Ionicons name="location-outline" size={16} color='#4CAF50' />
                       <Text style={[styles.locationText, { color: colorScheme === 'dark' ? '#ccc' : '#666' }]}>
                         {job.location}
                       </Text>
                     </View>
                     <View style={styles.date}>
-                      <Ionicons name="time-outline" size={16} color="#7135B1" />
+                      <Ionicons name="time-outline" size={16} color='#4CAF50' />
                       <Text style={[styles.dateText, { color: colorScheme === 'dark' ? '#ccc' : '#666' }]}>
                         {job.datePosted}
                       </Text>
@@ -234,7 +237,7 @@ const EmploymentModule = () => {
 
                   {/* Job Mode */}
                   <View style={styles.modeContainer}>
-                    <Text style={[styles.modeText, { color: '#7135B1' }]}>
+                    <Text style={[styles.modeText, { color: '#4CAF50' }]}>
                       {job.mode}
                     </Text>
                   </View>
@@ -263,52 +266,15 @@ const EmploymentModule = () => {
       </ScrollView>
 
       {/* Accessibility Settings Button (fixed position) */}
-      <TouchableOpacity
-        style={styles.accessibilityButton}
-        onPress={toggleAccessibilityDrawer}
-        activeOpacity={0.9}
-      >
-        <Ionicons name="settings-outline" size={24} color="#fff" />
-      </TouchableOpacity>
-
-      {/* Accessibility Settings Button (fixed position) */}
-      <TouchableOpacity
-        style={styles.accessibilityButton}
-        onPress={toggleAccessibilityDrawer}
-        activeOpacity={0.9}
-      >
-        <Ionicons name="accessibility-outline" size={24} color="#fff" />
-      </TouchableOpacity>
+      <AccessibilityOption
+        handlePress={toggleAccessibilityDrawer}
+      />
 
       {/* Accessibility Drawer */}
       {accessibilityDrawerVisible && (
-        <View style={styles.accessibilityDrawerOverlay}>
-          <Pressable
-            style={styles.accessibilityDrawerDismiss}
-            onPress={toggleAccessibilityDrawer}
-          />
-          <View style={styles.accessibilityDrawer}>
-            <View style={styles.accessibilityDrawerContent}>
-              <Text style={styles.accessibilityDrawerTitle}>Accessibility Settings</Text>
-
-              <TouchableOpacity style={styles.accessibilityOption}>
-                <Text style={styles.accessibilityOptionText}>Voice Commands</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.accessibilityOption}>
-                <Text style={styles.accessibilityOptionText}>Text Size</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.accessibilityOption}>
-                <Text style={styles.accessibilityOptionText}>High Contrast</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.accessibilityOption}>
-                <Text style={styles.accessibilityOptionText}>Screen Reader</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
+        <AccessibilityDrawer
+          handlePress={toggleAccessibilityDrawer}
+        />
       )}
     </SafeAreaView>
   )
@@ -391,78 +357,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
   },
-  // Accessibility Button Styles
-  accessibilityButton: {
-    position: 'absolute',
-    bottom: 80, // Position above bottom tabs
-    right: 20,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#7135B1',
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 4,
-    zIndex: 1000,
-  },
-  // Accessibility Drawer Styles
-  accessibilityDrawerOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    zIndex: 1001,
-  },
-  accessibilityDrawerDismiss: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 1002,
-  },
-  accessibilityDrawer: {
-    position: 'absolute',
-    right: 20,
-    bottom: 150, // Position above the accessibility button
-    zIndex: 1003,
-    borderRadius: 16,
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
-    width: 250,
-  },
-  accessibilityDrawerContent: {
-    backgroundColor: '#f8f2ff', // Light purple background
-    padding: 16,
-  },
-  accessibilityDrawerTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#7135B1',
-    marginBottom: 16,
-    textAlign: 'center',
-  },
-  accessibilityOption: {
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    marginBottom: 8,
-    backgroundColor: '#fff',
-  },
-  accessibilityOptionText: {
-    fontSize: 16,
-    color: '#46216E',
-  },
   jobsContainer: {
     marginTop: 16,
   },
@@ -479,12 +373,15 @@ const styles = StyleSheet.create({
   jobInfo: {
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: 'transparent',
   },
   jobAvatar: {
     marginRight: 16,
+    backgroundColor: 'transparent',
   },
   jobDetails: {
     flex: 1,
+    backgroundColor: 'transparent',
   },
   jobTitle: {
     fontSize: 16,
@@ -498,11 +395,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 8,
+    backgroundColor: 'transparent',
   },
   location: {
     flexDirection: 'row',
     alignItems: 'center',
     marginRight: 16,
+    backgroundColor: 'transparent',
   },
   locationText: {
     marginLeft: 4,
@@ -511,6 +410,7 @@ const styles = StyleSheet.create({
   date: {
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: 'transparent',
   },
   dateText: {
     marginLeft: 4,
@@ -518,6 +418,8 @@ const styles = StyleSheet.create({
   },
   modeContainer: {
     marginTop: 8,
+    backgroundColor: 'transparent',
+    paddingVertical: 4,
   },
   modeText: {
     fontSize: 14,
@@ -527,6 +429,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     marginTop: 8,
+    backgroundColor: 'transparent',
   },
   featureBadge: {
     borderRadius: 8,

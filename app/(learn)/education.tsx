@@ -1,10 +1,15 @@
-import { Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, useColorScheme, View } from 'react-native'
+import { ScrollView, StyleSheet, TouchableOpacity, useColorScheme } from 'react-native'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { FontAwesome5, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
 import { router } from 'expo-router'
-import { useThemeColor } from '@/components/Themed'
+
+import { useAccessibility } from '@/contexts/AccessibilityContext'
+
+import { Text, useThemeColor, View } from '@/components/Themed'
 import SearchBar from '@/components/common/SearchBar'
+import AccessibilityDrawer from '@/components/accessibility/AccessibilityDrawer'
+import AccessibilityOption from '@/components/accessibility/AccessibilityOption'
 
 // Interface for available insurance services
 interface ServiceCategory {
@@ -36,42 +41,42 @@ const servicesAvailble: ServiceCategory[] = [
     title: 'Accessible Courses',
     icon: 'school',
     iconType: 'ionicons',
-    iconColor: '#9C27B0', // Purple color
+    iconColor: '#2196F3', // Blue color
   },
   {
     id: 'tutoring',
     title: 'One-on-One Tutoring',
     icon: 'person',
     iconType: 'ionicons',
-    iconColor: '#9C27B0', // Purple color
+    iconColor: '#2196F3', // Blue color
   },
   {
     id: 'assistive-resources',
     title: 'Assistive Resources',
     icon: 'library',
     iconType: 'ionicons',
-    iconColor: '#9C27B0', // Purple color
+    iconColor: '#2196F3', // Blue color
   },
   {
     id: 'scholarships',
     title: 'Scholarships for Disabilities',
     icon: 'cash',
     iconType: 'ionicons',
-    iconColor: '#9C27B0', // Purple color
+    iconColor: '#2196F3', // Blue color
   },
   {
     id: 'inclusive-events',
     title: 'Inclusive Events',
     icon: 'calendar',
     iconType: 'ionicons',
-    iconColor: '#9C27B0', // Purple color
+    iconColor: '#2196F3', // Blue color
   },
   {
     id: 'support-groups',
     title: 'Support Groups',
     icon: 'people',
     iconType: 'ionicons',
-    iconColor: '#9C27B0', // Purple color
+    iconColor: '#2196F3', // Blue color
   },
 ]
 
@@ -103,11 +108,7 @@ const popularCourses: PopularCourse[] = [
 const EducationModule = () => {
   const colorScheme = useColorScheme();
 
-  const [accessibilityDrawerVisible, setAccessibilityDrawerVisible] = React.useState(false);
-
-  const toggleAccessibilityDrawer = () => {
-    setAccessibilityDrawerVisible(!accessibilityDrawerVisible);
-  };
+  const { accessibilityDrawerVisible, toggleAccessibilityDrawer } = useAccessibility();
 
   // Theme colors
   const primaryColor = useThemeColor({ light: '#7135B1', dark: '#9C68E7' }, 'text');
@@ -134,13 +135,13 @@ const EducationModule = () => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor }} edges={['top', 'left', 'right']}>
       {/* Header */}
-      <View style={[styles.headerContainer, { backgroundColor: primaryColor }]}>
+      <View style={styles.headerContainer}>
         <TouchableOpacity style={styles.headerButton} onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={28} color="white" />
         </TouchableOpacity>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: 'transparent' }}>
           <Ionicons name="book" size={28} color="white" />
-          <View>
+          <View style={{ backgroundColor: 'transparent' }}>
             <Text style={[styles.headerTitle, { color: 'white' }]}>
               AbiliLife Learn
             </Text>
@@ -203,7 +204,7 @@ const EducationModule = () => {
               <View style={styles.courseInfo}>
                 {/* Course Icon/Avatar */}
                 <View style={styles.courseAvatar}>
-                  <Ionicons name="school" size={24} color="#7135B1" />
+                  <Ionicons name="school" size={24} color='#2196F3' />
                 </View>
 
                 {/* Course Details */}
@@ -251,52 +252,15 @@ const EducationModule = () => {
       </ScrollView>
 
       {/* Accessibility Settings Button (fixed position) */}
-      <TouchableOpacity
-        style={styles.accessibilityButton}
-        onPress={toggleAccessibilityDrawer}
-        activeOpacity={0.9}
-      >
-        <Ionicons name="settings-outline" size={24} color="#fff" />
-      </TouchableOpacity>
-
-      {/* Accessibility Settings Button (fixed position) */}
-      <TouchableOpacity
-        style={styles.accessibilityButton}
-        onPress={toggleAccessibilityDrawer}
-        activeOpacity={0.9}
-      >
-        <Ionicons name="accessibility-outline" size={24} color="#fff" />
-      </TouchableOpacity>
+      <AccessibilityOption
+        handlePress={toggleAccessibilityDrawer}
+      />
 
       {/* Accessibility Drawer */}
       {accessibilityDrawerVisible && (
-        <View style={styles.accessibilityDrawerOverlay}>
-          <Pressable
-            style={styles.accessibilityDrawerDismiss}
-            onPress={toggleAccessibilityDrawer}
-          />
-          <View style={styles.accessibilityDrawer}>
-            <View style={styles.accessibilityDrawerContent}>
-              <Text style={styles.accessibilityDrawerTitle}>Accessibility Settings</Text>
-
-              <TouchableOpacity style={styles.accessibilityOption}>
-                <Text style={styles.accessibilityOptionText}>Voice Commands</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.accessibilityOption}>
-                <Text style={styles.accessibilityOptionText}>Text Size</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.accessibilityOption}>
-                <Text style={styles.accessibilityOptionText}>High Contrast</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.accessibilityOption}>
-                <Text style={styles.accessibilityOptionText}>Screen Reader</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
+        <AccessibilityDrawer
+          handlePress={toggleAccessibilityDrawer}
+        />
       )}
     </SafeAreaView>
   )
@@ -319,7 +283,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomEndRadius: 20,
     borderBottomStartRadius: 20,
+    borderBottomColor: '#2196F3',
     marginBottom: 16,
+    backgroundColor: '#2196F3'
   },
   headerButton: {
     width: 40,
@@ -395,60 +361,6 @@ const styles = StyleSheet.create({
     elevation: 4,
     zIndex: 1000,
   },
-  // Accessibility Drawer Styles
-  accessibilityDrawerOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    zIndex: 1001,
-  },
-  accessibilityDrawerDismiss: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 1002,
-  },
-  accessibilityDrawer: {
-    position: 'absolute',
-    right: 20,
-    bottom: 150, // Position above the accessibility button
-    zIndex: 1003,
-    borderRadius: 16,
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
-    width: 250,
-  },
-  accessibilityDrawerContent: {
-    backgroundColor: '#f8f2ff', // Light purple background
-    padding: 16,
-  },
-  accessibilityDrawerTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#7135B1',
-    marginBottom: 16,
-    textAlign: 'center',
-  },
-  accessibilityOption: {
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    marginBottom: 8,
-    backgroundColor: '#fff',
-  },
-  accessibilityOptionText: {
-    fontSize: 16,
-    color: '#46216E',
-  },
   // Popular Courses Styles
   coursesContainer: {
     backgroundColor: 'transparent',
@@ -472,7 +384,7 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: '#f0e6ff',
+    backgroundColor: '#E8F5E9',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,

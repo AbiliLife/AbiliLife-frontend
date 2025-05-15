@@ -1,14 +1,19 @@
 import React from 'react'
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, useColorScheme, View } from 'react-native'
+import { ActivityIndicator, ScrollView, StyleSheet, TouchableOpacity, useColorScheme } from 'react-native'
+import { router } from 'expo-router';
 import { FontAwesome5, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { ChevronLeft } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useThemeColor } from '@/components/Themed';
-import { router } from 'expo-router';
+
+// Context
+import { useAccessibility } from '@/contexts/AccessibilityContext';
 
 // Components
+import { Text, useThemeColor, View } from '@/components/Themed';
 import SearchBar from '@/components/common/SearchBar';
 import { DoctorCard } from '@/components/doctors/DoctorCard';
+import AccessibilityDrawer from '@/components/accessibility/AccessibilityDrawer';
+import AccessibilityOption from '@/components/accessibility/AccessibilityOption';
 
 // Types
 import { Doctor } from '@/types/doctor';
@@ -32,42 +37,42 @@ const servicesAvailble: ServiceCategory[] = [
         title: 'Find Specialist',
         icon: 'search',
         iconType: 'ionicons',
-        iconColor: '#9C27B0', // Purple color
+        iconColor: '#F44336', // Red color
     },
     {
         id: 'appointment',
         title: 'Book Appointment',
         icon: 'calendar-check',
         iconType: 'materialcommunity',
-        iconColor: '#9C27B0', // Purple color
+        iconColor: '#F44336', // Red color
     },
     {
         id: 'telehealth',
         title: 'Telehealth Services',
         icon: 'videocam',
         iconType: 'ionicons',
-        iconColor: '#9C27B0', // Purple color
+        iconColor: '#F44336', // Red color
     },
     {
         id: 'emergency',
         title: 'Emergency Assistance',
         icon: 'medkit',
         iconType: 'ionicons',
-        iconColor: '#9C27B0', // Purple color
+        iconColor: '#F44336', // Red color
     },
     {
         id: 'health-records',
         title: 'Health Records',
         icon: 'folder',
         iconType: 'ionicons',
-        iconColor: '#9C27B0', // Purple color
+        iconColor: '#F44336', // Red color
     },
     {
         id: 'clinics',
         title: 'Accessible Clinics',
         icon: 'hospital-building',
         iconType: 'materialcommunity',
-        iconColor: '#9C27B0', // Purple color
+        iconColor: '#F44336', // Red color
     },
 ]
 
@@ -80,11 +85,7 @@ const HealthcareModule = () => {
     const [loading, setLoading] = React.useState(true);
     const [error, setError] = React.useState<string | null>(null);
 
-    const [accessibilityDrawerVisible, setAccessibilityDrawerVisible] = React.useState(false);
-
-    const toggleAccessibilityDrawer = () => {
-        setAccessibilityDrawerVisible(!accessibilityDrawerVisible);
-    };
+const { accessibilityDrawerVisible, toggleAccessibilityDrawer } = useAccessibility();
 
     // Theme colors
     const primaryColor = useThemeColor({ light: '#7135B1', dark: '#9C68E7' }, 'text');
@@ -130,9 +131,9 @@ const HealthcareModule = () => {
                 <TouchableOpacity style={styles.headerButton} onPress={() => router.back()}>
                     <ChevronLeft size={32} color="white" />
                 </TouchableOpacity>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: 'transparent' }}>
                     <Ionicons name="heart-outline" size={40} color="white" />
-                    <View>
+                    <View style={{ backgroundColor: 'transparent' }}>
                         <Text style={[styles.headerTitle, { color: 'white' }]}>
                             AbiliLife Care
                         </Text>
@@ -187,12 +188,12 @@ const HealthcareModule = () => {
                     {
                         loading ? (
                             <View style={styles.loadingContainer}>
-                                <ActivityIndicator size="large" color={primaryColor} />
+                                <ActivityIndicator size="large" color='#F44336' />
                                 <Text style={{ marginTop: 8, color: textColor }}>Loading doctors...</Text>
                             </View>
                         ) : error ? (
                             <View style={styles.errorContainer}>
-                                <Ionicons name="alert-circle-outline" size={48} color={primaryColor} />
+                                <Ionicons name="alert-circle-outline" size={48} color='#F44336' />
                                 <Text style={{ marginTop: 8, color: textColor }}>{error}</Text>
                                 <TouchableOpacity
                                     style={styles.retryButton}
@@ -225,54 +226,17 @@ const HealthcareModule = () => {
 
             </ScrollView>
 
-            {/* Accessibility Settings Button (fixed position) */}
-            <TouchableOpacity
-                style={styles.accessibilityButton}
-                onPress={toggleAccessibilityDrawer}
-                activeOpacity={0.9}
-            >
-                <Ionicons name="settings-outline" size={24} color="#fff" />
-            </TouchableOpacity>
+      {/* Accessibility Settings Button (fixed position) */}
+      <AccessibilityOption
+        handlePress={toggleAccessibilityDrawer}
+      />
 
-            {/* Accessibility Settings Button (fixed position) */}
-            <TouchableOpacity
-                style={styles.accessibilityButton}
-                onPress={toggleAccessibilityDrawer}
-                activeOpacity={0.9}
-            >
-                <Ionicons name="accessibility-outline" size={24} color="#fff" />
-            </TouchableOpacity>
-
-            {/* Accessibility Drawer */}
-            {accessibilityDrawerVisible && (
-                <View style={styles.accessibilityDrawerOverlay}>
-                    <Pressable
-                        style={styles.accessibilityDrawerDismiss}
-                        onPress={toggleAccessibilityDrawer}
-                    />
-                    <View style={styles.accessibilityDrawer}>
-                        <View style={styles.accessibilityDrawerContent}>
-                            <Text style={styles.accessibilityDrawerTitle}>Accessibility Settings</Text>
-
-                            <TouchableOpacity style={styles.accessibilityOption}>
-                                <Text style={styles.accessibilityOptionText}>Voice Commands</Text>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity style={styles.accessibilityOption}>
-                                <Text style={styles.accessibilityOptionText}>Text Size</Text>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity style={styles.accessibilityOption}>
-                                <Text style={styles.accessibilityOptionText}>High Contrast</Text>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity style={styles.accessibilityOption}>
-                                <Text style={styles.accessibilityOptionText}>Screen Reader</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </View>
-            )}
+      {/* Accessibility Drawer */}
+      {accessibilityDrawerVisible && (
+        <AccessibilityDrawer
+          handlePress={toggleAccessibilityDrawer}
+        />
+      )}
         </SafeAreaView>
     )
 }
@@ -376,77 +340,5 @@ const styles = StyleSheet.create({
     retryButtonText: {
         color: 'white',
         fontWeight: 'bold',
-    },
-    // Accessibility Button Styles
-    accessibilityButton: {
-        position: 'absolute',
-        bottom: 80, // Position above bottom tabs
-        right: 20,
-        width: 56,
-        height: 56,
-        borderRadius: 28,
-        backgroundColor: '#7135B1',
-        justifyContent: 'center',
-        alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 4,
-        elevation: 4,
-        zIndex: 1000,
-    },
-    // Accessibility Drawer Styles
-    accessibilityDrawerOverlay: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: 'rgba(0,0,0,0.4)',
-        zIndex: 1001,
-    },
-    accessibilityDrawerDismiss: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        zIndex: 1002,
-    },
-    accessibilityDrawer: {
-        position: 'absolute',
-        right: 20,
-        bottom: 150, // Position above the accessibility button
-        zIndex: 1003,
-        borderRadius: 16,
-        overflow: 'hidden',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.3,
-        shadowRadius: 8,
-        elevation: 8,
-        width: 250,
-    },
-    accessibilityDrawerContent: {
-        backgroundColor: '#f8f2ff', // Light purple background
-        padding: 16,
-    },
-    accessibilityDrawerTitle: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: '#7135B1',
-        marginBottom: 16,
-        textAlign: 'center',
-    },
-    accessibilityOption: {
-        paddingVertical: 12,
-        paddingHorizontal: 16,
-        borderRadius: 8,
-        marginBottom: 8,
-        backgroundColor: '#fff',
-    },
-    accessibilityOptionText: {
-        fontSize: 16,
-        color: '#46216E',
     },
 })
