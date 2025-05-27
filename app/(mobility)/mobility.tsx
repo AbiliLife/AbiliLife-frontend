@@ -1,20 +1,19 @@
-import { Pressable, ScrollView, StyleSheet, TouchableOpacity, useColorScheme } from 'react-native'
 import React from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { Image, ScrollView, StyleSheet, TouchableOpacity } from 'react-native'
 import { FontAwesome5, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
-import { router } from 'expo-router'
+import { useRouter } from 'expo-router'
 
 import { useAccessibility } from '@/contexts/AccessibilityContext'
 
 import { Text, useThemeColor, View } from '@/components/Themed'
-import SearchBar from '@/components/common/SearchBar'
+import CustomButton from '@/components/common/CustomButton'
 import AccessibilityDrawer from '@/components/accessibility/AccessibilityDrawer'
 import AccessibilityOption from '@/components/accessibility/AccessibilityOption'
 
+import { images } from '@/constants/Images'
 
-
-const MobilityModule = () => {
-  const colorScheme = useColorScheme();
+const MobilityHomeScreen = () => {
+  const router = useRouter();
 
   const { accessibilityDrawerVisible, toggleAccessibilityDrawer } = useAccessibility();
 
@@ -25,50 +24,70 @@ const MobilityModule = () => {
   const cardBackgroundColor = useThemeColor({ light: '#fff', dark: '#333' }, 'background');
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor }} edges={['top', 'left', 'right']}>
-      {/* Header */}
-      <View style={styles.headerContainer}>
-        <TouchableOpacity style={styles.headerButton} onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={28} color="white" />
-        </TouchableOpacity>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: 'transparent' }}>
-          <FontAwesome5 name="wheelchair" size={28} color="white" />
-          <View style={{ backgroundColor: 'transparent' }}>
-            <Text style={[styles.headerTitle, { color: 'white' }]}>
-              AbiliLife Mobility
-            </Text>
-            <Text style={[styles.headerSubtitle, { color: 'white' }]}>
-              Accessible, affordable transportation
-            </Text>
+    <View style={{ flex: 1}}>
+      <ScrollView contentContainerStyle={[styles.container, { backgroundColor }]} showsVerticalScrollIndicator={false}>
+      <Image
+        source={images.mobility}
+        style={{ width: '100%', height: 300, borderRadius: 12, marginBottom: 16 }}
+        resizeMode="cover"
+      />
+        <Text style={styles.title}>Mobility Options</Text>
+        
+        {/* Private Ride Card */}
+        <TouchableOpacity 
+          style={[styles.card, { backgroundColor: cardBackgroundColor }]} 
+          onPress={() => router.push('/(mobility)/rideBooking')}
+        >
+          <View style={styles.cardContent}>
+            <FontAwesome5 name="car" size={24} color={primaryColor} style={styles.cardIcon} />
+            <View style={styles.cardTextContainer}>
+              <Text style={[styles.cardTitle, { color: textColor }]}>Private Ride (Ace)</Text>
+              <Text style={styles.cardDescription}>Book a private ride with Ace Mobility</Text>
+            </View>
           </View>
-        </View>
-      </View>
-
-      <ScrollView contentContainerStyle={[styles.container, { backgroundColor }]}>
-        {/* Search Bar */}
-        <SearchBar
-          placeholder="Search for mobility services..."
-          value=""
-          onChangeText={() => { }}
-          onPress={() => { }}
+        </TouchableOpacity>
+        
+        {/* Public Transport Card */}
+        <TouchableOpacity 
+          style={[styles.card, { backgroundColor: cardBackgroundColor }]} 
+          onPress={() => router.push('/(mobility)/rideBooking')}
+        >
+          <View style={styles.cardContent}>
+            <MaterialCommunityIcons name="bus" size={24} color={primaryColor} style={styles.cardIcon} />
+            <View style={styles.cardTextContainer}>
+              <Text style={[styles.cardTitle, { color: textColor }]}>Public Transport Info</Text>
+              <Text style={styles.cardDescription}>Get information about public transportation</Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+        
+        {/* Schedule Ride Card */}
+        <TouchableOpacity 
+          style={[styles.card, { backgroundColor: cardBackgroundColor }]} 
+          onPress={() => router.push('/(mobility)/rideBooking')}
+        >
+          <View style={styles.cardContent}>
+            <Ionicons name="calendar" size={24} color={primaryColor} style={styles.cardIcon} />
+            <View style={styles.cardTextContainer}>
+              <Text style={[styles.cardTitle, { color: textColor }]}>Schedule a Ride</Text>
+              <Text style={styles.cardDescription}>Plan and schedule transportation in advance</Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+        
+        {/* Caregiver Mode Button */}
+        <CustomButton 
+          title="Caregiver Mode" 
+          handlePress={() => router.push('/(mobility)/caregiverBook')}
+          containerStyle={styles.caregiverButton}
+          textStyle={styles.caregiverButtonText}
         />
-
-        {/* Services Available Section Header */}
-        <View style={styles.sectionHeader}>
-          <Text style={[styles.sectionTitle, { color: textColor }]}>
-            Services Available
-          </Text>
-        </View>
-
-        {/* Services Available Categories Grid */}
-        <View style={styles.servicesGrid}>
-          
-        </View>
       </ScrollView>
 
       {/* Accessibility Settings Button (fixed position) */}
       <AccessibilityOption
         handlePress={toggleAccessibilityDrawer}
+        otherStyle={{ position: 'absolute', top: 20, right: 20 }}
       />
 
       {/* Accessibility Drawer */}
@@ -77,85 +96,66 @@ const MobilityModule = () => {
           handlePress={toggleAccessibilityDrawer}
         />
       )}
-    </SafeAreaView>
+    </View>
   )
 }
 
-export default MobilityModule
+export default MobilityHomeScreen
 
 const styles = StyleSheet.create({
   container: {
     padding: 16,
+    alignItems: 'center',
   },
-  headerContainer: {
-    height: 150,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    gap: 8,
-    paddingVertical: 50,
-    paddingHorizontal: 16,
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  card: {
     width: '100%',
-    borderBottomWidth: 1,
-    borderBottomEndRadius: 20,
-    borderBottomStartRadius: 20,
-    borderBottomColor: '#2196F3',
-    marginBottom: 16,
-    backgroundColor: '#2196F3'
-  },
-  headerButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: 'center',
+    height: 100,
     justifyContent: 'center',
-  },
-  headerTitle: {
-    fontSize: 26,
-    fontWeight: 'bold',
-    color: 'white',
-  },
-  headerSubtitle: {
-    fontSize: 14,
-    color: 'white',
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 24,
+    borderRadius: 12,
     marginBottom: 16,
-    backgroundColor: 'transparent',
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  servicesGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    backgroundColor: 'transparent',
-  },
-  serviceCard: {
-    width: '48%',
-    backgroundColor: 'white',
-    borderRadius: 16,
-    padding: 24,
-    marginBottom: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
+    padding: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 2,
+    elevation: 3,
   },
-  iconContainer: {
-    marginBottom: 16,
+  cardContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: 'transparent',
   },
-  serviceTitle: {
-    fontSize: 16,
-    textAlign: 'center',
+  cardIcon: {
+    marginRight: 16,
+  },
+  cardTextContainer: {
+    flex: 1,
+    backgroundColor: 'transparent',
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 4,
+  },
+  cardDescription: {
+    fontSize: 14,
+    opacity: 0.7,
+  },
+  caregiverButton: {
+    width: '70%',
+    padding: 14,
+    marginTop: 20,
+    marginBottom: 30,
+    backgroundColor: '#7135B1',
+  },
+  caregiverButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
 })
