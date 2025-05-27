@@ -3,6 +3,7 @@ const healthcare = require("@/assets/images/healthcare.jpeg");
 const insurance = require("@/assets/images/insurance.jpeg");
 const community = require("@/assets/images/community.jpeg");
 const assistiveRobot = require("@/assets/images/assistive-tech-robot.jpeg");
+const mobility = require("@/assets/images/mobility.png");
 
 export const images = {
     marketplace,
@@ -10,4 +11,5 @@ export const images = {
     insurance,
     community,
     assistiveRobot,
+    mobility,
 }
