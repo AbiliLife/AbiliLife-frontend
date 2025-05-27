@@ -4,12 +4,13 @@ import { Ionicons } from '@expo/vector-icons'
 
 interface AccessibilityOptionProps {
     handlePress: () => void
+    otherStyle?: object
 }
 
-const AccessibilityOption = ({ handlePress }: AccessibilityOptionProps) => {
+const AccessibilityOption = ({ handlePress, otherStyle }: AccessibilityOptionProps) => {
     return (
         <TouchableOpacity
-            style={styles.accessibilityButton}
+            style={[styles.accessibilityButton, otherStyle]}
             onPress={handlePress}
             activeOpacity={0.9}
         >
