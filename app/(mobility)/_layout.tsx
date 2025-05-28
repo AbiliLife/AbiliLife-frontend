@@ -23,6 +23,7 @@ export default function MobilityLayout() {
               size={28}
               color={colorScheme === 'dark' ? '#fff' : '#18181B'}
               onPress={() => router.back()}
+              style={{ marginLeft: -16 }}
             />
           ),
           headerStyle: {
@@ -46,6 +47,7 @@ export default function MobilityLayout() {
               size={28}
               color={colorScheme === 'dark' ? '#fff' : '#18181B'}
               onPress={() => router.back()}
+              style={{ marginLeft: -16 }}
             />
           )
         }} />
@@ -65,9 +67,30 @@ export default function MobilityLayout() {
               size={28}
               color={colorScheme === 'dark' ? '#fff' : '#18181B'}
               onPress={() => router.back()}
+              style={{ marginLeft: -16 }}
             />
           )
         }} />
+        <Stack.Screen name="publicTransport" options={{ 
+          headerTitle: 'Public Transport',
+          headerShadowVisible: false,
+          headerTitleStyle: {
+            fontSize: 16,
+            fontWeight: '600',
+            color: colorScheme === 'dark' ? '#fff' : '#18181B',
+          },
+          headerStyle: {
+            backgroundColor: colorScheme === 'dark' ? '#18181B' : '#fff',
+          },
+          headerLeft: () => (
+            <ChevronLeft
+              size={28}
+              color={colorScheme === 'dark' ? '#fff' : '#18181B'}
+              onPress={() => router.back()}
+              style={{ marginLeft: -16 }}
+            />
+          )
+         }} />
         <Stack.Screen name="rideConfirm" options={{ title: 'Ride Confirmation' }} />
         <Stack.Screen name="rideHistory" options={{ title: 'Ride History' }} />
       </Stack>
