@@ -50,7 +50,7 @@ const MobilityHomeScreen = () => {
         {/* Public Transport Card */}
         <TouchableOpacity 
           style={[styles.card, { backgroundColor: cardBackgroundColor }]} 
-          onPress={() => router.push('/(mobility)/rideBooking')}
+          onPress={() => router.push('/(mobility)/publicTransport')}
         >
           <View style={styles.cardContent}>
             <MaterialCommunityIcons name="bus" size={24} color={primaryColor} style={styles.cardIcon} />
