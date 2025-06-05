@@ -2,8 +2,8 @@ import React from 'react';
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
-import Header from '@/components/common/Header';
-import { useColorScheme } from 'react-native';
+import notificationsData from '@/assets/data/notifications.json';
+const newNotificationsCount = notificationsData.filter(item => item.isNew).length;
 
 
 function TabBarIcon(props: {
@@ -14,28 +14,28 @@ function TabBarIcon(props: {
 }
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: colorScheme === 'dark' ? '#fff' : '#5E35B1',
-        headerShown: false,
+        tabBarActiveTintColor:'#5E35B1',
+        tabBarLabelStyle: {
+          fontSize: 12,
+          marginBottom: 5,
+        },
       }}>
       <Tabs.Screen
         name="index"
         options={{
           title: 'Home',
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
-          header: () => <Header title="AbiliLife" />,
         }}
       />
       <Tabs.Screen
         name="services"
         options={{
-          title: 'Services',
+          title: 'All Services',
           tabBarIcon: ({ color }) => <TabBarIcon name="grid" color={color} />,
-          headerShown: false,
         }}
       />
       <Tabs.Screen
@@ -43,7 +43,11 @@ export default function TabLayout() {
         options={{
           title: 'Alerts',
           tabBarIcon: ({ color }) => <TabBarIcon name="notifications" color={color} />,
-          headerShown: false,
+          tabBarBadgeStyle: {
+            backgroundColor: '#7135B1',
+            color: '#fff',
+          },
+          tabBarBadge: newNotificationsCount > 0 ? newNotificationsCount : undefined,
         }}
       />
       <Tabs.Screen
@@ -51,7 +55,6 @@ export default function TabLayout() {
         options={{
           title: 'Profile',
           tabBarIcon: ({ color }) => <TabBarIcon name="person" color={color} />,
-          headerShown: false,
         }}
       />
     </Tabs>
