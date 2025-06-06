@@ -1,8 +1,6 @@
-import { ActivityIndicator, StyleSheet, TouchableOpacity } from "react-native";
-
+import { ActivityIndicator, StyleSheet, TouchableOpacity, Text, View } from "react-native";
+import { Ionicons, FontAwesome, MaterialIcons, Entypo, Feather } from '@expo/vector-icons';
 import { StyleProp, TextStyle, ViewStyle } from "react-native";
-
-import { Text } from '@/components/Themed';
 
 interface CustomButtonProps {
     title: string;
@@ -11,39 +9,81 @@ interface CustomButtonProps {
     textStyle?: StyleProp<TextStyle>;
     loading?: boolean;
     disabled?: boolean;
+    leading?: boolean;
+    trailing?: boolean;
+    leadingIconName?: string;
+    trailingIconName?: string;
+    iconFamily?: 'Ionicons' | 'FontAwesome' | 'MaterialIcons' | 'Entypo' | 'Feather';
+    [key: string]: any; // For additional props
 }
+
+const getIconComponent = (family: string) => {
+    switch (family) {
+        case 'FontAwesome': return FontAwesome;
+        case 'MaterialIcons': return MaterialIcons;
+        case 'Entypo': return Entypo;
+        case 'Feather': return Feather;
+        default: return Ionicons;
+    }
+};
 
 const CustomButton: React.FC<CustomButtonProps> = ({
     title,
     handlePress,
-    containerStyle,
-    textStyle,
+    containerStyle = {},
+    textStyle = {},
     loading = false,
-    disabled = false
+    disabled = false,
+    leading = false,
+    trailing = false,
+    leadingIconName,
+    trailingIconName,
+    iconFamily = 'Ionicons',
 }) => {
+    const IconComponent = getIconComponent(iconFamily);
+
     return (
         <TouchableOpacity
             onPress={handlePress}
             activeOpacity={0.8}
-            style={[
-                styles.button, 
-                containerStyle,
-                (disabled || loading) && styles.buttonDisabled
-            ]}
             disabled={disabled || loading}
+            style={[
+                styles.button,
+                disabled && styles.buttonDisabled,
+                containerStyle
+            ]}
         >
-
-            {loading ? (
-                <ActivityIndicator
-                animating={loading}
-                color="#fff"
-                size="small"
-                style={styles.loader}
-                />
-            ) : (
-                <Text style={[styles.buttonText, textStyle]}>{title}</Text>
-            )
-        }
+            <View style={styles.contentRow}>
+                {leading && leadingIconName && (
+                    <IconComponent
+                        name={leadingIconName as any}
+                        size={26}
+                        color={disabled ? "#ccc" : "#fff"}
+                        style={{ marginRight: 8 }}
+                    />
+                )}
+                {loading ? (
+                    <ActivityIndicator color="#fff" style={styles.loader} />
+                ) : (
+                    <Text
+                        style={[
+                            styles.buttonText,
+                            disabled && styles.buttonTextDisabled,
+                            textStyle
+                        ]}
+                    >
+                        {title}
+                    </Text>
+                )}
+                {trailing && trailingIconName && (
+                    <IconComponent
+                        name={trailingIconName as any}
+                        size={20}
+                        color={disabled ? "#ccc" : "#fff"}
+                        style={{ marginLeft: 8 }}
+                    />
+                )}
+            </View>
         </TouchableOpacity>
     );
 };
@@ -52,30 +92,33 @@ export default CustomButton;
 
 const styles = StyleSheet.create({
     button: {
-        width: '100%',
-        padding: 20,
-        borderRadius: 25,
+        backgroundColor: '#7135B1',
+        borderRadius: 10,
+        paddingVertical: 14,
+        paddingHorizontal: 18,
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'row',
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        elevation: 5,
+        minHeight: 48,
     },
     buttonDisabled: {
-        opacity: 0.7,
+        backgroundColor: '#C7B8E0',
     },
     buttonText: {
+        color: '#fff',
         fontSize: 16,
-        fontWeight: '500',
-    },
-    loader: {
-        width: 20,
-        height: 20,
+        fontWeight: '600',
+        textAlign: 'center',
     },
     buttonTextDisabled: {
-        opacity: 0.7,
+        color: '#eee',
+    },
+    loader: {
+        marginHorizontal: 8,
+    },
+    contentRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
 });

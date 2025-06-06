@@ -1,120 +1,129 @@
 import React from "react";
-import { TextInput, TouchableOpacity, Image, StyleSheet } from "react-native";
-import { Ionicons, FontAwesome, MaterialCommunityIcons, Feather, FontAwesome5, FontAwesome6, MaterialIcons } from "@expo/vector-icons";
-
-import { useThemeColor, View } from '@/components/Themed';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity } from "react-native";
+import { Ionicons, FontAwesome, MaterialIcons, Entypo, Feather } from '@expo/vector-icons';
 
 interface FormFieldProps {
+    icon?: boolean;
+    iconName?: string;
+    iconFamily?: 'Ionicons' | 'FontAwesome' | 'MaterialIcons' | 'Entypo' | 'Feather';
+    type: 'number' | 'phone' | 'email' | 'password' | 'text';
     title: string;
-    icon?: string;
     value: string;
     placeholder: string;
-    handleChangeText: (text: string) => void;
+    onChangeText: (text: string) => void;
     otherStyles?: object;
-    [key: string]: any;
+    [key: string]: any; // For additional props
 }
 
+const getIconComponent = (family: string) => {
+    switch (family) {
+        case 'FontAwesome': return FontAwesome;
+        case 'MaterialIcons': return MaterialIcons;
+        case 'Entypo': return Entypo;
+        case 'Feather': return Feather;
+        default: return Ionicons;
+    }
+};
+
 const FormField: React.FC<FormFieldProps> = ({
+    icon = false,
+    iconName,
+    iconFamily = 'Ionicons',
+    type,
     title,
-    icon,
     value,
     placeholder,
-    handleChangeText,
-    otherStyles,
+    onChangeText,
+    otherStyles = {},
     ...props
 }) => {
     const [showPassword, setShowPassword] = React.useState(false);
     const [isFocused, setIsFocused] = React.useState(false);
 
-    const backgroundColor = useThemeColor(
-        { light: 'rgba(194, 195, 203, 0.5)', dark: '#1E1E1E' },
-        'background'
-    );
-    const borderColor = useThemeColor(
-        { light: '#ccc', dark: '#1E1E1E' },
-        'background'
-    );
-    const textColor = useThemeColor({}, 'text');
-        const iconColor = useThemeColor({
-            light: '#7135B1',
-            dark: '#fff',
-        }, 'text');
+    const IconComponent = getIconComponent(iconFamily);
+
+    // Keyboard type mapping
+    const keyboardType =
+        type === 'email' ? 'email-address'
+            : type === 'number' ? 'numeric'
+                : type === 'phone' ? 'phone-pad'
+                    : 'default';
+
+    // Secure text entry for password
+    const secureTextEntry = type === 'password' && !showPassword;
 
     return (
-        <View style={[styles.container, otherStyles]}>
-            <View style={[
-                styles.inputContainer,
-                { backgroundColor, borderColor: isFocused ? textColor : borderColor },
-                isFocused ? styles.inputContainerFocused : null,
-                value ? styles.inputContainerWithValue : null
-            ]}>
-
-                {icon && (
-                    React.createElement(
-                        Ionicons || FontAwesome || MaterialCommunityIcons || Feather || FontAwesome5 || FontAwesome6 || MaterialIcons,
-                        {
-                            name: icon as any,
-                            size: 20,
-                            color: iconColor,
-                            style: styles.icon,
-                        }
-                    )
-                )}
-
-                <TextInput
-                    value={value}
-                    onChangeText={handleChangeText}
-                    placeholder={placeholder}
-                    placeholderTextColor="#888"
-                    secureTextEntry={title === "Password" && !showPassword}
-                    keyboardType={title === "Email" ? "email-address" : title === "Phone" ? "phone-pad" : "default"}
-                    style={[styles.input, { color: textColor }]}
-                    onFocus={() => setIsFocused(true)}
-                    onBlur={() => setIsFocused(false)}
-                    {...props}
-                />
-                {title === "Password" && (
-                    <TouchableOpacity
-                        onPress={() => setShowPassword(!showPassword)}
-                    >
-                        {showPassword ? (
-                            <Ionicons name="eye-off" size={20} color={textColor} />
-                        ) : (
-                            <Ionicons name="eye" size={20} color={textColor} />
-                        )}
-                    </TouchableOpacity>
-                )}
-            </View>
+        <View style={[
+            styles.fieldContainer,
+            otherStyles,
+            isFocused && styles.fieldContainerFocused
+        ]}>
+            {icon && iconName && (
+                <View style={styles.iconWrapper}>
+                    <IconComponent name={iconName as any} size={20} color={isFocused ? "#7135B1" : "#A29EB6"} />
+                </View>
+            )}
+            <TextInput
+                style={[
+                    styles.input,
+                    icon && styles.inputWithIcon,
+                ]}
+                placeholder={placeholder}
+                value={value}
+                onChangeText={onChangeText}
+                keyboardType={keyboardType}
+                secureTextEntry={secureTextEntry}
+                autoCapitalize={type === 'email' ? 'none' : 'sentences'}
+                autoCorrect={type !== 'email' && type !== 'password'}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
+                {...props}
+            />
+            {type === 'password' && (
+                <TouchableOpacity
+                    style={styles.eyeIcon}
+                    onPress={() => setShowPassword(!showPassword)}
+                    activeOpacity={0.7}
+                >
+                    <Ionicons name={showPassword ? "eye-off" : "eye"} size={20} color="#A29EB6" />
+                </TouchableOpacity>
+            )}
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        width: '100%',
-    },
-    inputContainer: {
-        width: '100%',
-        height: 65,
-        paddingHorizontal: 16,
-        paddingVertical: 22,
-        borderRadius: 12,
+    fieldContainer: {
         flexDirection: 'row',
         alignItems: 'center',
+        backgroundColor: '#F8F8FA',
+        borderRadius: 10,
         borderWidth: 1,
+        borderColor: '#E0E0E0',
+        paddingHorizontal: 12,
+        paddingVertical: 4,
+        marginBottom: 4,
+        position: 'relative',
     },
-    inputContainerFocused: {
-        borderWidth: 1,
+    fieldContainerFocused: {
+        borderColor: '#7135B1',
     },
-    inputContainerWithValue: {
-        borderWidth: 1,
-    },
-    icon: {
-        marginRight: 10,
+    iconWrapper: {
+        marginRight: 8,
     },
     input: {
         flex: 1,
         fontSize: 16,
+        color: '#2D1457',
+        paddingVertical: 10,
+        backgroundColor: 'transparent',
+    },
+    inputWithIcon: {
+        paddingLeft: 0,
+    },
+    eyeIcon: {
+        marginLeft: 8,
+        padding: 4,
     },
 });
 
