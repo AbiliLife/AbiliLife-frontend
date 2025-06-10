@@ -1,12 +1,12 @@
 import { Doctor } from "@/types/doctor";
-import { doctorsData } from "@/constants/mockData";
+import doctorsData from '@/assets/data/doctors.json';
 
 export const getDoctors = (): Doctor[] => {
-    return Object.values(doctorsData);
+    return doctorsData as Doctor[];
 };
 
 export const getDoctorById = (id: string): Doctor | undefined => {
-    return doctorsData[id];
+    return doctorsData.find(doctor => doctor.id === id) as Doctor | undefined;
 };
 
 // For production, this would be an async function that fetches from an API
