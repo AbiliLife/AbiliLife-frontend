@@ -14,7 +14,6 @@ import Animated, {
 SplashScreen.preventAutoHideAsync();
 
 export default function Splash() {
-
   // Animation values
   const scale = useSharedValue(1);
   const opacity = useSharedValue(0);
