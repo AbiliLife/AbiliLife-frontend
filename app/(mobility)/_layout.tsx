@@ -1,75 +1,49 @@
 import { Stack } from 'expo-router';
-import { useColorScheme } from 'react-native';
-import { ChevronLeft } from 'lucide-react-native';
-import { useRouter } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 
 export default function MobilityLayout() {
-  const colorScheme = useColorScheme();
-  const router = useRouter();
   return (
-    <GestureHandlerRootView style={{ flex: 1, backgroundColor: colorScheme === 'dark' ? '#18181B' : '#fff' }}>
+    <GestureHandlerRootView style={{ flex: 1, backgroundColor: '#fff' }}>
       <Stack>
         <Stack.Screen name="mobility" options={{
           headerTitle: 'AbiliLife Mobility',
           headerShadowVisible: false,
+          headerTintColor: '#7135B1',
           headerTitleStyle: {
             fontSize: 16,
-            fontWeight: '600',
-            color: colorScheme === 'dark' ? '#fff' : '#18181B',
+            fontWeight: 'bold',
+            color: '#7135B1',
           },
-          headerLeft: () => (
-            <ChevronLeft
-              size={28}
-              color={colorScheme === 'dark' ? '#fff' : '#18181B'}
-              onPress={() => router.back()}
-              style={{ marginLeft: -16 }}
-            />
-          ),
           headerStyle: {
-            backgroundColor: colorScheme === 'dark' ? '#18181B' : '#fff',
+            backgroundColor: '#fff',
           },
         }} />
         <Stack.Screen name="caregiverBook" options={{
           headerTitle: 'Caregiver Booking',
+          headerTitleAlign: 'center',
           headerShadowVisible: false,
           headerTitleStyle: {
             fontSize: 16,
             fontWeight: '600',
-            color: colorScheme === 'dark' ? '#fff' : '#18181B',
+            color:'#18181B',
           },
           headerBackButtonDisplayMode: 'minimal',
           headerStyle: {
-            backgroundColor: colorScheme === 'dark' ? '#18181B' : '#fff',
+            backgroundColor: '#fff',
           },
-          headerLeft: () => (
-            <ChevronLeft
-              size={28}
-              color={colorScheme === 'dark' ? '#fff' : '#18181B'}
-              onPress={() => router.back()}
-              style={{ marginLeft: -16 }}
-            />
-          )
         }} />
         <Stack.Screen name="rideBooking" options={{
           headerTitle: 'Book a Private Ride',
+          headerTitleAlign: 'center',
           headerShadowVisible: false,
           headerTitleStyle: {
             fontSize: 16,
             fontWeight: '600',
-            color: colorScheme === 'dark' ? '#fff' : '#18181B',
+            color:'#18181B',
           },
           headerStyle: {
-            backgroundColor: colorScheme === 'dark' ? '#18181B' : '#fff',
+            backgroundColor: '#fff',
           },
-          headerLeft: () => (
-            <ChevronLeft
-              size={28}
-              color={colorScheme === 'dark' ? '#fff' : '#18181B'}
-              onPress={() => router.back()}
-              style={{ marginLeft: -16 }}
-            />
-          )
         }} />
         <Stack.Screen name="publicTransport" options={{ 
           headerTitle: 'Public Transport',
@@ -77,19 +51,11 @@ export default function MobilityLayout() {
           headerTitleStyle: {
             fontSize: 16,
             fontWeight: '600',
-            color: colorScheme === 'dark' ? '#fff' : '#18181B',
+            color:'#18181B',
           },
           headerStyle: {
-            backgroundColor: colorScheme === 'dark' ? '#18181B' : '#fff',
+            backgroundColor: '#fff',
           },
-          headerLeft: () => (
-            <ChevronLeft
-              size={28}
-              color={colorScheme === 'dark' ? '#fff' : '#18181B'}
-              onPress={() => router.back()}
-              style={{ marginLeft: -16 }}
-            />
-          )
          }} />
         <Stack.Screen name="rideConfirm" options={{ title: 'Ride Confirmation' }} />
         <Stack.Screen name="rideHistory" options={{ title: 'Ride History' }} />
