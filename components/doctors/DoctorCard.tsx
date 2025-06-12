@@ -2,7 +2,6 @@ import React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { useThemeColor } from '@/components/Themed';
 import { Doctor } from '@/types/doctor';
 
 interface DoctorCardProps {
@@ -11,8 +10,8 @@ interface DoctorCardProps {
 
 export const DoctorCard = ({ doctor }: DoctorCardProps) => {
     // Theme colors
-    const textColor = useThemeColor({ light: '#46216E', dark: '#fff' }, 'text');
-    const cardBackgroundColor = useThemeColor({ light: '#fff', dark: '#333' }, 'background');
+    const textColor = '#46216E'; // Example text color
+    const cardBackgroundColor = '#FFFFFF'; // Example card background color
     
     // Handle different availability formats
     const availabilityText = typeof doctor.availability === 'string' 
@@ -23,7 +22,7 @@ export const DoctorCard = ({ doctor }: DoctorCardProps) => {
         <TouchableOpacity
             style={[styles.doctorCard, { backgroundColor: cardBackgroundColor }]}
             onPress={() => router.push({
-                pathname: '/(services)/doctors/[doc]',
+                pathname: '/(care)/doctors/[doc]',
                 params: { doc: doctor.id }
             })}
             accessible={true}
@@ -33,7 +32,7 @@ export const DoctorCard = ({ doctor }: DoctorCardProps) => {
             <View style={styles.doctorInfo}>
                 {/* Doctor Avatar */}
                 <View style={styles.doctorAvatar}>
-                    <Ionicons name="person" size={24} color="#7135B1" />
+                    <Ionicons name="person" size={24} color='#F44336' />
                 </View>
 
                 {/* Doctor Details */}
@@ -99,7 +98,7 @@ const styles = StyleSheet.create({
         width: 56,
         height: 56,
         borderRadius: 28,
-        backgroundColor: '#f0e6ff',
+        backgroundColor: '#E0E0E0',
         justifyContent: 'center',
         alignItems: 'center',
         marginRight: 16,

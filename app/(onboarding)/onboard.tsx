@@ -1,9 +1,8 @@
 import React, { useRef, useState } from 'react';
-import { StyleSheet, Dimensions, TouchableOpacity, FlatList, Pressable } from 'react-native';
+import { StyleSheet, View, Text,  TouchableOpacity, FlatList, Pressable } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
-import { Text, View, useThemeColor } from '@/components/Themed';
 import OnboardingDots from '@/components/onboard/OnboardingDots';
 import OnboardingSlide from '@/components/onboard/OnboardingSlide';
 import CustomButton from '@/components/common/CustomButton';
@@ -23,9 +22,9 @@ export default function OnboardingScreen() {
         setAccessibilityDrawerVisible(!accessibilityDrawerVisible);
       };
 
-    const primaryColor = useThemeColor({ light: '#7135B1', dark: '#9C68E7' }, 'text');
-    const backgroundColor = useThemeColor({}, 'background');
-    const cardBg = useThemeColor({ light: 'rgba(194, 195, 203, 0.5)', dark: '#1E1E1E' }, 'background');
+    const primaryColor = '#7135B1'; // Example primary color
+    const backgroundColor = '#F5F5F5'; // Example background color
+    const cardBg = 'rgba(194, 195, 203, 0.5)'; // Example card background color
 
 
     const handleNext = () => {

@@ -1,18 +1,10 @@
 import React, { useState } from 'react';
-import { StyleSheet, Image, TouchableOpacity, Switch, ScrollView, useColorScheme } from 'react-native';
-import { Text, useThemeColor, View } from '@/components/Themed';
+import { StyleSheet, View, Text, ScrollView, Image, TouchableOpacity, Switch } from 'react-native';
+import { Stack } from 'expo-router';
+import { Feather, Ionicons, MaterialIcons } from '@expo/vector-icons';
 import Slider from '@react-native-community/slider';
-import {
-  FontAwesome,
-  Ionicons,
-  MaterialIcons,
-  Feather,
-  MaterialCommunityIcons
-} from '@expo/vector-icons';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ProfileScreen() {
-  const colorScheme = useColorScheme();
 
   // State for toggle switches
   const [voiceCommands, setVoiceCommands] = useState(false);
@@ -20,68 +12,72 @@ export default function ProfileScreen() {
   const [highContrast, setHighContrast] = useState(false);
   const [textSize, setTextSize] = useState(0.7);
 
-  // Theme Colors
-  const backgroundColor = useThemeColor({}, 'background');
-  const textColor = useThemeColor({ light: '#46216E', dark: '#fff' }, 'text');
-  const avatarBackgroundColor = useThemeColor({ light: '#e8e3f5', dark: '#512DA8' }, 'background');
-  const cardBgColor = useThemeColor({ light: '#fff', dark: '#333' }, 'background');
-
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor }} edges={['top', 'left', 'right']}>
+    <>
+      <Stack.Screen
+        options={{
+          headerTitle: 'Your Profile',
+          headerTitleAlign: 'center',
+          headerTitleStyle: {
+            fontSize: 22,
+            fontWeight: 'bold',
+            color: '#7135B1',
+          },
+          headerTintColor: '#7135B1',
+          headerShadowVisible: false,
+          headerStyle: {
+            backgroundColor: '#F5F5F5',
+          }
+        }}
+      />
 
-      <ScrollView contentContainerStyle={[styles.container, { backgroundColor }]}>
-        {/* Profile Section */}
-        <Text style={[styles.profileTitle, { color: textColor }]}>
-          Profile
-        </Text>
+      <ScrollView style={styles.container}>
         <View style={styles.profileContainer}>
-          <View style={[styles.avatarContainer, { backgroundColor: avatarBackgroundColor }]}>
-            <Ionicons name="person-circle" size={60} color={textColor} />
-          </View>
-          <Text style={[styles.userName, { color: colorScheme === 'dark' ? '#fff' : '#512DA8' }]}>
-            Eli Keli
-          </Text>
+          <Image
+            source={{ uri: 'https://i.pravatar.cc/150?u=bessieduke@marketoid.com' }}
+            style={styles.profileImage}
+          />
+          <Text style={styles.userName}>Bessie Johnson</Text>
           <Text style={styles.userEmail}>
-            elikeli@gmail.com
+            bessie.j@example.com
           </Text>
           <TouchableOpacity>
-            <Text style={styles.editProfile}>
-              Edit Profile
-            </Text>
+            <Text style={styles.editProfile}>Edit Profile</Text>
           </TouchableOpacity>
         </View>
 
         {/* Accessibility Settings Section Header */}
         <View style={styles.sectionHeader}>
-          <Text style={[styles.sectionTitle, { color: textColor }]}>
-            Accessibility Settings
-          </Text>
+          <Text style={styles.sectionTitle}>Accessibility Settings</Text>
+          <Ionicons name="accessibility-outline" size={24} color="#000" />
         </View>
 
         {/* Accessibility Settings Cards */}
-        <View style={[styles.settingsCard, { backgroundColor: cardBgColor }]}>
+        <View style={styles.settingsCard}>
           {/* Text Size */}
           <View style={styles.settingRow}>
             <View style={styles.settingLabelContainer}>
-              <Ionicons name="text" size={20} color="#8954dc" />
+              <Ionicons name="text" size={24} color="#8954dc" />
               <Text style={styles.settingLabel}>Text Size</Text>
             </View>
             <Slider
               style={styles.slider}
+              upperLimit={1}
+              lowerLimit={0}
               minimumValue={0}
               maximumValue={1}
               value={textSize}
               onValueChange={setTextSize}
-              minimumTrackTintColor="#8954dc"
-              maximumTrackTintColor="#00c2a8"
-              thumbTintColor="#fff"
+              maximumTrackTintColor='#00c2a8'
+              minimumTrackTintColor='#8954dc'
+              thumbTintColor='#000'
             />
           </View>
 
           {/* Voice Commands */}
           <View style={styles.settingRow}>
             <View style={styles.settingLabelContainer}>
-              <MaterialIcons name="keyboard-voice" size={20} color="#8954dc" />
+              <MaterialIcons name="keyboard-voice" size={24} color="#8954dc" />
               <Text style={styles.settingLabel}>Voice Commands</Text>
             </View>
             <Switch
@@ -95,7 +91,7 @@ export default function ProfileScreen() {
           {/* Dark Mode */}
           <View style={styles.settingRow}>
             <View style={styles.settingLabelContainer}>
-              <Ionicons name="moon" size={20} color="#8954dc" />
+              <Ionicons name="moon" size={24} color="#8954dc" />
               <Text style={styles.settingLabel}>Dark Mode</Text>
             </View>
             <Switch
@@ -109,7 +105,7 @@ export default function ProfileScreen() {
           {/* High Contrast */}
           <View style={styles.settingRow}>
             <View style={styles.settingLabelContainer}>
-              <Ionicons name="sunny" size={20} color="#8954dc" />
+              <Ionicons name="sunny" size={24} color="#8954dc" />
               <Text style={styles.settingLabel}>High Contrast</Text>
             </View>
             <Switch
@@ -123,7 +119,7 @@ export default function ProfileScreen() {
 
         {/* Account Settings Section Header */}
         <View style={styles.sectionHeader}>
-          <Text style={[styles.sectionTitle, { color: textColor }]}>
+          <Text style={styles.sectionTitle}>
             Account Settings
           </Text>
         </View>
@@ -131,7 +127,7 @@ export default function ProfileScreen() {
         <TouchableOpacity style={styles.settingsCard}>
           <View style={styles.settingRow}>
             <View style={styles.settingLabelContainer}>
-              <Ionicons name="notifications-outline" size={20} color="#8954dc" />
+              <Ionicons name="notifications-outline" size={24} color="#8954dc" />
               <Text style={styles.settingLabel}>Notifications</Text>
             </View>
             <MaterialIcons name="keyboard-arrow-right" size={24} color="#aaa" />
@@ -141,7 +137,7 @@ export default function ProfileScreen() {
         <TouchableOpacity style={styles.settingsCard}>
           <View style={styles.settingRow}>
             <View style={styles.settingLabelContainer}>
-              <Feather name="settings" size={20} color="#8954dc" />
+              <Feather name="settings" size={24} color="#8954dc" />
               <Text style={styles.settingLabel}>General Settings</Text>
             </View>
             <MaterialIcons name="keyboard-arrow-right" size={24} color="#aaa" />
@@ -151,60 +147,41 @@ export default function ProfileScreen() {
         <TouchableOpacity style={styles.settingsCard}>
           <View style={styles.settingRow}>
             <View style={styles.settingLabelContainer}>
-              <Feather name="help-circle" size={20} color="#8954dc" />
+              <Feather name="help-circle" size={24} color="#8954dc" />
               <Text style={styles.settingLabel}>Help & Support</Text>
             </View>
             <MaterialIcons name="keyboard-arrow-right" size={24} color="#aaa" />
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.settingsCard}>
+        <TouchableOpacity style={[styles.settingsCard, { marginBottom: 40 }]}>
           <View style={styles.settingRow}>
             <View style={styles.settingLabelContainer}>
-              <MaterialIcons name="logout" size={20} color="#f44336" />
+              <MaterialIcons name="logout" size={24} color="#f44336" />
               <Text style={[styles.settingLabel, { color: '#f44336' }]}>Logout</Text>
             </View>
           </View>
         </TouchableOpacity>
       </ScrollView>
-    </SafeAreaView>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     padding: 16,
-  },
-  profileTitle: {
-    fontSize: 26,
-    fontWeight: 'bold',
-    color: 'white',
-    textAlign: 'center',
-    marginVertical: 24,
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 24,
-    marginBottom: 16,
-    backgroundColor: 'transparent',
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    backgroundColor: '#F5F5F5',
   },
   profileContainer: {
     alignItems: 'center',
     marginBottom: 20,
   },
-  avatarContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 12,
+  profileImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: 16,
   },
   userName: {
     fontSize: 20,
@@ -220,15 +197,25 @@ const styles = StyleSheet.create({
     color: '#8954dc',
     fontSize: 14,
   },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 24,
+    marginBottom: 16,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
   settingsCard: {
     borderRadius: 12,
     marginBottom: 12,
     padding: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.08,
-    shadowRadius: 2,
-    elevation: 1,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    overflow: 'hidden',
+    backgroundColor: '#fff',
   },
   settingRow: {
     flexDirection: 'row',
@@ -236,12 +223,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 12,
     paddingHorizontal: 16,
-    backgroundColor: 'transparent',
   },
   settingLabelContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'transparent',
   },
   settingLabel: {
     fontSize: 16,
@@ -251,5 +236,6 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 16,
     height: 40,
+    // backgroundColor: 'red', // Testing
   },
 });
