@@ -56,37 +56,37 @@ const FormField: React.FC<FormFieldProps> = ({
         <View style={[
             styles.fieldContainer,
             otherStyles,
-            isFocused && styles.fieldContainerFocused
+            (isFocused || !!value) && styles.fieldContainerFocused
         ]}>
             {icon && iconName && (
-                <View style={styles.iconWrapper}>
-                    <IconComponent name={iconName as any} size={20} color={isFocused ? "#7135B1" : "#A29EB6"} />
-                </View>
+            <View style={styles.iconWrapper}>
+                <IconComponent name={iconName as any} size={20} color={isFocused || !!value ? "#7135B1" : "#A29EB6"} />
+            </View>
             )}
             <TextInput
-                style={[
-                    styles.input,
-                    icon && styles.inputWithIcon,
-                ]}
-                placeholder={placeholder}
-                value={value}
-                onChangeText={onChangeText}
-                keyboardType={keyboardType}
-                secureTextEntry={secureTextEntry}
-                autoCapitalize={type === 'email' ? 'none' : 'sentences'}
-                autoCorrect={type !== 'email' && type !== 'password'}
-                onFocus={() => setIsFocused(true)}
-                onBlur={() => setIsFocused(false)}
-                {...props}
+            style={[
+                styles.input,
+                icon && styles.inputWithIcon,
+            ]}
+            placeholder={placeholder}
+            value={value}
+            onChangeText={onChangeText}
+            keyboardType={keyboardType}
+            secureTextEntry={secureTextEntry}
+            autoCapitalize={type === 'email' ? 'none' : 'sentences'}
+            autoCorrect={type !== 'email' && type !== 'password'}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            {...props}
             />
             {type === 'password' && (
-                <TouchableOpacity
-                    style={styles.eyeIcon}
-                    onPress={() => setShowPassword(!showPassword)}
-                    activeOpacity={0.7}
-                >
-                    <Ionicons name={showPassword ? "eye-off" : "eye"} size={20} color="#A29EB6" />
-                </TouchableOpacity>
+            <TouchableOpacity
+                style={styles.eyeIcon}
+                onPress={() => setShowPassword(!showPassword)}
+                activeOpacity={0.7}
+            >
+                <Ionicons name={showPassword ? "eye-off" : "eye"} size={20} color="#A29EB6" />
+            </TouchableOpacity>
             )}
         </View>
     );
