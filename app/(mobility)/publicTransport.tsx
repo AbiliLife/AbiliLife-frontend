@@ -13,13 +13,11 @@ import {
   Platform
 } from 'react-native'
 import { FontAwesome, FontAwesome5, Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'
-import { useThemeColor } from '@/components/Themed'
 import * as Location from 'expo-location'
 import FormField from '@/components/common/FormField'
 import CustomButton from '@/components/common/CustomButton'
 import { 
   getPublicTransportRoutes, 
-  getTransportSaccos, 
   getTransportSafetyTips, 
   getLegalRights,
   getEmergencyContacts,
@@ -30,10 +28,10 @@ import { TransportRoute, AccessibilityFilters } from '@/types/mobility'
 
 const PublicTransportScreen = () => {
   // Theme colors
-  const primaryColor = useThemeColor({ light: '#7135B1', dark: '#9C68E7' }, 'text')
-  const backgroundColor = useThemeColor({}, 'background')
-  const textColor = useThemeColor({ light: '#46216E', dark: '#fff' }, 'text')
-  const cardBackgroundColor = useThemeColor({ light: '#fff', dark: '#333' }, 'background')
+  const primaryColor = '#7135B1' // purple
+  const backgroundColor = '#fff'; // white
+  const textColor = '#46216E' // dark purple
+  const cardBackgroundColor = '#F5F5F5' // light gray
 
   // State
   const [location, setLocation] = useState<string>('')
@@ -166,12 +164,21 @@ const PublicTransportScreen = () => {
     : null
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor }]}>
+    <ScrollView 
+      style={[styles.container, { backgroundColor }]}
+      contentContainerStyle={{ paddingBottom: 20 }}
+      showsVerticalScrollIndicator={true}
+      accessibilityLabel="Public transport options screen"
+    >
       {/* Location Header */}
       <View style={styles.locationHeader}>
         <View style={styles.locationContainer}>
           <MaterialIcons name="location-on" size={24} color={primaryColor} />
-          <Text style={[styles.locationText, { color: textColor }]}>
+          <Text 
+            style={[styles.locationText, { color: textColor }]
+            }
+            accessibilityLabel={location ? `Your location: ${location}` : "Set your location"}
+          >
             {location || 'Set your location'}
           </Text>
         </View>
@@ -179,6 +186,9 @@ const PublicTransportScreen = () => {
           onPress={handleUseCurrentLocation} 
           disabled={loadingLocation}
           style={styles.locationButton}
+          accessibilityLabel="Use current location"
+          accessibilityHint="Gets your current location to show nearby routes"
+          accessibilityRole="button"
         >
           {loadingLocation ? (
             <ActivityIndicator size="small" color={primaryColor} />
@@ -190,16 +200,28 @@ const PublicTransportScreen = () => {
 
       {/* Search Location */}
       <FormField
+        type="text"
         title="Search"
-        icon="search"
+        icon={true}
+        iconName="search"
+        iconFamily="Ionicons"
         value={location}
         placeholder="Search location or route number"
-        handleChangeText={setLocation}
+        onChangeText={setLocation}
         otherStyles={{ marginBottom: 16 }}
+        accessibilityLabel="Search location input"
+        accessibilityHint="Enter your location or a route number"
       />
 
       {/* Accessibility Filters */}
-      <Text style={[styles.sectionTitle, { color: textColor }]}>Accessibility Filters</Text>
+      <Text 
+        style={[styles.sectionTitle, { color: textColor }]
+        }
+        accessibilityRole="header"
+        accessibilityLabel="Accessibility Filters"
+      >
+        Accessibility Filters
+      </Text>
       <View style={styles.filtersRow}>
         <TouchableOpacity 
           style={[
@@ -207,6 +229,10 @@ const PublicTransportScreen = () => {
             filters.wheelchairAccessible && { backgroundColor: primaryColor }
           ]} 
           onPress={() => toggleFilter('wheelchairAccessible')}
+          accessibilityLabel="Wheelchair Accessible Filter"
+          accessibilityHint="Toggle to show only wheelchair accessible routes"
+          accessibilityRole="checkbox"
+          accessibilityState={{ checked: filters.wheelchairAccessible }}
         >
           <FontAwesome5 
             name="wheelchair" 
@@ -225,6 +251,10 @@ const PublicTransportScreen = () => {
             filters.hasRamp && { backgroundColor: primaryColor }
           ]} 
           onPress={() => toggleFilter('hasRamp')}
+          accessibilityLabel="Ramp Available Filter"
+          accessibilityHint="Toggle to show only routes with ramps"
+          accessibilityRole="checkbox"
+          accessibilityState={{ checked: filters.hasRamp }}
         >
           <MaterialCommunityIcons 
             name="slope-uphill" 
@@ -243,6 +273,10 @@ const PublicTransportScreen = () => {
             filters.trainedDriver && { backgroundColor: primaryColor }
           ]} 
           onPress={() => toggleFilter('trainedDriver')}
+          accessibilityLabel="Trained Driver Filter"
+          accessibilityHint="Toggle to show only routes with trained drivers"
+          accessibilityRole="checkbox"
+          accessibilityState={{ checked: filters.trainedDriver }}
         >
           <FontAwesome5 
             name="chalkboard-teacher" 
@@ -263,6 +297,10 @@ const PublicTransportScreen = () => {
             filters.visualAids && { backgroundColor: primaryColor }
           ]} 
           onPress={() => toggleFilter('visualAids')}
+          accessibilityLabel="Visual Aids Filter"
+          accessibilityHint="Toggle to show only routes with visual aids"
+          accessibilityRole="checkbox"
+          accessibilityState={{ checked: filters.visualAids }}
         >
           <Ionicons 
             name="eye" 
@@ -281,6 +319,10 @@ const PublicTransportScreen = () => {
             filters.caregiverSpace && { backgroundColor: primaryColor }
           ]} 
           onPress={() => toggleFilter('caregiverSpace')}
+          accessibilityLabel="Caregiver Space Filter"
+          accessibilityHint="Toggle to show only routes with caregiver space"
+          accessibilityRole="checkbox"
+          accessibilityState={{ checked: filters.caregiverSpace }}
         >
           <Ionicons 
             name="people" 
@@ -299,6 +341,10 @@ const PublicTransportScreen = () => {
             filters.verified && { backgroundColor: primaryColor }
           ]} 
           onPress={() => toggleFilter('verified')}
+          accessibilityLabel="Verified Routes Filter"
+          accessibilityHint="Toggle to show only verified routes"
+          accessibilityRole="checkbox"
+          accessibilityState={{ checked: filters.verified }}
         >
           <Ionicons 
             name="shield-checkmark" 
@@ -313,13 +359,24 @@ const PublicTransportScreen = () => {
       </View>
 
       {/* Route Listings */}
-      <Text style={[styles.sectionTitle, { color: textColor }]}>Nearby Routes</Text>
+      <Text 
+        style={[styles.sectionTitle, { color: textColor }]
+        }
+        accessibilityRole="header"
+      >
+        Nearby Routes
+      </Text>
       {isLoading ? (
         <ActivityIndicator size="large" color={primaryColor} style={{ marginVertical: 20 }} />
       ) : filteredRoutes.length === 0 ? (
         <View style={styles.emptyState}>
           <MaterialIcons name="not-listed-location" size={48} color="#888" />
-          <Text style={styles.emptyStateText}>No routes match your filters</Text>
+          <Text 
+            style={styles.emptyStateText}
+            accessibilityLabel="No routes match your filters"
+          >
+            No routes match your filters
+          </Text>
           <TouchableOpacity 
             onPress={() => setFilters({
               wheelchairAccessible: false,
@@ -330,6 +387,9 @@ const PublicTransportScreen = () => {
               verified: false
             })}
             style={styles.resetButton}
+            accessibilityLabel="Reset Filters"
+            accessibilityHint="Clears all selected filters"
+            accessibilityRole="button"
           >
             <Text style={styles.resetButtonText}>Reset Filters</Text>
           </TouchableOpacity>
@@ -340,10 +400,18 @@ const PublicTransportScreen = () => {
             key={route.id} 
             style={[styles.routeCard, { backgroundColor: cardBackgroundColor }]}
             onPress={() => viewRouteDetails(route.id)}
+            accessibilityLabel={`Route ${route.routeNumber} ${route.routeName}`}
+            accessibilityHint="Tap to view details about this route"
+            accessibilityRole="button"
           >
             <View style={styles.routeHeader}>
               <View style={styles.routeNumberContainer}>
-                <Text style={styles.routeNumber}>{route.routeNumber}</Text>
+                <Text 
+                  style={styles.routeNumber}
+                  accessibilityLabel={`Route number ${route.routeNumber}`}
+                >
+                  {route.routeNumber}
+                </Text>
               </View>
               <View style={styles.routeHeaderRight}>
                 <Text style={[styles.routeName, { color: textColor }]}>{route.routeName}</Text>
@@ -357,21 +425,39 @@ const PublicTransportScreen = () => {
             </View>
             
             <View style={styles.routeDetails}>
-              <View style={styles.routeDetail}>
+              <View 
+                style={styles.routeDetail}
+                accessibilityLabel={`Frequency: Every ${route.frequency}`}
+              >
                 <Ionicons name="time-outline" size={16} color={primaryColor} />
                 <Text style={styles.routeDetailText}>Every {route.frequency}</Text>
               </View>
-              <View style={styles.routeDetail}>
+              <View 
+                style={styles.routeDetail}
+                accessibilityLabel={`Route from ${route.startPoint} to ${route.endPoint}`}
+              >
                 <Ionicons name="location-outline" size={16} color={primaryColor} />
                 <Text style={styles.routeDetailText}>{route.startPoint} → {route.endPoint}</Text>
               </View>
-              <View style={styles.routeDetail}>
+              <View 
+                style={styles.routeDetail}
+                accessibilityLabel={`Provider: ${getSaccoName(route.saccoId)}`}
+              >
                 <FontAwesome name="users" size={16} color={primaryColor} />
                 <Text style={styles.routeDetailText}>{getSaccoName(route.saccoId)}</Text>
               </View>
             </View>
             
-            <View style={styles.accessibilityIcons}>
+            <View 
+              style={styles.accessibilityIcons}
+              accessibilityLabel={
+                `Accessibility features: ${route.wheelchairAccessible ? 'Wheelchair accessible, ' : ''}` +
+                `${route.hasRamp ? 'Has ramp, ' : ''}` +
+                `${route.visualAids ? 'Visual aids, ' : ''}` +
+                `${route.trainedDriver ? 'Trained driver, ' : ''}` +
+                `${route.caregiverSpace ? 'Caregiver space' : ''}`
+              }
+            >
               <View style={[
                 styles.accessibilityIcon, 
                 { backgroundColor: route.wheelchairAccessible ? primaryColor : '#f0f0f0' }
@@ -436,18 +522,32 @@ const PublicTransportScreen = () => {
                   />
                 ))}
               </View>
-              <Text style={styles.ratingText}>{route.rating.toFixed(1)}</Text>
+              <Text 
+                style={styles.ratingText}
+                accessibilityLabel={`Rating ${route.rating.toFixed(1)} out of 5 stars`}
+              >
+                {route.rating.toFixed(1)}
+              </Text>
             </View>
           </TouchableOpacity>
         ))
       )}
 
       {/* Support Tools */}
-      <Text style={[styles.sectionTitle, { color: textColor }]}>Public Transport Support</Text>
+      <Text 
+        style={[styles.sectionTitle, { color: textColor }]
+        }
+        accessibilityRole="header"
+      >
+        Public Transport Support
+      </Text>
       <View style={styles.supportTools}>
         <TouchableOpacity 
           style={[styles.supportTool, { backgroundColor: cardBackgroundColor }]}
           onPress={() => setSafetyTipsVisible(true)}
+          accessibilityLabel="Safety Tips"
+          accessibilityHint="View safety tips for using public transport"
+          accessibilityRole="button"
         >
           <Ionicons name="information-circle" size={24} color={primaryColor} />
           <Text style={[styles.supportToolText, { color: textColor }]}>Safety Tips</Text>
@@ -455,6 +555,9 @@ const PublicTransportScreen = () => {
         <TouchableOpacity 
           style={[styles.supportTool, { backgroundColor: cardBackgroundColor }]}
           onPress={() => setLegalRightsVisible(true)}
+          accessibilityLabel="Legal Rights"
+          accessibilityHint="Learn about your legal rights on public transport"
+          accessibilityRole="button"
         >
           <FontAwesome5 name="balance-scale" size={24} color={primaryColor} />
           <Text style={[styles.supportToolText, { color: textColor }]}>Legal Rights</Text>
@@ -462,6 +565,9 @@ const PublicTransportScreen = () => {
         <TouchableOpacity 
           style={[styles.supportTool, { backgroundColor: cardBackgroundColor }]}
           onPress={() => setEmergencyContactsVisible(true)}
+          accessibilityLabel="Emergency Contacts"
+          accessibilityHint="View emergency contacts for transport assistance"
+          accessibilityRole="button"
         >
           <Ionicons name="call" size={24} color={primaryColor} />
           <Text style={[styles.supportToolText, { color: textColor }]}>Emergency</Text>
@@ -469,7 +575,12 @@ const PublicTransportScreen = () => {
       </View>
 
       {/* WhatsApp Assistance */}
-      <View style={[styles.whatsappCard, { backgroundColor: cardBackgroundColor }]}>
+      <View 
+        style={[styles.whatsappCard, { backgroundColor: cardBackgroundColor }]}
+        accessible={true}
+        accessibilityLabel="WhatsApp assistance"
+        accessibilityRole="summary"
+      >
         <Text style={[styles.whatsappTitle, { color: textColor }]}>Need Route Planning Help?</Text>
         <Text style={styles.whatsappSubtitle}>Our team can help you plan an accessible route</Text>
         <CustomButton
@@ -477,6 +588,8 @@ const PublicTransportScreen = () => {
           handlePress={handleWhatsAppAssistance}
           containerStyle={styles.whatsappButton}
           textStyle={styles.whatsappButtonText}
+          accessibilityLabel="Message AbiliLife Assistant"
+          accessibilityHint="Opens WhatsApp to message for route planning assistance"
         />
       </View>
 
@@ -486,19 +599,45 @@ const PublicTransportScreen = () => {
         transparent={true}
         animationType="slide"
         onRequestClose={() => setSafetyTipsVisible(false)}
+        accessibilityViewIsModal={true}
       >
         <View style={styles.modalOverlay}>
-          <View style={[styles.modalContent, { backgroundColor }]}>
+          <View 
+            style={[styles.modalContent, { backgroundColor }]
+            }
+            accessibilityLabel="Safety Tips Modal"
+            accessibilityRole="alert"
+          >
             <View style={styles.modalHeader}>
-              <Text style={[styles.modalTitle, { color: textColor }]}>Safety Tips</Text>
-              <TouchableOpacity onPress={() => setSafetyTipsVisible(false)}>
+              <Text 
+                style={[styles.modalTitle, { color: textColor }]
+                }
+                accessibilityRole="header"
+              >
+                Safety Tips
+              </Text>
+              <TouchableOpacity 
+                onPress={() => setSafetyTipsVisible(false)}
+                accessibilityLabel="Close safety tips"
+                accessibilityHint="Closes the safety tips modal"
+                accessibilityRole="button"
+              >
                 <Ionicons name="close" size={24} color={textColor} />
               </TouchableOpacity>
             </View>
             
-            <ScrollView style={styles.modalScrollView}>
+            <ScrollView 
+              style={styles.modalScrollView}
+              accessibilityLabel="Safety tips list"
+            >
               {getTransportSafetyTips().map(tip => (
-                <View key={tip.id} style={[styles.tipCard, { backgroundColor: cardBackgroundColor }]}>
+                <View 
+                  key={tip.id} 
+                  style={[styles.tipCard, { backgroundColor: cardBackgroundColor }]}
+                  accessible={true}
+                  accessibilityLabel={`Safety tip: ${tip.title}`}
+                  accessibilityRole="text"
+                >
                   <Text style={[styles.tipTitle, { color: textColor }]}>{tip.title}</Text>
                   <Text style={styles.tipContent}>{tip.content}</Text>
                 </View>
@@ -514,17 +653,37 @@ const PublicTransportScreen = () => {
         transparent={true}
         animationType="slide"
         onRequestClose={() => setLegalRightsVisible(false)}
+        accessibilityViewIsModal={true}
       >
         <View style={styles.modalOverlay}>
-          <View style={[styles.modalContent, { backgroundColor }]}>
+          <View 
+            style={[styles.modalContent, { backgroundColor }]
+            }
+            accessibilityLabel="Legal Rights Modal"
+            accessibilityRole="alert"
+          >
             <View style={styles.modalHeader}>
-              <Text style={[styles.modalTitle, { color: textColor }]}>Your Legal Rights</Text>
-              <TouchableOpacity onPress={() => setLegalRightsVisible(false)}>
+              <Text 
+                style={[styles.modalTitle, { color: textColor }]
+                }
+                accessibilityRole="header"
+              >
+                Your Legal Rights
+              </Text>
+              <TouchableOpacity 
+                onPress={() => setLegalRightsVisible(false)}
+                accessibilityLabel="Close legal rights"
+                accessibilityHint="Closes the legal rights modal"
+                accessibilityRole="button"
+              >
                 <Ionicons name="close" size={24} color={textColor} />
               </TouchableOpacity>
             </View>
             
-            <ScrollView style={styles.modalScrollView}>
+            <ScrollView 
+              style={styles.modalScrollView}
+              accessibilityLabel="Legal rights list"
+            >
               {getLegalRights().map(right => (
                 <View key={right.id} style={[styles.tipCard, { backgroundColor: cardBackgroundColor }]}>
                   <Text style={[styles.tipTitle, { color: textColor }]}>{right.title}</Text>
@@ -542,22 +701,45 @@ const PublicTransportScreen = () => {
         transparent={true}
         animationType="slide"
         onRequestClose={() => setEmergencyContactsVisible(false)}
+        accessibilityViewIsModal={true}
       >
         <View style={styles.modalOverlay}>
-          <View style={[styles.modalContent, { backgroundColor }]}>
+          <View 
+            style={[styles.modalContent, { backgroundColor }]
+            }
+            accessibilityLabel="Emergency Contacts Modal"
+            accessibilityRole="alert"
+          >
             <View style={styles.modalHeader}>
-              <Text style={[styles.modalTitle, { color: textColor }]}>Emergency Contacts</Text>
-              <TouchableOpacity onPress={() => setEmergencyContactsVisible(false)}>
+              <Text 
+                style={[styles.modalTitle, { color: textColor }]
+                }
+                accessibilityRole="header"
+              >
+                Emergency Contacts
+              </Text>
+              <TouchableOpacity 
+                onPress={() => setEmergencyContactsVisible(false)}
+                accessibilityLabel="Close emergency contacts"
+                accessibilityHint="Closes the emergency contacts modal"
+                accessibilityRole="button"
+              >
                 <Ionicons name="close" size={24} color={textColor} />
               </TouchableOpacity>
             </View>
             
-            <ScrollView style={styles.modalScrollView}>
+            <ScrollView 
+              style={styles.modalScrollView}
+              accessibilityLabel="Emergency contacts list"
+            >
               {getEmergencyContacts().map(contact => (
                 <TouchableOpacity 
                   key={contact.id} 
                   style={[styles.contactCard, { backgroundColor: cardBackgroundColor }]}
                   onPress={() => callNumber(contact.number)}
+                  accessibilityLabel={`Call ${contact.name} at ${contact.number}`}
+                  accessibilityHint="Tap to call this emergency contact"
+                  accessibilityRole="button"
                 >
                   <View style={styles.contactInfo}>
                     <Text style={[styles.contactName, { color: textColor }]}>{contact.name}</Text>
@@ -579,18 +761,38 @@ const PublicTransportScreen = () => {
         transparent={true}
         animationType="slide"
         onRequestClose={closeRouteDetails}
+        accessibilityViewIsModal={true}
       >
         {selectedRoute && selectedRouteSacco && (
           <View style={styles.modalOverlay}>
-            <View style={[styles.modalContent, { backgroundColor }]}>
+            <View 
+              style={[styles.modalContent, { backgroundColor }]
+              }
+              accessibilityLabel={`Route ${selectedRoute.routeNumber} Details`}
+              accessibilityRole="alert"
+            >
               <View style={styles.modalHeader}>
-                <Text style={[styles.modalTitle, { color: textColor }]}>Route Details</Text>
-                <TouchableOpacity onPress={closeRouteDetails}>
+                <Text 
+                  style={[styles.modalTitle, { color: textColor }]
+                  }
+                  accessibilityRole="header"
+                >
+                  Route Details
+                </Text>
+                <TouchableOpacity 
+                  onPress={closeRouteDetails}
+                  accessibilityLabel="Close route details"
+                  accessibilityHint="Closes the route details modal"
+                  accessibilityRole="button"
+                >
                   <Ionicons name="close" size={24} color={textColor} />
                 </TouchableOpacity>
               </View>
               
-              <ScrollView style={styles.modalScrollView}>
+              <ScrollView 
+                style={styles.modalScrollView}
+                accessibilityLabel={`Details for route ${selectedRoute.routeNumber} from ${selectedRoute.startPoint} to ${selectedRoute.endPoint}`}
+              >
                 <View style={[styles.routeDetailCard, { backgroundColor: cardBackgroundColor }]}>
                   <View style={styles.routeDetailHeader}>
                     <View style={styles.routeNumberContainerLarge}>
@@ -638,7 +840,10 @@ const PublicTransportScreen = () => {
                   <View style={styles.accessibilitySection}>
                     <Text style={[styles.routeInfoTitle, { color: textColor }]}>Accessibility Features</Text>
                     <View style={styles.accessibilityRow}>
-                      <View style={styles.accessibilityFeature}>
+                      <View 
+                        style={styles.accessibilityFeature}
+                        accessibilityLabel={`Wheelchair Access: ${selectedRoute.wheelchairAccessible ? 'Available' : 'Not available'}`}
+                      >
                         <FontAwesome5 
                           name="wheelchair" 
                           size={20} 
@@ -654,7 +859,10 @@ const PublicTransportScreen = () => {
                           color={selectedRoute.wheelchairAccessible ? 'green' : 'red'} 
                         />
                       </View>
-                      <View style={styles.accessibilityFeature}>
+                      <View 
+                        style={styles.accessibilityFeature}
+                        accessibilityLabel={`Ramp Access: ${selectedRoute.hasRamp ? 'Available' : 'Not available'}`}
+                      >
                         <MaterialCommunityIcons 
                           name="slope-uphill" 
                           size={20} 
@@ -663,7 +871,7 @@ const PublicTransportScreen = () => {
                         <Text style={[
                           styles.accessibilityText, 
                           { color: selectedRoute.hasRamp ? textColor : '#888' }
-                        ]}>Ramp Available</Text>
+                        ]}>Ramp Access</Text>
                         <Ionicons 
                           name={selectedRoute.hasRamp ? "checkmark-circle" : "close-circle"} 
                           size={20} 
@@ -672,7 +880,10 @@ const PublicTransportScreen = () => {
                       </View>
                     </View>
                     <View style={styles.accessibilityRow}>
-                      <View style={styles.accessibilityFeature}>
+                      <View 
+                        style={styles.accessibilityFeature}
+                        accessibilityLabel={`Visual Aids: ${selectedRoute.visualAids ? 'Available' : 'Not available'}`}
+                      >
                         <Ionicons 
                           name="eye" 
                           size={20} 
@@ -688,7 +899,10 @@ const PublicTransportScreen = () => {
                           color={selectedRoute.visualAids ? 'green' : 'red'} 
                         />
                       </View>
-                      <View style={styles.accessibilityFeature}>
+                      <View 
+                        style={styles.accessibilityFeature}
+                        accessibilityLabel={`Trained Driver: ${selectedRoute.trainedDriver ? 'Available' : 'Not available'}`}
+                      >
                         <FontAwesome5 
                           name="chalkboard-teacher" 
                           size={20} 
@@ -706,7 +920,10 @@ const PublicTransportScreen = () => {
                       </View>
                     </View>
                     <View style={styles.accessibilityRow}>
-                      <View style={styles.accessibilityFeature}>
+                      <View 
+                        style={styles.accessibilityFeature}
+                        accessibilityLabel={`Caregiver Space: ${selectedRoute.caregiverSpace ? 'Available' : 'Not available'}`}
+                      >
                         <Ionicons 
                           name="people" 
                           size={20} 
@@ -731,6 +948,7 @@ const PublicTransportScreen = () => {
                       <Image 
                         source={{ uri: selectedRouteSacco.logo }}
                         style={styles.saccoLogo}
+                        accessibilityLabel={`${selectedRouteSacco.name} logo`}
                       />
                       <View style={styles.saccoInfo}>
                         <Text style={[styles.saccoName, { color: textColor }]}>{selectedRouteSacco.name}</Text>
@@ -745,6 +963,9 @@ const PublicTransportScreen = () => {
                       <TouchableOpacity 
                         style={styles.saccoActionButton}
                         onPress={() => callNumber(selectedRouteSacco.contact)}
+                        accessibilityLabel={`Call ${selectedRouteSacco.name}`}
+                        accessibilityHint="Tap to call this transport provider"
+                        accessibilityRole="button"
                       >
                         <Ionicons name="call" size={20} color={primaryColor} />
                         <Text style={styles.saccoActionText}>Call</Text>
@@ -755,6 +976,9 @@ const PublicTransportScreen = () => {
                           selectedRouteSacco.whatsapp, 
                           `Hello ${selectedRouteSacco.name}, I would like information about route ${selectedRoute.routeNumber} (${selectedRoute.routeName}). I have accessibility requirements.`
                         )}
+                        accessibilityLabel={`WhatsApp ${selectedRouteSacco.name}`}
+                        accessibilityHint="Tap to message this transport provider on WhatsApp"
+                        accessibilityRole="button"
                       >
                         <FontAwesome5 name="whatsapp" size={20} color="#25D366" />
                         <Text style={styles.saccoActionText}>WhatsApp</Text>
@@ -762,8 +986,10 @@ const PublicTransportScreen = () => {
                     </View>
                   </View>
                   
-                  <View style={styles.reviewsSection}>
-                    <Text style={[styles.routeInfoTitle, { color: textColor }]}>Community Reviews</Text>
+                  <View 
+                    style={styles.reviewsSection}
+                    accessibilityLabel={`Reviews and ratings: ${selectedRoute.rating.toFixed(1)} out of 5 stars from ${selectedRoute.reviews.length} reviews`}
+                  >
                     <View style={styles.reviewsSummary}>
                       <View style={styles.reviewsRating}>
                         <Text style={[styles.reviewsRatingNumber, { color: textColor }]}>{selectedRoute.rating.toFixed(1)}</Text>
