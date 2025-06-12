@@ -1,7 +1,5 @@
-import { Pressable, StyleSheet, TouchableOpacity } from 'react-native'
-import React from 'react'
-
-import { Text, View } from '@/components/Themed'
+import React from 'react';
+import { Pressable, StyleSheet, TouchableOpacity, View, Text } from 'react-native'
 
 interface AccessibilityDrawerProps {
     handlePress: () => void
@@ -9,28 +7,70 @@ interface AccessibilityDrawerProps {
 
 const AccessibilityDrawer = ({ handlePress }: AccessibilityDrawerProps) => {
     return (
-        <View style={styles.accessibilityDrawerOverlay}>
+        <View 
+            style={styles.accessibilityDrawerOverlay}
+            accessibilityViewIsModal={true}
+        >
             <Pressable
                 style={styles.accessibilityDrawerDismiss}
                 onPress={handlePress}
+                accessible={true}
+                accessibilityLabel="Close accessibility menu"
+                accessibilityHint="Dismisses the accessibility settings drawer"
+                accessibilityRole="button"
             />
-            <View style={styles.accessibilityDrawer}>
+            <View 
+                style={styles.accessibilityDrawer}
+                accessible={true}
+                accessibilityLabel="Accessibility settings drawer"
+                accessibilityRole="menu"
+                importantForAccessibility="yes"
+            >
                 <View style={styles.accessibilityDrawerContent}>
-                    <Text style={styles.accessibilityDrawerTitle}>Accessibility Settings</Text>
+                    <Text 
+                        style={styles.accessibilityDrawerTitle}
+                        accessibilityRole="header"
+                    >
+                        Accessibility Settings
+                    </Text>
 
-                    <TouchableOpacity style={styles.accessibilityOption}>
+                    <TouchableOpacity 
+                        style={styles.accessibilityOption}
+                        accessible={true}
+                        accessibilityLabel="Voice Commands"
+                        accessibilityHint="Configure voice command settings"
+                        accessibilityRole="menuitem"
+                    >
                         <Text style={styles.accessibilityOptionText}>Voice Commands</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.accessibilityOption}>
+                    <TouchableOpacity 
+                        style={styles.accessibilityOption}
+                        accessible={true}
+                        accessibilityLabel="Text Size"
+                        accessibilityHint="Adjust the text size of the application"
+                        accessibilityRole="menuitem"
+                    >
                         <Text style={styles.accessibilityOptionText}>Text Size</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.accessibilityOption}>
+                    <TouchableOpacity 
+                        style={styles.accessibilityOption}
+                        accessible={true}
+                        accessibilityLabel="High Contrast"
+                        accessibilityHint="Toggle high contrast mode for better visibility"
+                        accessibilityRole="menuitem"
+                    >
                         <Text style={styles.accessibilityOptionText}>High Contrast</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.accessibilityOption}>
+                    <TouchableOpacity 
+                        style={styles.accessibilityOption}
+                        accessible={true}
+                        accessibilityLabel="Screen Reader"
+                        accessibilityHint="Configure screen reader settings"
+                        accessibilityRole="menuitem"
+                    >
                         <Text style={styles.accessibilityOptionText}>Screen Reader</Text>
                     </TouchableOpacity>
                 </View>

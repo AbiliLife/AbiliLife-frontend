@@ -13,6 +13,11 @@ const AccessibilityOption = ({ handlePress, otherStyle }: AccessibilityOptionPro
             style={[styles.accessibilityButton, otherStyle]}
             onPress={handlePress}
             activeOpacity={0.9}
+            accessible={true}
+            accessibilityLabel="Accessibility Options"
+            accessibilityHint="Open accessibility settings menu"
+            accessibilityRole="button"
+            importantForAccessibility="yes"
         >
             <Ionicons name="accessibility-outline" size={24} color="#fff" />
         </TouchableOpacity>
