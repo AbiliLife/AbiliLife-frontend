@@ -38,7 +38,7 @@ export default function LoginScreen() {
                 {/* Header Image */}
                 <Image
                     source={images.login}
-                    style={{ width: '100%', height: 250, borderRadius: 10, marginBottom: 20 }}
+                    style={{ width: '100%', height: 300, borderRadius: 10, marginBottom: 20 }}
                     resizeMode='contain'
                     accessibilityLabel="Login Header Image"
                     accessibilityHint="An image representing the login process"
@@ -66,7 +66,6 @@ export default function LoginScreen() {
                             iconFamily='Ionicons'
                             accessibilityLabel="Email Input Field"
                             accessibilityHint="Enter your email address"
-                            accessibilityRole="textbox"
                         />
                     </View>
 
@@ -85,7 +84,6 @@ export default function LoginScreen() {
                             iconFamily='Ionicons'
                             accessibilityLabel="Password Input Field"
                             accessibilityHint="Enter your password"
-                            accessibilityRole="textbox"
                         />
                     </View>
                 </View>
@@ -108,6 +106,7 @@ export default function LoginScreen() {
                     iconFamily='Ionicons'
                     accessibilityLabel="Login Button"
                     accessibilityHint="Press to log in to your account"
+                    accessibilityRole="button"
                 />
             </ScrollView>
 
