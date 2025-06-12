@@ -1,163 +1,213 @@
-# 🦸‍♂️ AbiliLife - Super App for People with Disabilities (PWDs)
+<p align="center">
+   <a href="https://github.com/AbiliLife/AbiliLife-frontend">
+      <img src="./assets/icon.png" alt="AbiliLife Logo" width="300" />
+   </a>
+</p>
 
-[![AbiliLife Demo](https://logodix.com/logo/2002377.jpg)](https://drive.google.com/file/d/1ZeFDOUDRe2uafilDUGRvceAnJmlpvBEh/view?usp=drive_link)
+# AbiliLife Super App🌳
 
-*Click the image above to watch the Pitch Video and demo video*
+AbiliLife is a **modular super app** designed to empower Persons with Disabilities (PWDs) by providing an **integrated ecosystem** of services. Our vision is represented as a tree with five main branches:
+
+```
+            AbiliLife
+            ───────
+     ┌────────┬────────┬────────┬────────┬────────┐
+     │Mobility│ Access │  Work  │  Care  │ Learn  │
+     └────────┴────────┴────────┴────────┴────────┘
+```
+
+* **Mobility (this MVP | Ongoing beta):** Accessible ride-hailing and transport planning.
+* **Access (future | beta):** Marketplace for assistive devices and inclusion resources.
+* **Care (future | beta):** Healthcare, microinsurance, and caregiver coordination.
+* **Work (our promise):** Job portal and financial inclusion for PWD professionals.
+* **Learn (our promise):** Inclusive education and skills courses.
+
+---
+
+# 🧑🏾‍🦼‍➡️ AbiliLife Mobility Module (MVP)
+<p align="center">
+   <img src="./assets/images/mobility.png" alt="AbiliLife Logo" width="200" height="200" />
+</p>
+
+This repository hosts the **Mobility** slice of the AbiliLife ecosystem—an **Expo/React Native** front-end that enables:
+
+* **Private Rides:** Wheelchair-accessible booking via Ace Mobility
+* **Public Transport Info:** Routes & accessibility details
+* **Scheduled Trips:** Plan rides in advance
+* **Caregiver Mode:** Book on behalf of another user
+* **Accessibility Preferences:** Ramps, assistive devices, sign language
 
 ---
 
 ## 📋 Table of Contents
 
-- [Project Overview](#project-overview)
-- [Problem Statement](#problem-statement)
-- [Features](#features)
-- [Technologies Used](#technologies-used)
-- [Setup & Installation](#setup--installation)
-- [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
+* [Project Overview](#project-overview)
+* [Tech Stack](#tech-stack)
+* [Prerequisites](#prerequisites)
+* [Getting Started](#getting-started)
+* [Directory Structure](#directory-structure)
+* [Core Features](#core-features)
+* [Running the App](#running-the-app)
+* [Contributing](#contributing)
+* [License](#license)
 
 ---
 
-## 📚 Project Overview
+## 🔍 Project Overview
 
-AbiliLife is a Super App for PWDs is a multi-functional platform designed to simplify the daily challenges faced by people with disabilities across Africa. By integrating healthcare services, assistive technology, financial support, and insurance options, this app fosters a more inclusive, accessible and collaborate society.
+AbiliLife Mobility delivers an accessible, on-demand transport experience for PWDs in East Africa:
 
-**Key Objectives:**
-- Provide accessible insurance solutions tailored for PWDs.
-- Offer assistive technologies and devices through an inclusive marketplace.
-- Enable financial support via microloans for healthcare and assistive tools.
-- Facilitate access to healthcare professionals and telemedicine.
-- Create an inclusive community and support system for PWDs and their caregivers.
-
----
-
-## 🔎 Problem Statement
-
-In Eastern Africa, approximately **10-15% of the population** consists of individuals living with disabilities. However, they face:
-- **Limited access to affordable insurance policies**, as most insurers exclude PWDs from comprehensive coverage.
-- **Insufficient healthcare services** tailored to their specific needs.
-- **High cost of assistive technologies**, with little or no financial support.
-- A **lack of centralized, easily accessible platforms** for managing healthcare, insurance, and assistive technology needs.
-
-This app aims to solve these issues by creating an ecosystem that addresses the gap in insurance, healthcare, and financial services for PWDs.
-
-### Relevant Statistics:
-- **15% of the world's population** (about 1 billion people) live with some form of disability, with a large percentage in developing regions like Africa.
-- In Kenya, approximately **4.6% of the population** has a disability, with limited access to insurance coverage, healthcare, and assistive tools.
+1. **Book Private Rides:** Deep-link to Ace Mobility via WhatsApp for wheelchair-friendly vehicles.
+2. **View Public Transit:** Map and schedule info for buses, matatus, and BRT with accessibility cues.
+3. **Schedule in Advance:** Choose ASAP or pick a date/time slot.
+4. **Enable Caregiver Mode:** Caregivers can request rides on behalf of PWDs.
+5. **Set Preferences:** Toggle ramp/lift, assistive device support, or sign-language interpreter.
 
 ---
 
-## 💡 Features
+## 🛠 Tech Stack
 
-The super app includes the following key features and functionalities:
-
-### 1. **Inclusive Insurance Solutions**
-   - Integration with insurance companies that offer tailored policies for PWDs.
-   - Eligibility check tools for users to assess which insurance plans they can access.
-
-### 2. **Assistive Technology Marketplace**
-   - A marketplace for users to browse and purchase assistive devices.
-   - Microloans and financing options for purchasing necessary tools.
-   
-### 3. **Healthcare & Telemedicine**
-   - Access to healthcare professionals via in-app telemedicine services.
-   - Health tracking tools and personalized wellness plans.
-
-### 4. **Financial Services**
-   - Integration with financial institutions offering microloans to assist in purchasing healthcare services or assistive devices.
-   
-### 5. **Community Support**
-   - A platform for caregivers and PWDs to share experiences, advice, and support.
+* **Framework:** React Native with Expo
+* **Navigation:** Expo Router
+* **UI:** NativeWind (Tailwind CSS), React Native Paper, Gorhom Bottom Sheet
+* **Maps & Location:** `expo-location`, `react-native-maps`
+* **State:** React Context API
+* **Communication:** WhatsApp deep links
+* **Icons:** `@expo/vector-icons`
+* **TypeScript:** Static typing
 
 ---
 
-## 🛠 Technologies Used
+## 📋 Prerequisites
 
-This project utilizes a robust tech stack for the best user experience and system performance:
-
-- **Frontend**: React Native for cross-platform mobile app development.
-- **Backend**: Node.js with Express.js for the API.
-- **Database**: MongoDB for scalable, flexible data storage.
-- **Cloud Services**: Microsoft Azure for hosting and deployment.
-- **Payment Integration**: M-Pesa, Stripe, and other payment gateways for financial transactions.
-- **API Integrations**:
-  - Insurance APIs for eligibility and claims processing.
-  - Healthcare APIs for telemedicine services.
+* **Node.js:** v16.x or later
+* **Yarn** or **npm**
+* **Expo CLI:** `npm install -g expo-cli`
+* **Mobile Dev Tools** (optional): Android Studio / Xcode Simulator
 
 ---
 
-## 🚀 Setup & Installation
+## 🚀 Getting Started
 
-To run this project locally, follow these steps:
+1. **Clone the repo**
 
-### Prerequisites
-
-- Node.js (v14 or later)
-- MongoDB
-- React Native CLI
-- A compatible code editor (VS Code recommended)
-
-### Installation
-
-1. **Clone the Repository:**
    ```bash
-   git clone https://github.com/AbiliLife/AbiliLife-frontend
+   git clone https://github.com/AbiliLife/AbiliLife-frontend.git
+   cd AbiliLife-frontend
    ```
 
-2. **Install Dependencies:**
+2. **Install dependencies**
+
    ```bash
-   cd AbiliLife-frontend
+   yarn install
+   # or
    npm install
    ```
 
-3. **Set Up Environment Variables:**
-   Create a `.env` file in the root directory and configure your API keys for MongoDB, Azure, and payment gateways.
 
-4. **Start the Backend:**
+3. **Start Expo**
+
    ```bash
-   npm run server
+   npx expo start # For Expo Go App
+   # or
+   npx expo run:android # npx expo run:ios
    ```
 
-5. **Run the App:**
-   ```bash
-   react-native run-android   # For Android
-   react-native run-ios       # For iOS
-   ```
+4. **Run on device/emulator**
+
+   * **iOS:** Press `i` or use Xcode
+   * **Android:** Press `a` or use Android Studio
 
 ---
 
-## 📲 Usage
+## 📂 Directory Structure
 
-Once you've installed the app, you can:
+```
+/app
+├── access/          # Assistive tech marketplace (future)
+├── auth/            # Sign-up, login, onboarding flows
+├── care/            # Caregiver booking module
+├── insurance/       # Insurance module (future)
+├── learn/           # Learning module (future)
+├── mobility/        # Mobility home & booking screens (this MVP)
+├── onboarding/      # Welcome & tutorial screens
+├── tabs/            # BottomTab navigator
+└── work/            # Work & jobs module (future)
 
-1. **Register as a PWD or caregiver** and complete your profile.
-2. **Explore insurance options** specifically designed for PWDs and purchase policies directly.
-3. **Browse the assistive device marketplace** and apply for microloans if needed.
-4. **Access healthcare professionals** through the telemedicine feature.
-5. **Engage with the community** by participating in forums and support groups.
+/components          # Shared UI components
+/contexts            # React Context providers
+/hooks               # Custom hooks
+/services            # API and integration logic
+/constants           # App-wide constants
+/config              # Tailwind & router configs
+/types               # TypeScript definitions
+/assets              # Images, icons, fonts
+```
+
+---
+
+## ⭐ Core Features
+
+### 1. Quick Start & Onboarding
+- Register using email or phone number with OTP verification **(onboarding flow in progress)**
+- Guided onboarding experience with accessibility tips **(coming soon)**
+- Set up your profile: name, disability type, and accessibility preferences **(feature under development)**
+
+### 2. Mobility Dashboard
+- One-tap access to Private Ride, Public Transport Info, and Schedule Ride
+- Toggle Caregiver Mode for assisted bookings
+
+### 3. Ride Booking Made Easy
+- Interactive map with current location marker
+- GPS autofill for pickup/dropoff
+- Choose ASAP or schedule for later
+- Accessibility options: ramp, assistive device, sign language
+- Trip summary preview before booking
+- Request ride via WhatsApp deep link
+- Emergency hotline modal for urgent help
+
+---
+
+## ▶️ Running the App
+
+To run the AbiliLife Mobility app locally:
+
+1. **Start the development server:**
+
+   ```bash
+   npx expo start
+   ```
+
+2. **Open on your device:**
+   - **Expo Go App:** Scan the QR code in your terminal or browser using the [Expo Go](https://expo.dev/client) app (iOS/Android).
+   - **Emulator/Simulator:** Press `a` (Android) or `i` (iOS) in the terminal, or launch via Android Studio/Xcode.
+
+3. **Hot Reloading:** Changes to your code will automatically reload the app.
+
+**Troubleshooting:**
+- If you encounter issues, try clearing the cache with `npx expo start -c`.
+- Ensure your device and computer are on the same Wi-Fi network for QR code scanning.
+
+For more details, see the [Expo documentation](https://docs.expo.dev/).
+
 
 ---
 
 ## 🤝 Contributing
 
-We welcome contributions to make this project better! Please follow the steps below:
+We welcome your help! Please:
 
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature/AmazingFeature`).
-3. Commit your changes (`git commit -m 'Add AmazingFeature'`).
-4. Push to the branch (`git push origin feature/AmazingFeature`).
-5. Open a pull request.
+1. Fork the repo
+2. Create a feature branch (`git checkout -b feat/awesome`)
+3. Commit your changes (`git commit -m 'feat: awesome feature'`)
+4. Push (`git push origin feat/awesome`)
+5. Open a Pull Request
 
 ---
 
 ## 📄 License
 
-Distributed under the AGPL-3.0 (Affero General Public License). See `LICENSE` for more information.
+Distributed under the AGPL-3.0 License. See [LICENSE](LICENSE) for details.
 
 ---
 
-## 🙌 Acknowledgements
-
-- Microsoft for supporting the development of this project through Hack4PWD.
-- All contributors and team members working to make this app a reality.
