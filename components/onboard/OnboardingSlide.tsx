@@ -1,8 +1,6 @@
 import React from 'react';
-import { Image, StyleSheet, Dimensions } from 'react-native';
+import { Image, StyleSheet, Dimensions, View, Text } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
-
-import { Text, View } from '@/components/Themed';
 
 const { width, height } = Dimensions.get('window');
 

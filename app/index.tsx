@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import { router } from 'expo-router';
 import Animated, { 
@@ -10,14 +10,10 @@ import Animated, {
   Easing,
 } from 'react-native-reanimated';
 
-import { Text, useThemeColor, View } from '@/components/Themed';
-
 // Prevent the splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
 
 export default function Splash() {
-  const textColor = useThemeColor({ light: 'black', dark: 'white' }, 'text');
-  
   // Animation values
   const scale = useSharedValue(1);
   const opacity = useSharedValue(0);
@@ -43,7 +39,7 @@ export default function Splash() {
 
     // Navigate to the login screen after animation
     const navigationTimer = setTimeout(() => {
-      router.replace('/(onboarding)/onboard');
+      router.replace('/welcome');
     }, 2500);
 
     return () => {
