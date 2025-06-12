@@ -1,8 +1,5 @@
 import React from 'react'
-import { StyleSheet, TextInput } from 'react-native'
-import { Ionicons } from '@expo/vector-icons';
-
-import { useThemeColor, View } from '@/components/Themed';
+import { StyleSheet, TextInput, View } from 'react-native'
 
 interface SearchBarProps {
     placeholder: string;
@@ -18,35 +15,14 @@ const SearchBar = ({
     onPress,
 }: SearchBarProps) => {
 
-    // Theme colors
-    const backgroundColor = useThemeColor({
-        light: '#F5F5F5',
-        dark: '#1E1E1E',
-    }, 'background');
-    const iconColor = useThemeColor({
-        light: '#5E35B1',
-        dark: '#fff',
-    }, 'text');
-
     return (
-        <View style={[styles.container, { backgroundColor }]}>
-            <Ionicons
-                name='search'
-                size={24}
-                color={iconColor}
-            />
+        <View style={{ flexDirection: 'row', alignItems: 'center', padding: 10, borderRadius: 8, backgroundColor: '#f0f0f0' }}>
             <TextInput
-                onPress={onPress}
+                style={{ flex: 1, padding: 10, fontSize: 16 }}
                 placeholder={placeholder}
                 value={value}
                 onChangeText={onChangeText}
-                placeholderTextColor="#A0A0A0"
-                style={styles.textInput}
-            />
-            <Ionicons
-                name='mic'
-                size={24}
-                color={iconColor}
+                onSubmitEditing={onPress}
             />
         </View>
     )
@@ -55,18 +31,5 @@ const SearchBar = ({
 export default SearchBar
 
 const styles = StyleSheet.create({
-    container: {
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingHorizontal: 20,
-        paddingVertical: 16,
-        borderRadius: 10,
-    },
-    textInput: {
-        flex: 1,
-        marginLeft: 16,
-        fontSize: 16,
-        color: '#5E35B1',
-    }
+    
 })

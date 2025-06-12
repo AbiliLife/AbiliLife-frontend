@@ -1,5 +1,5 @@
 import React from 'react'
-import { ActivityIndicator, ScrollView, StyleSheet, TouchableOpacity, useColorScheme } from 'react-native'
+import { ActivityIndicator, ScrollView, StyleSheet, TouchableOpacity, View, Text } from 'react-native'
 import { router } from 'expo-router';
 import { FontAwesome5, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { ChevronLeft } from 'lucide-react-native';
@@ -9,7 +9,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAccessibility } from '@/contexts/AccessibilityContext';
 
 // Components
-import { Text, useThemeColor, View } from '@/components/Themed';
 import SearchBar from '@/components/common/SearchBar';
 import { DoctorCard } from '@/components/doctors/DoctorCard';
 import AccessibilityDrawer from '@/components/accessibility/AccessibilityDrawer';
@@ -78,7 +77,6 @@ const servicesAvailble: ServiceCategory[] = [
 
 
 const HealthcareModule = () => {
-    const colorScheme = useColorScheme();
 
     // State for doctors data
     const [availableDoctors, setAvailableDoctors] = React.useState<Doctor[]>([]);
@@ -86,11 +84,6 @@ const HealthcareModule = () => {
     const [error, setError] = React.useState<string | null>(null);
 
 const { accessibilityDrawerVisible, toggleAccessibilityDrawer } = useAccessibility();
-
-    // Theme colors
-    const primaryColor = useThemeColor({ light: '#7135B1', dark: '#9C68E7' }, 'text');
-    const backgroundColor = useThemeColor({}, 'background');
-    const textColor = useThemeColor({ light: '#46216E', dark: '#fff' }, 'text');
 
     // Fetch available doctors on component mount
     React.useEffect(() => {
@@ -125,7 +118,7 @@ const { accessibilityDrawerVisible, toggleAccessibilityDrawer } = useAccessibili
         }
     };
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor }} edges={['top', 'left', 'right']}>
+        <SafeAreaView style={{ flex: 1 }} edges={['top', 'left', 'right']}>
             {/* Header */}
             <View style={styles.headerContainer}>
                 <TouchableOpacity style={styles.headerButton} onPress={() => router.back()}>
@@ -144,7 +137,7 @@ const { accessibilityDrawerVisible, toggleAccessibilityDrawer } = useAccessibili
                 </View>
             </View>
 
-            <ScrollView contentContainerStyle={[styles.container, { backgroundColor }]}>
+            <ScrollView contentContainerStyle={styles.container}>
                 {/* Search Bar */}
                 <SearchBar
                     placeholder="Search for services or doctors..."
@@ -155,7 +148,7 @@ const { accessibilityDrawerVisible, toggleAccessibilityDrawer } = useAccessibili
 
                 {/* Services Available Section Header */}
                 <View style={styles.sectionHeader}>
-                    <Text style={[styles.sectionTitle, { color: textColor }]}>
+                    <Text style={[styles.sectionTitle, { color: '' }]}>
                         Services Available
                     </Text>
                 </View>
@@ -165,20 +158,20 @@ const { accessibilityDrawerVisible, toggleAccessibilityDrawer } = useAccessibili
                     {servicesAvailble.map((category) => (
                         <TouchableOpacity
                             key={category.id}
-                            style={[styles.serviceCard, { backgroundColor: colorScheme === 'dark' ? '#333' : '#fff' }]}
+                            style={[styles.serviceCard, { backgroundColor: '#fff' }]}
                             onPress={() => console.log(`Selected service: ${category.title}`)}
                         >
                             <View style={styles.iconContainer}>
                                 {renderServiceIcon(category)}
                             </View>
-                            <Text style={[styles.serviceTitle, { color: textColor }]}>{category.title}</Text>
+                            <Text style={[styles.serviceTitle, { color: '' }]}>{category.title}</Text>
                         </TouchableOpacity>
                     ))}
                 </View>
 
                 {/* Available Doctors Section Header */}
                 <View style={styles.sectionHeader}>
-                    <Text style={[styles.sectionTitle, { color: textColor }]}>
+                    <Text style={[styles.sectionTitle, { color: '' }]}>
                         Available Doctors
                     </Text>
                 </View>
@@ -189,12 +182,12 @@ const { accessibilityDrawerVisible, toggleAccessibilityDrawer } = useAccessibili
                         loading ? (
                             <View style={styles.loadingContainer}>
                                 <ActivityIndicator size="large" color='#F44336' />
-                                <Text style={{ marginTop: 8, color: textColor }}>Loading doctors...</Text>
+                                <Text style={{ marginTop: 8, color: '' }}>Loading doctors...</Text>
                             </View>
                         ) : error ? (
                             <View style={styles.errorContainer}>
                                 <Ionicons name="alert-circle-outline" size={48} color='#F44336' />
-                                <Text style={{ marginTop: 8, color: textColor }}>{error}</Text>
+                                <Text style={{ marginTop: 8, color: '' }}>{error}</Text>
                                 <TouchableOpacity
                                     style={styles.retryButton}
                                     onPress={() => fetchDoctors().then(setAvailableDoctors)}
@@ -203,7 +196,7 @@ const { accessibilityDrawerVisible, toggleAccessibilityDrawer } = useAccessibili
                                 </TouchableOpacity>
                             </View>
                         ) : availableDoctors.length === 0 ? (
-                            <Text style={{ textAlign: 'center', marginTop: 20, color: textColor }}>
+                            <Text style={{ textAlign: 'center', marginTop: 20, color: '' }}>
                                 No doctors available at the moment
                             </Text>
                         ) : (
@@ -219,7 +212,7 @@ const { accessibilityDrawerVisible, toggleAccessibilityDrawer } = useAccessibili
 
                 {/* Upcoming Appointments Section Header */}
                 <View style={styles.sectionHeader}>
-                    <Text style={[styles.sectionTitle, { color: textColor }]}>
+                    <Text style={[styles.sectionTitle, { color: '' }]}>
                         Upcoming Appointments
                     </Text>
                 </View>
