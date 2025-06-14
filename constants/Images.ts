@@ -6,6 +6,7 @@ const assistiveRobot = require("@/assets/images/assistive-tech-robot.jpeg");
 const mobility = require("@/assets/images/mobility.png");
 const welcome = require("@/assets/images/welcome.png");
 const login = require("@/assets/images/login.png");
+const signup = require("@/assets/images/sign-up.png");
 
 export const images = {
     marketplace,
@@ -16,4 +17,5 @@ export const images = {
     mobility,
     welcome,
     login,
+    signup,
 }
