@@ -33,6 +33,12 @@
         }
       ],
       [
+        "expo-image-picker",
+        {
+          "photosPermission": "AbiliLife accesses your photos to allow you to upload profile pictures and share images."
+        }
+      ],
+      [
         "react-native-maps",
         {
           "iosGoogleMapsApiKey": "YOUR_KEY_HERE",
