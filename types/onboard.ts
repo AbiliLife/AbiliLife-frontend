@@ -23,3 +23,13 @@ export interface OnboardingState {
     setCurrentStep: (step: number) => void;
     resetOnboarding: () => void;
 }
+
+export interface GuideStep {
+    id: number;
+    title: string;
+    image: any;
+    steps: {
+        main: string;
+        subSteps?: string[];
+    }[];
+}
