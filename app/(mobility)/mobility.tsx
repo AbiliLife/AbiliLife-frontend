@@ -102,6 +102,19 @@ const MobilityHomeScreen = () => {
           accessibilityHint="Book transportation for someone in your care"
           accessibilityRole="button"
         />
+        
+        {/* How to Book Guide Button */}
+        <TouchableOpacity 
+          style={styles.helpButton}
+          onPress={() => router.push('/bookingGuide')}
+          accessible={true}
+          accessibilityLabel="How to Book a Ride Guide"
+          accessibilityHint="View step-by-step instructions for booking rides"
+          accessibilityRole="button"
+        >
+          <Ionicons name="help-circle-outline" size={24} color="#7135B1" />
+          <Text style={styles.helpButtonText}>How to Book a Ride</Text>
+        </TouchableOpacity>
       </ScrollView>
 
       {/* Accessibility Settings Button (fixed position) */}
@@ -177,5 +190,19 @@ const styles = StyleSheet.create({
   caregiverButtonText: {
     color: '#fff',
     fontWeight: 'bold',
+  },
+  helpButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 8,
+    marginBottom: 30,
+    padding: 8,
+  },
+  helpButtonText: {
+    color: '#7135B1',
+    marginLeft: 8,
+    fontSize: 16,
+    fontWeight: '500',
   },
 })
