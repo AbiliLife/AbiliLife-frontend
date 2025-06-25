@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { ThemeContext } from '@/contexts/ThemeContext';
 
 import notificationsData from '@/assets/data/notifications.json';
+import Colors from '@/constants/Colors';
+
 const newNotificationsCount = notificationsData.filter(item => item.isNew).length;
 
 
@@ -14,11 +17,19 @@ function TabBarIcon(props: {
 }
 
 export default function TabLayout() {
+  const { currentTheme } = useContext(ThemeContext);
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor:'#5E35B1',
+        tabBarActiveTintColor: Colors.secondary,
+        tabBarInactiveTintColor: Colors.mediumGray,
+        tabBarStyle: {
+          backgroundColor: currentTheme === 'dark' ? Colors.darkContainer : Colors.lightContainer,
+          borderTopWidth: 0,
+          height: 100,
+          paddingTop: 10,
+        },
         tabBarLabelStyle: {
           fontSize: 12,
           marginBottom: 5,
