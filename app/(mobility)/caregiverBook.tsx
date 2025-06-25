@@ -185,6 +185,27 @@ const CaregiverBooking = () => {
     Linking.openURL(url).catch(() => Alert.alert('Error', 'Could not open WhatsApp.'));
   };
 
+  // ACE Mobility Deep Link
+  const handleAceMobilityRequest = () => {
+    // let rideTime = rideTimeType === 'ASAP' ? 'As soon as possible' : `${scheduledDate} at ${scheduledTime}`;
+    // let needs = [];
+    // if (ramp) needs.push('Ramp');
+    // if (assistiveDevice) needs.push('Assistive Device');
+    // if (signLanguage) needs.push('Sign Language');
+    // let needsStr = needs.length ? needs.join(', ') : 'None';
+    // let msg = `Hello Ace Mobility, I’d like to request a ride:\n\nPickup: ${pickup}\nDrop-off: ${dropoff}\nTime: ${rideTime}\nAccessibility needs: ${needsStr}\n\n`;
+    // if (instructions) msg += `Instructions: ${instructions}`;
+    // // console.log('ACE Mobility message:', msg); // Debugging line
+    // const url = `https://acemobility.co.ke/request?pickup=${encodeURIComponent(pickup)}&dropoff=${encodeURIComponent(dropoff)}&time=${encodeURIComponent(rideTime)}&needs=${encodeURIComponent(needsStr)}&instructions=${encodeURIComponent(instructions)}`;
+    // Linking.openURL(url).catch(() => Alert.alert('Error', 'Could not open ACE Mobility.'));
+
+    // For now, just Alert the user
+    Alert.alert('Make sure you have the ACE Mobility app installed', 'This feature is under development. Please use the WhatsApp option for now.', [
+      { text: 'OK', onPress: () => handleWhatsAppRequest() },
+      { text: 'Cancel', style: 'cancel' }
+    ]);
+  }
+
   // Add date/time picker functions
   const showMode = (currentMode: 'date' | 'time') => {
     setMode(currentMode);
@@ -412,7 +433,7 @@ const CaregiverBooking = () => {
           </View>
 
           {/* Drop-off Location */}
-          <Text 
+          <Text
             style={styles.label}
             accessibilityRole="text"
             accessibilityLabel="Drop-off Location Label"
@@ -433,7 +454,7 @@ const CaregiverBooking = () => {
           />
 
           {/* Ride Time Selection */}
-          <Text 
+          <Text
             style={styles.label}
             accessibilityRole="text"
             accessibilityLabel="Ride Time Label"
@@ -441,8 +462,8 @@ const CaregiverBooking = () => {
             Ride Time
           </Text>
           <View style={styles.radioRow}>
-            <TouchableOpacity 
-              style={styles.radioOption} 
+            <TouchableOpacity
+              style={styles.radioOption}
               onPress={() => setRideTimeType('ASAP')}
               accessibilityLabel="Select ASAP Ride Time"
               accessibilityHint="Select to request a ride as soon as possible"
@@ -455,8 +476,8 @@ const CaregiverBooking = () => {
               </View>
               <Text style={styles.radioLabel}>As soon as possible</Text>
             </TouchableOpacity>
-            <TouchableOpacity 
-              style={styles.radioOption} 
+            <TouchableOpacity
+              style={styles.radioOption}
               onPress={() => setRideTimeType('SCHEDULE')}
               accessibilityLabel="Select Scheduled Ride Time"
               accessibilityHint="Select to schedule a ride for later"
@@ -530,7 +551,7 @@ const CaregiverBooking = () => {
           )}
 
           {/* Accessibility Preferences */}
-          <Text 
+          <Text
             style={styles.label}
             accessibilityRole="text"
             accessibilityLabel="Accessibility Preferences Label"
@@ -538,8 +559,8 @@ const CaregiverBooking = () => {
             Accessibility Preferences
           </Text>
           <View style={styles.toggleRow}>
-            <TouchableOpacity 
-              style={styles.toggleOption} 
+            <TouchableOpacity
+              style={styles.toggleOption}
               onPress={() => setRamp(v => !v)}
               accessibilityLabel="Toggle Ramp/Lift Accessibility"
               accessibilityHint="Press to indicate if the rider needs a ramp or lift for wheelchair access"
@@ -549,8 +570,8 @@ const CaregiverBooking = () => {
               <MaterialCommunityIcons name="wheelchair-accessibility" size={22} color={ramp ? primaryColor : '#888'} />
               <Text style={[styles.toggleLabel, ramp && { color: primaryColor }]}>Ramp/Lift</Text>
             </TouchableOpacity>
-            <TouchableOpacity 
-              style={styles.toggleOption} 
+            <TouchableOpacity
+              style={styles.toggleOption}
               onPress={() => setAssistiveDevice(v => !v)}
               accessibilityLabel="Toggle Assistive Device Accessibility"
               accessibilityHint="Press to indicate if the rider needs assistance with an assistive device"
@@ -560,8 +581,8 @@ const CaregiverBooking = () => {
               <FontAwesome5 name="walking" size={20} color={assistiveDevice ? primaryColor : '#888'} />
               <Text style={[styles.toggleLabel, assistiveDevice && { color: primaryColor }]}>Assistive Device</Text>
             </TouchableOpacity>
-            <TouchableOpacity 
-              style={styles.toggleOption} 
+            <TouchableOpacity
+              style={styles.toggleOption}
               onPress={() => setSignLanguage(v => !v)}
               accessibilityLabel="Toggle Sign Language Accessibility"
               accessibilityHint="Press to indicate if the rider needs a driver who knows sign language"
@@ -574,7 +595,7 @@ const CaregiverBooking = () => {
           </View>
 
           {/* Caregiver Info */}
-          <Text 
+          <Text
             style={styles.sectionTitle}
             accessibilityRole="header"
             accessibilityLabel="Caregiver Accompanying Info"
@@ -582,8 +603,8 @@ const CaregiverBooking = () => {
             Are you accompanying them?
           </Text>
           <View style={styles.radioRow}>
-            <TouchableOpacity 
-              style={styles.radioOption} 
+            <TouchableOpacity
+              style={styles.radioOption}
               onPress={() => setJoining(true)}
               accessibilityLabel="Select Yes for Accompanying"
               accessibilityHint="Select if you will be riding with the person"
@@ -596,8 +617,8 @@ const CaregiverBooking = () => {
               </View>
               <Text style={styles.radioLabel}>Yes, I'll ride with them</Text>
             </TouchableOpacity>
-            <TouchableOpacity 
-              style={styles.radioOption} 
+            <TouchableOpacity
+              style={styles.radioOption}
               onPress={() => setJoining(false)}
               accessibilityLabel="Select No for Accompanying"
               accessibilityHint="Select if you will not be riding with the person"
@@ -625,7 +646,7 @@ const CaregiverBooking = () => {
           />
 
           <View style={{ width: '100%' }}>
-            <Text 
+            <Text
               style={styles.sectionTitle}
               accessibilityRole="header"
               accessibilityLabel="Special Instructions Section"
@@ -645,73 +666,73 @@ const CaregiverBooking = () => {
           </View>
 
           {/* Summary Preview Card */}
-          <View 
+          <View
             style={styles.summaryCard}
             accessibilityRole="summary"
             accessibilityLabel="Trip Summary"
           >
             <Text style={styles.summaryTitle}>Trip Summary</Text>
-            
+
             <View style={styles.summaryRow}>
               <Ionicons name="person" size={24} color={primaryColor} />
               <Text style={styles.summaryText}>
                 Rider: {riderName}
               </Text>
             </View>
-            
+
             <View style={styles.summaryRow}>
               <Ionicons name="call" size={24} color={primaryColor} />
               <Text style={styles.summaryText}>
                 Rider Phone: {riderPhone}
               </Text>
             </View>
-            
+
             <View style={styles.summaryRow}>
               <MaterialCommunityIcons name="wheelchair-accessibility" size={24} color={primaryColor} />
               <Text style={styles.summaryText}>
                 Disability: {disabilityType}
               </Text>
             </View>
-            
+
             <View style={styles.summaryRow}>
               <MaterialCommunityIcons name="tools" size={24} color={primaryColor} />
               <Text style={styles.summaryText}>
                 Equipment: {mobilityEquipment}
               </Text>
             </View>
-            
+
             <View style={styles.summaryRow}>
               <Ionicons name="location" size={24} color={primaryColor} />
               <Text style={styles.summaryText}>
                 From: {pickup}
               </Text>
             </View>
-            
+
             <View style={styles.summaryRow}>
               <Ionicons name="flag" size={24} color={primaryColor} />
               <Text style={styles.summaryText}>
                 To: {dropoff}
               </Text>
             </View>
-            
+
             <View style={styles.summaryRow}>
               <Ionicons name="time" size={24} color={primaryColor} />
               <Text style={styles.summaryText}>
                 Time: {rideTimeType === 'ASAP' ? 'ASAP' : `${scheduledDate} at ${scheduledTime}`}
               </Text>
             </View>
-            
+
             <View style={styles.summaryRow}>
               <MaterialCommunityIcons name="tools" size={24} color={primaryColor} />
               <Text style={styles.summaryText}>
                 Needs: {notSure ? "I'm not sure" : [
-                  ramp && 'Ramp', 
-                  assistiveDevice && 'Assistive Device', 
+                  ramp && 'Ramp',
+                  assistiveDevice && 'Assistive Device',
                   signLanguage && 'Sign Language'
                 ].filter(Boolean).join(', ') || 'None'}
               </Text>
             </View>
-            
+
             {instructions && (
               <View style={styles.summaryRow}>
                 <Ionicons name="chatbox-ellipses" size={24} color={primaryColor} />
@@ -720,14 +741,14 @@ const CaregiverBooking = () => {
                 </Text>
               </View>
             )}
-            
+
             <View style={styles.summaryRow}>
               <Ionicons name="people" size={24} color={primaryColor} />
               <Text style={styles.summaryText}>
                 {joining ? 'You will ride with them.' : 'You will NOT ride with them.'}
               </Text>
             </View>
-            
+
             {caregiverPhone && (
               <View style={styles.summaryRow}>
                 <Ionicons name="call" size={24} color={primaryColor} />
@@ -740,14 +761,54 @@ const CaregiverBooking = () => {
 
           {/* Primary Action Button */}
           <CustomButton
-            title="📲 Request via WhatsApp"
-            handlePress={handleWhatsAppRequest}
-            containerStyle={{ marginVertical: 18, backgroundColor: primaryColor, width: '100%' }}
+            title="Request with ACE Mobility"
+            handlePress={handleAceMobilityRequest}
+            containerStyle={{ marginTop: 18, backgroundColor: primaryColor, width: '100%' }}
             textStyle={{ color: '#fff', fontWeight: 'bold' }}
             disabled={!pickup || !dropoff}
           />
 
-          
+          {/* Secondary Action Button */}
+          <CustomButton
+            title="📲 Request via WhatsApp"
+            handlePress={handleWhatsAppRequest}
+            containerStyle={{ marginTop: 12, backgroundColor: '#25D366', width: '100%' }}
+            textStyle={{ color: '#fff', fontWeight: 'bold' }}
+            disabled={!pickup || !dropoff}
+          />
+
+          {/* Emergency Contact Option */}
+          <TouchableOpacity style={styles.sosRow} onPress={() => setSosVisible(true)}>
+            <Text style={styles.sosText}>Need help right now?</Text>
+            <Text style={styles.sosButton}>🚨 Emergency Hotline</Text>
+          </TouchableOpacity>
+          <Modal
+            visible={sosVisible}
+            transparent
+            animationType="slide"
+            onRequestClose={() => setSosVisible(false)}
+          >
+            <View style={styles.sosModalBg}>
+              <View style={styles.sosModalCard}>
+                <Text style={{ fontWeight: 'bold', fontSize: 18, marginBottom: 10 }}>Emergency Hotline</Text>
+                <Text style={{ marginBottom: 16 }}>Call our emergency line for urgent assistance.</Text>
+                <CustomButton
+                  title="Call Now"
+                  handlePress={() => {
+                    setSosVisible(false);
+                    Linking.openURL('tel:+254742560540').catch(() => {
+                      Alert.alert('Error', 'Could not open dialer.');
+                    });
+                  }}
+                  containerStyle={{ backgroundColor: '#D7263D' }}
+                  textStyle={{ color: '#fff', fontWeight: 'bold' }}
+                />
+                <Pressable onPress={() => setSosVisible(false)} style={{ marginTop: 12 }}>
+                  <Text style={{ color: primaryColor, textAlign: 'center' }}>Cancel</Text>
+                </Pressable>
+              </View>
+            </View>
+          </Modal>
         </BottomSheetScrollView>
       </BottomSheet>
     </KeyboardAvoidingView>
@@ -894,5 +955,33 @@ const styles = StyleSheet.create({
     fontSize: 15,
     borderWidth: 1,
     borderColor: '#ccc',
+  },
+  sosRow: {
+    marginVertical: 28,
+    alignItems: 'center',
+    width: '100%',
+  },
+  sosText: {
+    fontSize: 15,
+    color: '#888',
+  },
+  sosButton: {
+    fontSize: 16,
+    color: '#D7263D',
+    fontWeight: 'bold',
+    marginTop: 2,
+  },
+  sosModalBg: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  sosModalCard: {
+    borderRadius: 16,
+    padding: 24,
+    width: 320,
+    alignItems: 'center',
+    backgroundColor: '#fff',
   },
 })

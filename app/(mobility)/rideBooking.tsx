@@ -191,6 +191,26 @@ const RideBooking = () => {
         Linking.openURL(url).catch(() => Alert.alert('Error', 'Could not open WhatsApp.'));
     };
 
+    // ACE Mobility Deep Link
+    const handleAceMobilityRequest = () => {
+        // let rideTime = rideTimeType === 'ASAP' ? 'As soon as possible' : `${scheduledDate} at ${scheduledTime}`;
+        // let needs = [];
+        // if (ramp) needs.push('Ramp');
+        // if (assistiveDevice) needs.push('Assistive Device');
+        // if (signLanguage) needs.push('Sign Language');
+        // let needsStr = needs.length ? needs.join(', ') : 'None';
+        // let msg = `Hello Ace Mobility, I’d like to request a ride:\n\nPickup: ${pickup}\nDrop-off: ${dropoff}\nTime: ${rideTime}\nAccessibility needs: ${needsStr}\n\n`;
+        // if (instructions) msg += `Instructions: ${instructions}`;
+        // // console.log('ACE Mobility message:', msg); // Debugging line
+        // const url = `https://acemobility.co.ke/request?pickup=${encodeURIComponent(pickup)}&dropoff=${encodeURIComponent(dropoff)}&time=${encodeURIComponent(rideTime)}&needs=${encodeURIComponent(needsStr)}&instructions=${encodeURIComponent(instructions)}`;
+        // Linking.openURL(url).catch(() => Alert.alert('Error', 'Could not open ACE Mobility.'));
+
+        // For now, just Alert the user
+        Alert.alert('Make sure you have the ACE Mobility app installed', 'This feature is under development. Please use the WhatsApp option for now.', [
+            { text: 'OK', onPress: () => handleWhatsAppRequest() },
+            { text: 'Cancel', style: 'cancel' }
+        ]);
+    }
 
     return (
         <KeyboardAvoidingView style={{ flex: 1 }}
@@ -554,9 +574,18 @@ const RideBooking = () => {
 
                     {/* Primary Action Button */}
                     <CustomButton
+                        title="Request with ACE Mobility"
+                        handlePress={handleAceMobilityRequest}
+                        containerStyle={{ marginTop: 18, backgroundColor: primaryColor, width: '100%' }}
+                        textStyle={{ color: '#fff', fontWeight: 'bold' }}
+                        disabled={!pickup || !dropoff}
+                    />
+
+                    {/* Secondary Action Button */}
+                    <CustomButton
                         title="📲 Request via WhatsApp"
                         handlePress={handleWhatsAppRequest}
-                        containerStyle={{ marginTop: 18, backgroundColor: primaryColor, width: '100%' }}
+                        containerStyle={{ marginTop: 12, backgroundColor: '#25D366', width: '100%' }}
                         textStyle={{ color: '#fff', fontWeight: 'bold' }}
                         disabled={!pickup || !dropoff}
                     />
@@ -580,7 +609,9 @@ const RideBooking = () => {
                                     title="Call Now"
                                     handlePress={() => {
                                         setSosVisible(false);
-                                        Linking.openURL('tel:0738218657');
+                                        Linking.openURL('tel:+254742560540').catch(() => {
+                                            Alert.alert('Error', 'Could not open dialer.');
+                                        });
                                     }}
                                     containerStyle={{ backgroundColor: '#D7263D' }}
                                     textStyle={{ color: '#fff', fontWeight: 'bold' }}
@@ -733,7 +764,7 @@ const styles = StyleSheet.create({
     },
     sosModalBg: {
         flex: 1,
-        backgroundColor: 'rgba(0,0,0,0.5)',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -742,10 +773,6 @@ const styles = StyleSheet.create({
         padding: 24,
         width: 320,
         alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.15,
-        shadowRadius: 6,
-        elevation: 4,
+        backgroundColor: '#fff',
     },
 })
