@@ -1,49 +1,57 @@
 [
     {
         "id": "1",
-        "title": "Ride Booked Successfully",
-        "message": "Your private ride with Ace Mobility is confirmed for tomorrow at 9:00 AM.",
-        "date": "Apr 3",
-        "day": 3,
-        "month": "Apr",
+        "title": "Welcome to AbiliLife!",
+        "message": "Thank you for joining AbiliLife. Explore our mobility services designed for your needs.",
+        "date": "Jul 1",
+        "day": 1,
+        "month": "Jul",
         "isNew": true
     },
     {
         "id": "2",
-        "title": "Public Transport Update",
-        "message": "Metro Blue Line will have limited service today due to maintenance.",
-        "date": "Apr 3",
-        "day": 3,
-        "month": "Apr",
-        "isNew": true
+        "title": "Account Successfully Created",
+        "message": "Your AbiliLife account has been created successfully. You can now book rides and access services.",
+        "date": "Jul 1",
+        "day": 1,
+        "month": "Jul"
     },
     {
         "id": "3",
-        "title": "Wheelchair Accessible Taxi Arriving",
-        "message": "Your accessible taxi will arrive in 5 minutes. Please be ready at the pickup point.",
-        "date": "Apr 2",
-        "day": 2,
-        "month": "Apr"
-    },
-    {
-        "id": "4",
-        "title": "Ride Reminder",
-        "message": "You have a scheduled ride to the Community Center at 2:00 PM today.",
-        "date": "Apr 3",
+        "title": "Ride Booked Successfully",
+        "message": "Your private ride with Ace Mobility is confirmed for tomorrow at 9:00 AM.",
+        "date": "Jul 3",
         "day": 3,
-        "month": "Apr",
+        "month": "Jul",
         "isNew": true
     },
     {
+        "id": "4",
+        "title": "Ace Service Update",
+        "message": "Your Ace Mobility ride is on its way! The driver will arrive in 10 minutes.",
+        "date": "Jul 2",
+        "day": 2,
+        "month": "Jul"
+    },
+    {
         "id": "5",
-        "title": "Mobility Service Feedback",
-        "message": "Please rate your recent ride with Ace Mobility.",
-        "date": "Apr 1",
-        "day": 1,
-        "month": "Apr"
+        "title": "Ride Reminder",
+        "message": "You have a scheduled ride to the Community Center at 2:00 PM today.",
+        "date": "Jul 3",
+        "day": 3,
+        "month": "Jul",
+        "isNew": true
     },
     {
         "id": "6",
+        "title": "Mobility Service Feedback",
+        "message": "Please rate your recent ride with Ace Mobility.",
+        "date": "Jul 1",
+        "day": 1,
+        "month": "Jul"
+    },
+    {
+        "id": "7",
         "title": "New Mobility Option Available",
         "message": "Shared van service is now available in your area for group rides.",
         "date": "Mar 31",
@@ -51,35 +59,20 @@
         "month": "Mar"
     },
     {
-        "id": "7",
+        "id": "8",
         "title": "Route Change Notification",
         "message": "Your usual bus route has a detour today. Check the app for details.",
         "date": "Mar 30",
         "day": 30,
-        "month": "Mar"
-    },
-    {
-        "id": "8",
-        "title": "Caregiver Ride Scheduled",
-        "message": "A caregiver has scheduled a ride for you at 11:00 AM tomorrow.",
-        "date": "Apr 2",
-        "day": 2,
-        "month": "Apr"
+        "month": "Mar",
+        "isNew": true
     },
     {
         "id": "9",
-        "title": "Mobility Pass Expiring Soon",
-        "message": "Your monthly mobility pass will expire in 3 days. Renew to continue enjoying services.",
-        "date": "Apr 2",
+        "title": "Caregiver Ride Scheduled",
+        "message": "A caregiver has scheduled a ride for you at 11:00 AM tomorrow.",
+        "date": "Jul 2",
         "day": 2,
-        "month": "Apr"
-    },
-    {
-        "id": "10",
-        "title": "Welcome to AbiliLife Mobility!",
-        "message": "Explore new features for booking rides and public transport info.",
-        "date": "Mar 29",
-        "day": 29,
-        "month": "Mar"
+        "month": "Jul"
     }
 ]
