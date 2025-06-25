@@ -130,7 +130,7 @@ export default function ProfileSetupScreen() {
             }
 
             setCurrentStep(4);
-            // router.replace('/onboarding-tips');
+            router.replace('/(tabs)');
         } catch (error) {
             console.error('Profile setup error:', error);
             setErrors({ general: 'An error occurred. Please try again.' });
