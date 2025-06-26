@@ -91,7 +91,7 @@ export default function ProfileScreen() {
             {userProfile.email}
           </Text>
           <TouchableOpacity
-            onPress={() => router.push('/profileSetup')}
+            onPress={() => router.push('/edit-profile')}
             accessibilityLabel="Edit profile"
             accessibilityHint="Navigate to profile editing screen"
             accessibilityRole="button"
@@ -381,11 +381,13 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.lightGray,
   },
   profilePlaceholder: {
-    width: '100%',
-    height: '100%',
+    width: 100,
+    height: 100,
     backgroundColor: Colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
+    borderRadius: 50,
+    marginBottom: 16,
   },
   profilePlaceholderText: {
     fontSize: 48,
