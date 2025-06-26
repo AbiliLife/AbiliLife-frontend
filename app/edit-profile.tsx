@@ -127,7 +127,7 @@ export default function EditProfileScreen() {
             contentContainerStyle={[styles.container, { paddingTop: Platform.OS === 'ios' ? headerHeight + 24 : 24, backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer }]}
             showsVerticalScrollIndicator={false}
         >
-            <Stack.Screen name="edit-profile" options={{
+            <Stack.Screen options={{
                 headerLeft: () => (
                     <TouchableOpacity
                         onPress={() => {
