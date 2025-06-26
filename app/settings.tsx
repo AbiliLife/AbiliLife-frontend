@@ -1,23 +1,55 @@
-import React, { useContext } from 'react'
-import { StyleSheet, View, Text, Switch, TouchableOpacity } from 'react-native'
+import React, { useContext } from 'react';
+import { StyleSheet, View, Text, Switch, TouchableOpacity, Platform, ScrollView } from 'react-native';
+import { useHeaderHeight } from '@react-navigation/elements';
+import { Stack, useRouter } from 'expo-router';
+import * as Haptics from 'expo-haptics';
+import { Ionicons } from '@expo/vector-icons';
+import { X } from 'lucide-react-native';
+
 import Colors from '@/constants/Colors'
-import { Ionicons } from '@expo/vector-icons'
 import { ThemeContext } from '@/contexts/ThemeContext'
 
-const SettingsModal = () => {
+export default function SettingsScreen() {
+    const router = useRouter();
+    const headerHeight = useHeaderHeight();
 
     const { currentTheme, toggleTheme, toggleSystemTheme, isSystemTheme } = useContext(ThemeContext);
 
     return (
-        <View style={[styles.container, { backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer }]}>
-            <View style={styles.header}>
-                <Text style={[styles.title, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}>
-                    General Settings
-                </Text>
-                <Text style={styles.subtitle}>
+        <ScrollView
+            contentContainerStyle={[styles.container, { paddingTop: Platform.OS === 'ios' ? headerHeight : 24, backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer }]}
+            showsVerticalScrollIndicator={false}
+        >
+            <Stack.Screen options={{
+                headerLeft: () => (
+                    <TouchableOpacity
+                        onPress={() => {
+                            Haptics.selectionAsync();
+                            router.back();
+                        }}
+                        accessibilityRole='button'
+                        accessibilityLabel="Back to previous screen"
+                        accessibilityHint='Returns to the previous screen without saving changes'
+                    >
+                        <X size={24} color={currentTheme === 'light' ? Colors.primary : Colors.white} />
+                    </TouchableOpacity>
+                ),
+                headerTitle: 'General Settings',
+                headerTitleAlign: 'center',
+                headerTitleStyle: {
+                    fontSize: 20,
+                    fontWeight: 'bold',
+                    color: currentTheme === 'light' ? Colors.primary : Colors.white,
+                },
+                headerStyle: {
+                    backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer,
+                },
+                headerLargeTitle: Platform.OS === 'ios',
+                headerShadowVisible: false,
+            }} />
+                <Text style={styles.subtitle} accessibilityRole='header' accessibilityLabel='Settings subtitle'>
                     Customize your experience
                 </Text>
-            </View>
 
             <View style={styles.sectionHeader}>
                 <Text style={[styles.sectionTitle, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}>
@@ -49,66 +81,66 @@ const SettingsModal = () => {
                 </Text>
             </View>
 
-            <TouchableOpacity 
+            <TouchableOpacity
                 style={[styles.settingRow, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray, borderColor: currentTheme === 'light' ? Colors.borderLight : Colors.borderDark }, !isSystemTheme && currentTheme === 'light' && styles.selectedRow]}
                 activeOpacity={0.7}
                 onPress={() => toggleTheme('light')}
             >
                 <View style={styles.settingLabelContainer}>
-                    <Ionicons 
-                        name="sunny" 
-                        size={24} 
+                    <Ionicons
+                        name="sunny"
+                        size={24}
                         color={!isSystemTheme && currentTheme === 'light' ? Colors.white : Colors.secondary}
                     />
                     <Text style={[
-                        styles.settingLabel, 
+                        styles.settingLabel,
                         { color: !isSystemTheme && currentTheme === 'light' ? Colors.white : Colors.white }
                     ]}>
                         Light
                     </Text>
                 </View>
             </TouchableOpacity>
-            
-            <TouchableOpacity 
+
+            <TouchableOpacity
                 style={[styles.settingRow, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray, borderColor: currentTheme === 'light' ? Colors.borderLight : Colors.borderDark }, !isSystemTheme && currentTheme === 'dark' && styles.selectedRow]}
                 activeOpacity={0.7}
                 onPress={() => toggleTheme('dark')}
             >
                 <View style={styles.settingLabelContainer}>
-                    <Ionicons 
-                        name="moon" 
-                        size={24} 
+                    <Ionicons
+                        name="moon"
+                        size={24}
                         color={!isSystemTheme && currentTheme === 'dark' ? Colors.white : Colors.secondary}
                     />
                     <Text style={[
-                        styles.settingLabel, 
+                        styles.settingLabel,
                         { color: !isSystemTheme && currentTheme === 'dark' ? Colors.white : currentTheme === 'light' ? Colors.primary : Colors.white }
                     ]}>
                         Dark
                     </Text>
                 </View>
             </TouchableOpacity>
-            
-            <TouchableOpacity 
+
+            <TouchableOpacity
                 style={[styles.settingRow, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray, borderColor: currentTheme === 'light' ? Colors.borderLight : Colors.borderDark }, isSystemTheme && styles.selectedRow]}
                 activeOpacity={0.7}
                 onPress={toggleSystemTheme}
             >
                 <View style={styles.settingLabelContainer}>
-                    <Ionicons 
-                        name="contrast" 
-                        size={24} 
-                        color={isSystemTheme ? Colors.white : Colors.secondary} 
+                    <Ionicons
+                        name="contrast"
+                        size={24}
+                        color={isSystemTheme ? Colors.white : Colors.secondary}
                     />
                     <Text style={[
-                        styles.settingLabel, 
+                        styles.settingLabel,
                         { color: isSystemTheme ? Colors.white : currentTheme === 'light' ? Colors.primary : Colors.white }
                     ]}>
                         System Default
                     </Text>
                 </View>
             </TouchableOpacity>
-            
+
             <View style={{ height: 1, backgroundColor: currentTheme === 'light' ? Colors.borderLight : Colors.borderDark, marginVertical: 16 }} />
 
             <View style={styles.sectionHeader}>
@@ -116,7 +148,7 @@ const SettingsModal = () => {
                     Other Settings
                 </Text>
             </View>
-        </View>
+        </ScrollView>
     )
 }
 
@@ -124,15 +156,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingHorizontal: 16,
-    },
-    header: {
-        marginTop: 32,
-    },
-    title: {
-        fontSize: 28,
-        fontWeight: 'bold',
-        color: Colors.primary,
-        marginBottom: 8,
     },
     subtitle: {
         fontSize: 16,
@@ -180,5 +203,3 @@ const styles = StyleSheet.create({
         borderColor: Colors.primary,
     }
 })
-
-export default SettingsModal
