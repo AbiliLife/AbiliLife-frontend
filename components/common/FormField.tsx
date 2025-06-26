@@ -1,6 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import { StyleSheet, View, Text, TextInput, TouchableOpacity } from "react-native";
 import { Ionicons, FontAwesome, MaterialIcons, Entypo, Feather } from '@expo/vector-icons';
+
+import Colors from "@/constants/Colors";
+
+import { ThemeContext } from "@/contexts/ThemeContext";
 
 interface FormFieldProps {
     icon?: boolean;
@@ -37,6 +41,8 @@ const FormField: React.FC<FormFieldProps> = ({
     otherStyles = {},
     ...props
 }) => {
+    const { currentTheme } = useContext(ThemeContext);
+
     const [showPassword, setShowPassword] = React.useState(false);
     const [isFocused, setIsFocused] = React.useState(false);
 
@@ -56,17 +62,19 @@ const FormField: React.FC<FormFieldProps> = ({
         <View style={[
             styles.fieldContainer,
             otherStyles,
-            (isFocused || !!value) && styles.fieldContainerFocused
+            (isFocused || !!value) && styles.fieldContainerFocused,
+            { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray, borderColor: isFocused ? Colors.secondary : !!value ? Colors.white : currentTheme === 'light' ? Colors.borderLight : Colors.borderDark }
         ]}>
             {icon && iconName && (
             <View style={styles.iconWrapper}>
-                <IconComponent name={iconName as any} size={20} color={isFocused || !!value ? "#7135B1" : "#A29EB6"} />
+                <IconComponent name={iconName as any} size={20} color={isFocused || !!value ? currentTheme === 'light' ? Colors.secondary : Colors.white : '#A29EB6'} />
             </View>
             )}
             <TextInput
             style={[
                 styles.input,
                 icon && styles.inputWithIcon,
+                { color: currentTheme === 'light' ? Colors.primary : Colors.lightGray }
             ]}
             placeholder={placeholder}
             value={value}
@@ -85,7 +93,7 @@ const FormField: React.FC<FormFieldProps> = ({
                 onPress={() => setShowPassword(!showPassword)}
                 activeOpacity={0.7}
             >
-                <Ionicons name={showPassword ? "eye-off" : "eye"} size={20} color="#A29EB6" />
+                <Ionicons name={showPassword ? "eye" : "eye-off"} size={20} color="#A29EB6" />
             </TouchableOpacity>
             )}
         </View>
@@ -96,7 +104,6 @@ const styles = StyleSheet.create({
     fieldContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#F8F8FA',
         borderRadius: 10,
         borderWidth: 1,
         borderColor: '#E0E0E0',
@@ -106,7 +113,7 @@ const styles = StyleSheet.create({
         position: 'relative',
     },
     fieldContainerFocused: {
-        borderColor: '#7135B1',
+        borderColor: Colors.secondary,
     },
     iconWrapper: {
         marginRight: 8,
@@ -114,7 +121,6 @@ const styles = StyleSheet.create({
     input: {
         flex: 1,
         fontSize: 16,
-        color: '#2D1457',
         paddingVertical: 10,
         backgroundColor: 'transparent',
     },
