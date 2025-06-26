@@ -1,16 +1,21 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { StyleSheet, View, Text, FlatList, Modal, TouchableOpacity } from 'react-native';
 import { Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
+import Colors from '@/constants/Colors';
 import { NotificationItem } from '@/types/notifications';
 import notificationsData from '@/assets/data/notifications.json';
+
+import { ThemeContext } from '@/contexts/ThemeContext';
 
 import AccessibilityOption from '@/components/accessibility/AccessibilityOption';
 import AccessibilityDrawer from '@/components/accessibility/AccessibilityDrawer';
 
 
 export default function AlertsScreen() {
+  const { currentTheme } = useContext(ThemeContext);
+
   const [accessibilityDrawerVisible, setAccessibilityDrawerVisible] = useState(false);
   const [selectedNotification, setSelectedNotification] = useState<NotificationItem | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -32,18 +37,78 @@ export default function AlertsScreen() {
       onPress={() => handleNotificationPress(item)}
       style={{ width: '100%' }}
     >
-      <View style={[styles.notificationContainer, item.isNew && styles.newNotification]}>
-        <View style={styles.iconContainer}>
-          <Ionicons name={item.isNew ? "notifications" : "notifications-outline"} size={24} color={item.isNew ? "#7135B1" : "#888"} />
-        </View>
-        <View style={styles.textContainer}>
-          <Text style={[styles.title, item.isNew && { color: '#7135B1' }]}>
-            {item.title}
-          </Text>
-          <Text style={styles.message}>{item.message}</Text>
-          <Text style={styles.date}>{item.date}</Text>
-        </View>
-        {item.isNew && <View style={styles.dot} />}
+      <View
+      style={[
+        styles.notificationContainer,
+        {
+        backgroundColor: item.isNew
+          ? (currentTheme === 'light' ? Colors.lightPurple : Colors.darkPurple)
+          : (currentTheme === 'light' ? Colors.white : Colors.darkGray),
+        borderColor: item.isNew
+          ? (currentTheme === 'light' ? Colors.secondary : '#B983FF')
+          : (currentTheme === 'light' ? Colors.borderLight : Colors.borderDark),
+        },
+      ]}
+      >
+      <View style={styles.iconContainer}>
+        <Ionicons
+        name={item.isNew ? "notifications" : "notifications-outline"}
+        size={24}
+        color={
+          item.isNew
+          ? (currentTheme === 'light' ? Colors.secondary : '#B983FF')
+          : (currentTheme === 'light' ? Colors.mediumGray : Colors.white)
+        }
+        />
+      </View>
+      <View style={styles.textContainer}>
+        <Text
+        style={[
+          styles.title,
+          {
+          color: item.isNew
+            ? (currentTheme === 'light' ? Colors.secondary : '#B983FF')
+            : (currentTheme === 'light' ? Colors.primary : Colors.white),
+          },
+        ]}
+        >
+        {item.title}
+        </Text>
+        <Text
+        style={[
+          styles.message,
+          {
+          color: currentTheme === 'light'
+            ? (item.isNew ? '#7135B1' : '#4B3B6B')
+            : (item.isNew ? '#E0C3FC' : Colors.white),
+          },
+        ]}
+        >
+        {item.message}
+        </Text>
+        <Text
+        style={[
+          styles.date,
+          {
+          color: currentTheme === 'light'
+            ? (item.isNew ? '#B983FF' : '#A29EB6')
+            : (item.isNew ? '#E0C3FC' : Colors.white),
+          },
+        ]}
+        >
+        {item.date}
+        </Text>
+      </View>
+      {item.isNew && (
+        <View
+        style={[
+          styles.dot,
+          {
+          backgroundColor: currentTheme === 'light' ? Colors.secondary : '#B983FF',
+          },
+        ]}
+        />
+      )}
       </View>
     </TouchableOpacity>
   );
@@ -52,16 +117,16 @@ export default function AlertsScreen() {
     <>
       <Stack.Screen
         options={{
-          headerTitle: 'Notifications',
+          headerTitle: 'Your Notifications',
           headerTitleAlign: 'left',
           headerTitleStyle: {
             fontSize: 20,
             fontWeight: 'bold',
-            color: '#7135B1',
+            color: currentTheme === 'light' ? Colors.primary : Colors.white,
           },
           headerShadowVisible: false,
           headerStyle: {
-            backgroundColor: '#F5F5F5',
+            backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer,
           }
         }}
       />
@@ -78,7 +143,7 @@ export default function AlertsScreen() {
         />
       )}
 
-      <View style={styles.container}>
+      <View style={[styles.container, { backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer }]}>
         <FlatList
           data={notificationsData}
           keyExtractor={item => item.id}
@@ -96,12 +161,18 @@ export default function AlertsScreen() {
         onRequestClose={() => setModalVisible(false)}
       >
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
+          <View style={[styles.modalContent, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkContainer }]}>
             {selectedNotification && (
               <>
-                <Text style={styles.modalTitle}>{selectedNotification.title}</Text>
-                <Text style={styles.modalMessage}>{selectedNotification.message}</Text>
-                <Text style={styles.modalDate}>{selectedNotification.date}</Text>
+                <Text style={[styles.modalTitle, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole='header' accessibilityLabel={`Notification: ${selectedNotification.title}`}>
+                  {selectedNotification.title}
+                </Text>
+                <Text style={styles.modalMessage} accessibilityRole='text' accessibilityLabel={`Message: ${selectedNotification.message}`}>
+                  {selectedNotification.message}
+                </Text>
+                <Text style={styles.modalDate}>
+                  {selectedNotification.date}
+                </Text>
               </>
             )}
             <TouchableOpacity
@@ -121,7 +192,6 @@ export default function AlertsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
     paddingHorizontal: 16,
     paddingTop: 16,
   },
@@ -131,20 +201,11 @@ const styles = StyleSheet.create({
   notificationContainer: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    backgroundColor: '#fff',
     borderRadius: 14,
     padding: 16,
     marginBottom: 14,
-    elevation: 2,
-    shadowColor: '#7135B1',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.07,
-    shadowRadius: 6,
+    borderWidth: 1,
     position: 'relative',
-  },
-  newNotification: {
-    borderLeftWidth: 4,
-    borderLeftColor: '#7135B1',
   },
   iconContainer: {
     marginRight: 12,
@@ -205,7 +266,7 @@ const styles = StyleSheet.create({
   },
   modalMessage: {
     fontSize: 16,
-    color: '#4B3B6B',
+    color: Colors.accent,
     marginBottom: 16,
     textAlign: 'center',
   },
