@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
     View,
     Text,
@@ -6,6 +6,7 @@ import {
     StyleSheet
 } from 'react-native';
 import Colors from '@/constants/Colors';
+import { ThemeContext } from '@/contexts/ThemeContext';
 
 interface ToggleSwitchProps {
     label: string;
@@ -20,10 +21,17 @@ export default function ToggleSwitch({
     onValueChange,
     description
 }: ToggleSwitchProps) {
+
+    const { currentTheme } = useContext(ThemeContext);
+
     return (
         <View style={styles.container}>
             <View style={styles.textContainer}>
-                <Text style={styles.label} accessibilityRole="text" accessibilityLabel={label}>
+                <Text 
+                style={[styles.label, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} 
+                accessibilityRole="text" 
+                accessibilityLabel={label}
+                >
                     {label}
                 </Text>
                 {description && (
@@ -35,12 +43,12 @@ export default function ToggleSwitch({
             <Switch
                 value={value}
                 onValueChange={onValueChange}
-                trackColor={{ false: Colors.lightGray, true: Colors.primary }}
+                trackColor={{ false: Colors.lightGray, true: Colors.secondary}}
                 thumbColor={Colors.white}
-                ios_backgroundColor={Colors.lightGray}
                 accessibilityRole="switch"
                 accessibilityState={{ checked: value }}
                 accessibilityLabel={label}
+                accessibilityHint={`Toggle ${label} to ${value ? 'off' : 'on'}`}
             />
         </View>
     );
@@ -52,8 +60,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         paddingVertical: 12,
-        borderBottomWidth: 1,
-        borderBottomColor: Colors.lightGray,
     },
     textContainer: {
         flex: 1,
@@ -61,7 +67,6 @@ const styles = StyleSheet.create({
     label: {
         fontSize: 16,
         fontWeight: '500',
-        color: Colors.black,
     },
     description: {
         fontSize: 14,
