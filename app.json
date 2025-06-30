@@ -15,14 +15,26 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.abililife.app"
+      "bundleIdentifier": "com.abililife.app",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "This app uses your location to show maps."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.abililife.app"
+      "package": "com.abililife.app",
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION"
+      ],
+      "config": {
+        "googleMaps": {
+          "apiKey": "ANDROID_GOOGLE_MAPS_API_KEY"
+        }
+      }
     },
     "plugins": [
       "expo-router",
@@ -36,13 +48,6 @@
         "expo-image-picker",
         {
           "photosPermission": "AbiliLife accesses your photos to allow you to upload profile pictures and share images."
-        }
-      ],
-      [
-        "react-native-maps",
-        {
-          "iosGoogleMapsApiKey": "YOUR_KEY_HERE",
-          "androidGoogleMapsApiKey": "YOUR_KEY_HERE"
         }
       ]
     ],
