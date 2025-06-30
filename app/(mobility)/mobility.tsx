@@ -1,9 +1,12 @@
-import React from 'react'
-import { Image, ScrollView, StyleSheet, TouchableOpacity, View, Text } from 'react-native'
-import { FontAwesome5, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
-import { useRouter } from 'expo-router'
+import React from 'react';
+import { Image, ScrollView, StyleSheet, TouchableOpacity, View, Text } from 'react-native';
+import { FontAwesome5, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 
-import { useAccessibility } from '@/contexts/AccessibilityContext'
+import Colors from '@/constants/Colors';
+
+import { useAccessibility } from '@/contexts/AccessibilityContext';
+import { ThemeContext } from '@/contexts/ThemeContext'
 
 import CustomButton from '@/components/common/CustomButton'
 import AccessibilityDrawer from '@/components/accessibility/AccessibilityDrawer'
@@ -14,12 +17,13 @@ import { images } from '@/constants/Images'
 const MobilityHomeScreen = () => {
   const router = useRouter();
 
+  const { currentTheme } = React.useContext(ThemeContext);
   const { accessibilityDrawerVisible, toggleAccessibilityDrawer } = useAccessibility();
 
   return (
     <View style={{ flex: 1 }}>
       <ScrollView 
-        contentContainerStyle={[styles.container, { backgroundColor: '#F5F5F5' }]} 
+        contentContainerStyle={[styles.container, { backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer }]} 
         showsVerticalScrollIndicator={false}
         accessibilityLabel="Mobility options screen"
       >
@@ -31,7 +35,7 @@ const MobilityHomeScreen = () => {
           accessibilityLabel="Mobility services illustration"
         />
         <Text 
-          style={styles.title}
+          style={[styles.title, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}
           accessibilityRole="header"
           accessibilityLabel="Mobility Options"
         >
@@ -40,7 +44,7 @@ const MobilityHomeScreen = () => {
         
         {/* Private Ride Card */}
         <TouchableOpacity 
-          style={[styles.card, { backgroundColor: '#FFFFFF' }]} 
+          style={[styles.card, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]} 
           onPress={() => router.push('/(mobility)/rideBooking')}
           accessible={true}
           accessibilityLabel="Private Ride with Ace Mobility"
@@ -48,17 +52,21 @@ const MobilityHomeScreen = () => {
           accessibilityRole="button"
         >
           <View style={styles.cardContent}>
-            <FontAwesome5 name="car" size={24} color="#7135B1" style={styles.cardIcon} />
+            <FontAwesome5 name="car" size={24} color={Colors.secondary} style={styles.cardIcon} />
             <View style={styles.cardTextContainer}>
-              <Text style={[styles.cardTitle, { color: '#46216E' }]}>Private Ride (Ace)</Text>
-              <Text style={styles.cardDescription}>Book a private ride with Ace Mobility</Text>
+              <Text style={[styles.cardTitle, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole="header" accessibilityLabel="Private Ride with Ace Mobility">
+                Private Ride with Ace Mobility
+              </Text>
+              <Text style={[styles.cardDescription, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel="Book a private accessible ride with Ace Mobility">
+                Book a private accessible ride with Ace Mobility
+              </Text>
             </View>
           </View>
         </TouchableOpacity>
         
         {/* Public Transport Card */}
         <TouchableOpacity 
-          style={[styles.card, { backgroundColor: '#FFFFFF' }]} 
+          style={[styles.card, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]} 
           onPress={() => router.push('/(mobility)/publicTransport')}
           accessible={true}
           accessibilityLabel="Public Transport Information"
@@ -66,17 +74,21 @@ const MobilityHomeScreen = () => {
           accessibilityRole="button"
         >
           <View style={styles.cardContent}>
-            <MaterialCommunityIcons name="bus" size={24} color="#7135B1" style={styles.cardIcon} />
+            <MaterialCommunityIcons name="bus" size={24} color={Colors.secondary} style={styles.cardIcon} />
             <View style={styles.cardTextContainer}>
-              <Text style={[styles.cardTitle, { color: '#46216E' }]}>Public Transport Info</Text>
-              <Text style={styles.cardDescription}>Get information about public transportation</Text>
+              <Text style={[styles.cardTitle, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole="header" accessibilityLabel="Public Transport Information">
+                Public Transport Information
+              </Text>
+              <Text style={[styles.cardDescription, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel="Get information about accessible public transportation options">
+                Get information about accessible public transportation options
+              </Text>
             </View>
           </View>
         </TouchableOpacity>
         
         {/* Schedule Ride Card */}
         <TouchableOpacity 
-          style={[styles.card, { backgroundColor: '#FFFFFF' }]} 
+          style={[styles.card, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]} 
           onPress={() => router.push('/(mobility)/rideBooking')}
           accessible={true}
           accessibilityLabel="Schedule a Ride"
@@ -84,10 +96,14 @@ const MobilityHomeScreen = () => {
           accessibilityRole="button"
         >
           <View style={styles.cardContent}>
-            <Ionicons name="calendar" size={24} color="#7135B1" style={styles.cardIcon} />
+            <Ionicons name="calendar" size={24} color={Colors.secondary} style={styles.cardIcon} />
             <View style={styles.cardTextContainer}>
-              <Text style={[styles.cardTitle, { color: '#46216E' }]}>Schedule a Ride</Text>
-              <Text style={styles.cardDescription}>Plan and schedule transportation in advance</Text>
+              <Text style={[styles.cardTitle, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole="header" accessibilityLabel="Schedule a Ride">
+                Schedule a Ride
+              </Text>
+              <Text style={[styles.cardDescription, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel="Plan and schedule transportation in advance">
+                Plan and schedule transportation in advance
+              </Text>
             </View>
           </View>
         </TouchableOpacity>
@@ -112,8 +128,10 @@ const MobilityHomeScreen = () => {
           accessibilityHint="View step-by-step instructions for booking rides"
           accessibilityRole="button"
         >
-          <Ionicons name="help-circle-outline" size={24} color="#7135B1" />
-          <Text style={styles.helpButtonText}>How to Book a Ride</Text>
+          <Ionicons name="help-circle-outline" size={24} color={Colors.secondary} />
+          <Text style={styles.helpButtonText}>
+            How to Book a Ride
+          </Text>
         </TouchableOpacity>
       </ScrollView>
 
@@ -200,7 +218,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   helpButtonText: {
-    color: '#7135B1',
+    color: Colors.secondary,
     marginLeft: 8,
     fontSize: 16,
     fontWeight: '500',

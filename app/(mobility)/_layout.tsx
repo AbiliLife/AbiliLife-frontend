@@ -1,21 +1,27 @@
+import React from 'react';
 import { Stack } from 'expo-router';
-import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import Colors from '@/constants/Colors';
+import { ThemeContext } from '@/contexts/ThemeContext';
 
 export default function MobilityLayout() {
+  const { currentTheme } = React.useContext(ThemeContext);
   return (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: '#fff' }}>
       <Stack>
         <Stack.Screen name="mobility" options={{
           headerTitle: 'AbiliLife Mobility',
+          headerTitleAlign: 'center',
           headerShadowVisible: false,
-          headerTintColor: '#7135B1',
           headerTitleStyle: {
-            fontSize: 16,
+            fontSize: 20,
             fontWeight: 'bold',
-            color: '#7135B1',
+            color: currentTheme === 'light' ? Colors.primary : Colors.white,
           },
+          headerBackButtonDisplayMode: 'minimal',
+          headerTintColor: currentTheme === 'light' ? Colors.primary : Colors.white,
           headerStyle: {
-            backgroundColor: '#fff',
+            backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer,
           },
         }} />
         <Stack.Screen name="caregiverBook" options={{
@@ -23,13 +29,14 @@ export default function MobilityLayout() {
           headerTitleAlign: 'center',
           headerShadowVisible: false,
           headerTitleStyle: {
-            fontSize: 16,
+            fontSize: 20,
             fontWeight: '600',
-            color:'#18181B',
+            color: currentTheme === 'light' ? Colors.primary : Colors.white,
           },
           headerBackButtonDisplayMode: 'minimal',
+          headerTintColor: currentTheme === 'light' ? Colors.primary : Colors.white,
           headerStyle: {
-            backgroundColor: '#fff',
+            backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer,
           },
         }} />
         <Stack.Screen name="rideBooking" options={{
@@ -37,12 +44,14 @@ export default function MobilityLayout() {
           headerTitleAlign: 'center',
           headerShadowVisible: false,
           headerTitleStyle: {
-            fontSize: 16,
+            fontSize: 20,
             fontWeight: '600',
-            color:'#18181B',
+            color: currentTheme === 'light' ? Colors.primary : Colors.white,
           },
+          headerBackButtonDisplayMode: 'minimal',
+          headerTintColor: currentTheme === 'light' ? Colors.primary : Colors.white,
           headerStyle: {
-            backgroundColor: '#fff',
+            backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer,
           },
         }} />
         <Stack.Screen name="publicTransport" options={{ 

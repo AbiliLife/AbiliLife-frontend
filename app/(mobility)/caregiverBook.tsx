@@ -1,13 +1,16 @@
-import React, { useEffect, useState, useMemo } from 'react'
-import { StyleSheet, TouchableOpacity, Modal, KeyboardAvoidingView, Platform, Alert, Linking, TextInput, Pressable, View, Text } from 'react-native'
-import { Ionicons, MaterialCommunityIcons, FontAwesome5 } from '@expo/vector-icons'
-import * as Location from 'expo-location'
-import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet'
+import React, { useEffect, useState, useMemo } from 'react';
+import { StyleSheet, TouchableOpacity, Modal, KeyboardAvoidingView, Platform, Alert, Linking, TextInput, Pressable, View, Text } from 'react-native';
+import { Ionicons, MaterialCommunityIcons, FontAwesome5 } from '@expo/vector-icons';
+import * as Location from 'expo-location';
+import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
-import FormField from '@/components/common/FormField'
-import CustomButton from '@/components/common/CustomButton'
+import FormField from '@/components/common/FormField';
+import CustomButton from '@/components/common/CustomButton';
+import { ThemeContext } from '@/contexts/ThemeContext';
+import Colors from '@/constants/Colors';
 
 const disabilityTypes = [
   'Physical',
@@ -24,47 +27,45 @@ const mobilityEquipments = [
   'Other',
 ];
 
-// Create an interface for our map components
-interface MapComponents {
-  MapView: any;
-  Marker: any;
-  PROVIDER_GOOGLE?: any; // Optional, only if using Google Maps
-}
+// // Create an interface for our map components
+// interface MapComponents {
+//   MapView: any;
+//   Marker: any;
+//   PROVIDER_GOOGLE?: any; // Optional, only if using Google Maps
+// }
 
-// Initialize map components based on platform
-const getMapComponents = (): MapComponents => {
-  if (Platform.OS !== 'web') {
-    try {
-      const Maps = require('react-native-maps');
-      return {
-        MapView: Maps.default,
-        Marker: Maps.Marker,
-        PROVIDER_GOOGLE: Maps.PROVIDER_GOOGLE, // If you need Google Maps provider
-      };
-    } catch (error) {
-      console.warn('Failed to load react-native-maps:', error);
-      return {
-        MapView: null,
-        Marker: null,
-        PROVIDER_GOOGLE: null, // No Google Maps provider available
-      };
-    }
-  }
-  return {
-    MapView: null,
-    Marker: null,
-    PROVIDER_GOOGLE: null, // No Google Maps provider on web
-  };
-};
+// // Initialize map components based on platform
+// const getMapComponents = (): MapComponents => {
+//   if (Platform.OS !== 'web') {
+//     try {
+//       const Maps = require('react-native-maps');
+//       return {
+//         MapView: Maps.default,
+//         Marker: Maps.Marker,
+//         PROVIDER_GOOGLE: Maps.PROVIDER_GOOGLE, // If you need Google Maps provider
+//       };
+//     } catch (error) {
+//       console.warn('Failed to load react-native-maps:', error);
+//       return {
+//         MapView: null,
+//         Marker: null,
+//         PROVIDER_GOOGLE: null, // No Google Maps provider available
+//       };
+//     }
+//   }
+//   return {
+//     MapView: null,
+//     Marker: null,
+//     PROVIDER_GOOGLE: null, // No Google Maps provider on web
+//   };
+// };
 
-// Get map components
-const { MapView, Marker, PROVIDER_GOOGLE } = getMapComponents();
+// // Get map components
+// const { MapView, Marker, PROVIDER_GOOGLE } = getMapComponents();
 
 const CaregiverBooking = () => {
-  // Theme colors
-  const primaryColor = '#7135B1'; // Purple
-  const backgroundColor = '#fff'; // White
-  const textColor = '#46216E'; // Dark Purple
+
+  const { currentTheme } = React.useContext(ThemeContext);
 
   // Bottom sheet - Updated for better Android scrolling
   const bottomSheetRef = React.useRef<BottomSheet>(null);
@@ -252,12 +253,12 @@ const CaregiverBooking = () => {
         MapView && Marker ? (
           <MapView
             style={styles.map}
-            provider={PROVIDER_GOOGLE}
+            provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined} // Use Google Maps on Android, Apple Maps on iOS
             // mapType="hybrid" // Use hybrid map type
             // mapType="mutedStandard" // Use muted standard map type
             mapType="standard" // Use standard map type
             showsUserLocation={true} // Show user's current location
-            followUserLocation={true} // Follow user's location
+            // followUserLocation={true} // Follow user's location
             showsMyLocationButton={true} // Show button to center map on user's location
             showsPointsOfInterest={true} // Show points of interest
             showsCompass={true} // Show compass
@@ -267,10 +268,10 @@ const CaregiverBooking = () => {
             showsBuildings={true} // Show 3D buildings if available
             showsIndoorLevelPicker={true} // Show indoor level picker ( Google Maps only )
             loadingEnabled={true} // Show loading indicator while map is loading
-            loadingIndicatorColor={primaryColor} // Customize loading indicator color
+            loadingIndicatorColor={Colors.primary} // Customize loading indicator color
             zoomEnabled={true} // Allow zooming
             // maxZoomLevel={20} // Set maximum zoom level
-            cameraZoomRange={{ min: 5, max: 20 }} // Set zoom range
+            // cameraZoomRange={{ min: 5, max: 20 }} // Set zoom range
             scrollEnabled={true} // Allow scrolling
             pitchEnabled={true} // Allow tilting the map
             rotateEnabled={true} // Allow rotating the map
@@ -286,7 +287,7 @@ const CaregiverBooking = () => {
                 coordinate={{ latitude: userLocation.coords.latitude, longitude: userLocation.coords.longitude }}
                 title="Your Location"
                 description="Current location"
-                pinColor={primaryColor}
+                pinColor={Colors.primary}
               />
             )}
             <Marker
@@ -297,7 +298,9 @@ const CaregiverBooking = () => {
             />
           </MapView>
         ) : (
-          <Text style={{ color: textColor, marginBottom: 16 }}>Map not available on this platform.</Text>
+          <Text style={{ color: currentTheme === 'light' ? Colors.primary : Colors.white, textAlign: 'center', marginTop: 20 }}>
+            Map not available. Please check your device settings or install the required maps app.
+          </Text>
         )
       }
 
@@ -308,9 +311,12 @@ const CaregiverBooking = () => {
         keyboardBehavior="extend" // Handle keyboard better
         android_keyboardInputMode="adjustResize" // Android specific
         enableContentPanningGesture={true}
+        enableHandlePanningGesture={true} // Allow dragging the bottom sheet
+        handleIndicatorStyle={{ backgroundColor: currentTheme === 'light' ? Colors.primary : Colors.white }} // Customize handle color
+        backgroundStyle={{ backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer }} // Background color of the bottom sheet
       >
         <BottomSheetScrollView
-          contentContainerStyle={[styles.container, { backgroundColor }]}
+          contentContainerStyle={[styles.container, { backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer }]}
           showsVerticalScrollIndicator={true}
           keyboardDismissMode='on-drag'
           // Key settings for better Android scrolling:
@@ -320,7 +326,7 @@ const CaregiverBooking = () => {
         >
           {/* Rider Info */}
           <Text
-            style={styles.sectionTitle}
+            style={[styles.sectionTitle, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}
             accessibilityRole="header"
             accessibilityLabel="Who is this ride for?"
           >
@@ -354,7 +360,7 @@ const CaregiverBooking = () => {
 
           {/* Disability and Mobility */}
           <Text
-            style={styles.label}
+            style={[styles.label, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}
             accessibilityRole="text"
             accessibilityLabel="Disability Type Label"
           >
@@ -370,13 +376,15 @@ const CaregiverBooking = () => {
                 accessibilityLabel={`Select ${type} disability type`}
                 accessibilityHint={`Selects ${type} as the disability type for the rider`}
               >
-                <Text style={[styles.selectOptionText, disabilityType === type && styles.selectOptionTextActive]}>{type}</Text>
+                <Text style={[styles.selectOptionText, disabilityType === type && styles.selectOptionTextActive]}>
+                  {type}
+                </Text>
               </TouchableOpacity>
             ))}
           </View>
 
           <Text
-            style={styles.label}
+            style={[styles.label, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}
             accessibilityRole="text"
             accessibilityLabel="Mobility Equipment Label"
           >
@@ -399,7 +407,7 @@ const CaregiverBooking = () => {
 
           {/* Pickup Location */}
           <Text
-            style={styles.label}
+            style={[styles.label, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}
             accessibilityRole="text"
             accessibilityLabel="Pickup Location Label"
           >
@@ -428,13 +436,13 @@ const CaregiverBooking = () => {
               accessibilityRole="button"
               aria-label="Use Current Location Button"
             >
-              <Ionicons name="locate" size={24} color={primaryColor} />
+              <Ionicons name="locate" size={24} color={Colors.secondary} />
             </TouchableOpacity>
           </View>
 
           {/* Drop-off Location */}
           <Text
-            style={styles.label}
+            style={[styles.label, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}
             accessibilityRole="text"
             accessibilityLabel="Drop-off Location Label"
           >
@@ -455,7 +463,7 @@ const CaregiverBooking = () => {
 
           {/* Ride Time Selection */}
           <Text
-            style={styles.label}
+            style={[styles.label, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}
             accessibilityRole="text"
             accessibilityLabel="Ride Time Label"
           >
@@ -471,10 +479,12 @@ const CaregiverBooking = () => {
               aria-label="Select ASAP Ride Time"
               accessibilityState={{ checked: rideTimeType === 'ASAP' }}
             >
-              <View style={[styles.radioCircle, rideTimeType === 'ASAP' && { borderColor: primaryColor }]}>
-                {rideTimeType === 'ASAP' && <View style={[styles.radioDot, { backgroundColor: primaryColor }]} />}
+              <View style={[styles.radioCircle, rideTimeType === 'ASAP' && { borderColor: Colors.secondary }]}>
+                {rideTimeType === 'ASAP' && <View style={[styles.radioDot, { backgroundColor: Colors.secondary }]} />}
               </View>
-              <Text style={styles.radioLabel}>As soon as possible</Text>
+              <Text style={[styles.radioLabel, rideTimeType === 'ASAP' && { color: currentTheme === 'light' ? Colors.primary : Colors.white }, { color: currentTheme === 'light' ? Colors.black : Colors.white }]}>
+                As soon as possible
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.radioOption}
@@ -485,10 +495,12 @@ const CaregiverBooking = () => {
               aria-label="Select Scheduled Ride Time"
               accessibilityState={{ checked: rideTimeType === 'SCHEDULE' }}
             >
-              <View style={[styles.radioCircle, rideTimeType === 'SCHEDULE' && { borderColor: primaryColor }]}>
-                {rideTimeType === 'SCHEDULE' && <View style={[styles.radioDot, { backgroundColor: primaryColor }]} />}
+              <View style={[styles.radioCircle, rideTimeType === 'SCHEDULE' && { borderColor: Colors.secondary }]}>
+                {rideTimeType === 'SCHEDULE' && <View style={[styles.radioDot, { backgroundColor: Colors.secondary }]} />}
               </View>
-              <Text style={styles.radioLabel}>Schedule for later</Text>
+              <Text style={[styles.radioLabel, rideTimeType === 'SCHEDULE' && { color: currentTheme === 'light' ? Colors.primary : Colors.white }, { color: currentTheme === 'light' ? Colors.black : Colors.white }]}>
+                Schedule for later
+              </Text>
             </TouchableOpacity>
           </View>
           {rideTimeType === 'SCHEDULE' && (
@@ -552,7 +564,7 @@ const CaregiverBooking = () => {
 
           {/* Accessibility Preferences */}
           <Text
-            style={styles.label}
+            style={[styles.label, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}
             accessibilityRole="text"
             accessibilityLabel="Accessibility Preferences Label"
           >
@@ -560,43 +572,49 @@ const CaregiverBooking = () => {
           </Text>
           <View style={styles.toggleRow}>
             <TouchableOpacity
-              style={styles.toggleOption}
+              style={[styles.toggleOption, ramp && { borderColor: currentTheme === 'light' ? Colors.secondary : Colors.white }, { backgroundColor: currentTheme === 'light' ? Colors.lightGray : Colors.darkGray }]}
               onPress={() => setRamp(v => !v)}
               accessibilityLabel="Toggle Ramp/Lift Accessibility"
-              accessibilityHint="Press to indicate if the rider needs a ramp or lift for wheelchair access"
+              accessibilityHint="Press to indicate if you need a ramp or lift for wheelchair access"
               accessibilityRole="button"
               aria-label="Toggle Ramp/Lift Accessibility"
             >
-              <MaterialCommunityIcons name="wheelchair-accessibility" size={22} color={ramp ? primaryColor : '#888'} />
-              <Text style={[styles.toggleLabel, ramp && { color: primaryColor }]}>Ramp/Lift</Text>
+              <MaterialCommunityIcons name="wheelchair-accessibility" size={22} color={ramp ? currentTheme === 'light' ? Colors.black : Colors.white : Colors.accent} />
+              <Text style={[styles.toggleLabel, ramp && { color: currentTheme === 'light' ? Colors.black : Colors.white }]}>
+                Ramp/Lift
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={styles.toggleOption}
+              style={[styles.toggleOption, assistiveDevice && { borderColor: currentTheme === 'light' ? Colors.secondary : Colors.white }, { backgroundColor: currentTheme === 'light' ? Colors.lightGray : Colors.darkGray }]}
               onPress={() => setAssistiveDevice(v => !v)}
               accessibilityLabel="Toggle Assistive Device Accessibility"
-              accessibilityHint="Press to indicate if the rider needs assistance with an assistive device"
+              accessibilityHint="Press to indicate if you need assistance with an assistive device"
               accessibilityRole="button"
               aria-label="Toggle Assistive Device Accessibility"
             >
-              <FontAwesome5 name="walking" size={20} color={assistiveDevice ? primaryColor : '#888'} />
-              <Text style={[styles.toggleLabel, assistiveDevice && { color: primaryColor }]}>Assistive Device</Text>
+              <FontAwesome5 name="walking" size={20} color={assistiveDevice ? currentTheme === 'light' ? Colors.black : Colors.white : Colors.accent} />
+              <Text style={[styles.toggleLabel, assistiveDevice && { color: currentTheme === 'light' ? Colors.black : Colors.white }]}>
+                Assistive Device
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={styles.toggleOption}
+              style={[styles.toggleOption, signLanguage && { borderColor: currentTheme === 'light' ? Colors.secondary : Colors.white }, { backgroundColor: currentTheme === 'light' ? Colors.lightGray : Colors.darkGray }]}
               onPress={() => setSignLanguage(v => !v)}
               accessibilityLabel="Toggle Sign Language Accessibility"
-              accessibilityHint="Press to indicate if the rider needs a driver who knows sign language"
+              accessibilityHint="Press to indicate if you need a driver who knows sign language"
               accessibilityRole="button"
               aria-label="Toggle Sign Language Accessibility"
             >
-              <MaterialCommunityIcons name="hand-peace" size={22} color={signLanguage ? primaryColor : '#888'} />
-              <Text style={[styles.toggleLabel, signLanguage && { color: primaryColor }]}>Sign Language</Text>
+              <MaterialCommunityIcons name="hand-peace" size={22} color={signLanguage ? currentTheme === 'light' ? Colors.black : Colors.white : Colors.accent} />
+              <Text style={[styles.toggleLabel, signLanguage && { color: currentTheme === 'light' ? Colors.black : Colors.white }]}>
+                Sign Language
+              </Text>
             </TouchableOpacity>
           </View>
 
           {/* Caregiver Info */}
           <Text
-            style={styles.sectionTitle}
+            style={[styles.sectionTitle, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}
             accessibilityRole="header"
             accessibilityLabel="Caregiver Accompanying Info"
           >
@@ -612,10 +630,12 @@ const CaregiverBooking = () => {
               aria-label="Select Yes for Accompanying"
               accessibilityState={{ checked: joining }}
             >
-              <View style={[styles.radioCircle, joining && { borderColor: primaryColor }]}>
-                {joining && <View style={[styles.radioDot, { backgroundColor: primaryColor }]} />}
+              <View style={[styles.radioCircle, joining && { borderColor: Colors.secondary }]}>
+                {joining && <View style={[styles.radioDot, { backgroundColor: Colors.secondary }]} />}
               </View>
-              <Text style={styles.radioLabel}>Yes, I'll ride with them</Text>
+              <Text style={[styles.radioLabel, joining && { color: currentTheme === 'light' ? Colors.primary : Colors.white }, { color: currentTheme === 'light' ? Colors.black : Colors.white }]}>
+                Yes, I will ride with them
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.radioOption}
@@ -626,10 +646,12 @@ const CaregiverBooking = () => {
               aria-label="Select No for Accompanying"
               accessibilityState={{ checked: !joining }}
             >
-              <View style={[styles.radioCircle, !joining && { borderColor: primaryColor }]}>
-                {!joining && <View style={[styles.radioDot, { backgroundColor: primaryColor }]} />}
+              <View style={[styles.radioCircle, !joining && { borderColor: Colors.primary }]}>
+                {!joining && <View style={[styles.radioDot, { backgroundColor: Colors.primary }]} />}
               </View>
-              <Text style={styles.radioLabel}>No, I'm not joining</Text>
+              <Text style={[styles.radioLabel, !joining && { color: currentTheme === 'light' ? Colors.primary : Colors.white }, { color: currentTheme === 'light' ? Colors.black : Colors.white }]}>
+                No, I will NOT ride with them
+              </Text>
             </TouchableOpacity>
           </View>
           <FormField
@@ -647,7 +669,7 @@ const CaregiverBooking = () => {
 
           <View style={{ width: '100%' }}>
             <Text
-              style={styles.sectionTitle}
+              style={[styles.sectionTitle, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}
               accessibilityRole="header"
               accessibilityLabel="Special Instructions Section"
             >
@@ -659,7 +681,7 @@ const CaregiverBooking = () => {
               onChangeText={setInstructions}
               multiline
               numberOfLines={5}
-              style={styles.instructionInput}
+              style={[styles.instructionInput, { backgroundColor: currentTheme === 'light' ? Colors.lightGray : Colors.darkGray, color: currentTheme === 'light' ? Colors.black : Colors.white }]}
               accessibilityLabel="Special Instructions Input"
               accessibilityHint="Enter any special instructions for the driver"
             />
@@ -667,64 +689,66 @@ const CaregiverBooking = () => {
 
           {/* Summary Preview Card */}
           <View
-            style={styles.summaryCard}
+            style={[styles.summaryCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}
             accessibilityRole="summary"
             accessibilityLabel="Trip Summary"
           >
-            <Text style={styles.summaryTitle}>Trip Summary</Text>
+            <Text style={[styles.summaryTitle, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole="header" accessibilityLabel="Trip Summary Title">
+              Trip Summary
+            </Text>
 
             <View style={styles.summaryRow}>
-              <Ionicons name="person" size={24} color={primaryColor} />
-              <Text style={styles.summaryText}>
+              <Ionicons name="person" size={24} color={Colors.secondary} />
+              <Text style={[styles.summaryText, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole="text" accessibilityLabel={`Rider Name: ${riderName}`}>
                 Rider: {riderName}
               </Text>
             </View>
 
             <View style={styles.summaryRow}>
-              <Ionicons name="call" size={24} color={primaryColor} />
-              <Text style={styles.summaryText}>
+              <Ionicons name="call" size={24} color={Colors.secondary} />
+              <Text style={[styles.summaryText, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole="text" accessibilityLabel={`Rider Phone: ${riderPhone}`}>
                 Rider Phone: {riderPhone}
               </Text>
             </View>
 
             <View style={styles.summaryRow}>
-              <MaterialCommunityIcons name="wheelchair-accessibility" size={24} color={primaryColor} />
-              <Text style={styles.summaryText}>
+              <MaterialCommunityIcons name="wheelchair-accessibility" size={24} color={Colors.secondary} />
+              <Text style={[styles.summaryText, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole="text" accessibilityLabel={`Disability Type: ${disabilityType}`}>
                 Disability: {disabilityType}
               </Text>
             </View>
 
             <View style={styles.summaryRow}>
-              <MaterialCommunityIcons name="tools" size={24} color={primaryColor} />
-              <Text style={styles.summaryText}>
+              <MaterialCommunityIcons name="tools" size={24} color={Colors.secondary} />
+              <Text style={[styles.summaryText, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole="text" accessibilityLabel={`Mobility Equipment: ${mobilityEquipment}`}>
                 Equipment: {mobilityEquipment}
               </Text>
             </View>
 
             <View style={styles.summaryRow}>
-              <Ionicons name="location" size={24} color={primaryColor} />
-              <Text style={styles.summaryText}>
+              <Ionicons name="location" size={24} color={Colors.secondary} />
+              <Text style={[styles.summaryText, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole="text" accessibilityLabel={`Pickup Location: ${pickup}`}>
                 From: {pickup}
               </Text>
             </View>
 
             <View style={styles.summaryRow}>
-              <Ionicons name="flag" size={24} color={primaryColor} />
-              <Text style={styles.summaryText}>
+              <Ionicons name="flag" size={24} color={Colors.secondary} />
+              <Text style={[styles.summaryText, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole="text" accessibilityLabel={`Drop-off Location: ${dropoff}`}>
                 To: {dropoff}
               </Text>
             </View>
 
             <View style={styles.summaryRow}>
-              <Ionicons name="time" size={24} color={primaryColor} />
-              <Text style={styles.summaryText}>
+              <Ionicons name="time" size={24} color={Colors.secondary} />
+              <Text style={[styles.summaryText, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole="text" accessibilityLabel={`Ride Time: ${rideTimeType === 'ASAP' ? 'ASAP' : `${scheduledDate} at ${scheduledTime}`}`}>
                 Time: {rideTimeType === 'ASAP' ? 'ASAP' : `${scheduledDate} at ${scheduledTime}`}
               </Text>
             </View>
 
             <View style={styles.summaryRow}>
-              <MaterialCommunityIcons name="tools" size={24} color={primaryColor} />
-              <Text style={styles.summaryText}>
+              <MaterialCommunityIcons name="tools" size={24} color={Colors.secondary} />
+              <Text style={[styles.summaryText, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole="text" accessibilityLabel={`Accessibility Needs: ${notSure ? "I'm not sure" : [ramp && 'Ramp', assistiveDevice && 'Assistive Device', signLanguage && 'Sign Language'].filter(Boolean).join(', ') || 'None'}`}>
                 Needs: {notSure ? "I'm not sure" : [
                   ramp && 'Ramp',
                   assistiveDevice && 'Assistive Device',
@@ -735,24 +759,24 @@ const CaregiverBooking = () => {
 
             {instructions && (
               <View style={styles.summaryRow}>
-                <Ionicons name="chatbox-ellipses" size={24} color={primaryColor} />
-                <Text style={styles.summaryText}>
+                <Ionicons name="chatbox-ellipses" size={24} color={Colors.secondary} />
+                <Text style={[styles.summaryText, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole="text" accessibilityLabel={`Special Instructions: ${instructions}`}>
                   Notes: <Text style={{ fontStyle: 'italic', color: '#666' }}>{instructions}</Text>
                 </Text>
               </View>
             )}
 
             <View style={styles.summaryRow}>
-              <Ionicons name="people" size={24} color={primaryColor} />
-              <Text style={styles.summaryText}>
+              <Ionicons name="people" size={24} color={Colors.secondary} />
+              <Text style={[styles.summaryText, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole="text" accessibilityLabel={`Caregiver Accompanying: ${joining ? 'Yes' : 'No'}`}>
                 {joining ? 'You will ride with them.' : 'You will NOT ride with them.'}
               </Text>
             </View>
 
             {caregiverPhone && (
               <View style={styles.summaryRow}>
-                <Ionicons name="call" size={24} color={primaryColor} />
-                <Text style={styles.summaryText}>
+                <Ionicons name="call" size={24} color={Colors.secondary} />
+                <Text style={[styles.summaryText, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole="text" accessibilityLabel={`Caregiver Phone: ${caregiverPhone}`}>
                   Your Phone: {caregiverPhone}
                 </Text>
               </View>
@@ -763,7 +787,7 @@ const CaregiverBooking = () => {
           <CustomButton
             title="Request with ACE Mobility"
             handlePress={handleAceMobilityRequest}
-            containerStyle={{ marginTop: 18, backgroundColor: primaryColor, width: '100%' }}
+            containerStyle={{ marginTop: 18, backgroundColor: Colors.primary, width: '100%' }}
             textStyle={{ color: '#fff', fontWeight: 'bold' }}
             disabled={!pickup || !dropoff}
           />
@@ -778,20 +802,40 @@ const CaregiverBooking = () => {
           />
 
           {/* Emergency Contact Option */}
-          <TouchableOpacity style={styles.sosRow} onPress={() => setSosVisible(true)}>
-            <Text style={styles.sosText}>Need help right now?</Text>
-            <Text style={styles.sosButton}>🚨 Emergency Hotline</Text>
+          <TouchableOpacity style={styles.sosRow} onPress={() => setSosVisible(true)} accessibilityRole='button' accessibilityLabel='Emergency Ride Assistance' accessibilityHint='Press to request emergency ride assistance'>
+            <Text
+              style={[styles.sosText, { color: currentTheme === 'light' ? Colors.black : Colors.white }]}
+              accessibilityRole="text"
+              accessibilityLabel="Need help right now?"
+            >
+              Need help right now?
+            </Text>
+            <Text
+              style={styles.sosButton}
+              accessibilityRole="text"
+              accessibilityLabel="Emergency Ride Hotline"
+            >
+              🚨 Emergency Ride Hotline
+            </Text>
           </TouchableOpacity>
           <Modal
             visible={sosVisible}
             transparent
             animationType="slide"
             onRequestClose={() => setSosVisible(false)}
+            accessibilityLabel="Emergency Ride Assistance Modal"
+            accessibilityHint="Modal for emergency ride assistance"
+            aria-label="Emergency Ride Assistance Modal"
           >
             <View style={styles.sosModalBg}>
-              <View style={styles.sosModalCard}>
-                <Text style={{ fontWeight: 'bold', fontSize: 18, marginBottom: 10 }}>Emergency Hotline</Text>
-                <Text style={{ marginBottom: 16 }}>Call our emergency line for urgent assistance.</Text>
+              <View style={[styles.sosModalCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}>
+                <Text style={{ fontWeight: 'bold', fontSize: 18, marginBottom: 10, color: currentTheme === 'light' ? Colors.primary : Colors.white }}>
+                  🚨
+                  Emergency Ride Assistance
+                </Text>
+                <Text style={{ marginBottom: 16, color: currentTheme === 'light' ? Colors.black : Colors.white }}>
+                  If you need immediate assistance, please call our emergency ride hotline. Our team is available 24/7 to help you with urgent ride requests.
+                </Text>
                 <CustomButton
                   title="Call Now"
                   handlePress={() => {
@@ -802,9 +846,21 @@ const CaregiverBooking = () => {
                   }}
                   containerStyle={{ backgroundColor: '#D7263D' }}
                   textStyle={{ color: '#fff', fontWeight: 'bold' }}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: true }}
+                  accessibilityLabel="Call Emergency Ride Hotline"
+                  accessibilityHint="Press to call the emergency ride hotline"
                 />
-                <Pressable onPress={() => setSosVisible(false)} style={{ marginTop: 12 }}>
-                  <Text style={{ color: primaryColor, textAlign: 'center' }}>Cancel</Text>
+                <Pressable
+                  onPress={() => setSosVisible(false)} style={{ marginTop: 12 }}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: true }}
+                  accessibilityLabel="Cancel Emergency Assistance"
+                  accessibilityHint="Press to close the emergency assistance modal"
+                >
+                  <Text style={{ color: currentTheme === 'light' ? Colors.primary : Colors.accent, fontWeight: 'bold', textAlign: 'center' }}>
+                    Cancel
+                  </Text>
                 </Pressable>
               </View>
             </View>
@@ -851,19 +907,18 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 8,
-    backgroundColor: '#eee',
     marginRight: 6,
     marginBottom: 6,
+    backgroundColor: Colors.lightGray,
   },
   selectOptionActive: {
-    backgroundColor: '#7135B1',
+    backgroundColor: Colors.secondary,
   },
   selectOptionText: {
-    color: '#46216E',
     fontWeight: '500',
   },
   selectOptionTextActive: {
-    color: '#fff',
+    color: Colors.white,
   },
   toggleRow: {
     flexDirection: 'row',
@@ -877,6 +932,7 @@ const styles = StyleSheet.create({
     gap: 16,
     marginBottom: 8,
     width: '100%',
+    flexWrap: 'wrap',
   },
   radioOption: {
     flexDirection: 'row',
@@ -888,7 +944,7 @@ const styles = StyleSheet.create({
     height: 22,
     borderRadius: 11,
     borderWidth: 2,
-    borderColor: '#888',
+    borderColor: Colors.accent,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 8,
@@ -907,13 +963,12 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 8,
     borderRadius: 8,
-    backgroundColor: 'rgba(113,53,177,0.07)',
-    marginRight: 8,
+    borderWidth: 1,
   },
   toggleLabel: {
     fontSize: 13,
     marginTop: 4,
-    color: '#888',
+    color: Colors.accent,
     textAlign: 'center',
   },
   summaryCard: {
@@ -922,12 +977,11 @@ const styles = StyleSheet.create({
     padding: 16,
     marginTop: 18,
     marginBottom: 8,
-    shadowColor: '#000',
+    shadowColor: Colors.black,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 4,
     elevation: 2,
-    backgroundColor: '#fff',
   },
   summaryTitle: {
     fontWeight: 'bold',
@@ -939,7 +993,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 8,
     gap: 8,
-    backgroundColor: 'transparent',
   },
   summaryText: {
     fontSize: 15,
@@ -950,8 +1003,6 @@ const styles = StyleSheet.create({
     width: '100%',
     padding: 12,
     borderRadius: 8,
-    backgroundColor: '#f9f9f9',
-    color: '#333',
     fontSize: 15,
     borderWidth: 1,
     borderColor: '#ccc',
@@ -963,11 +1014,10 @@ const styles = StyleSheet.create({
   },
   sosText: {
     fontSize: 15,
-    color: '#888',
   },
   sosButton: {
     fontSize: 16,
-    color: '#D7263D',
+    color: Colors.emergency,
     fontWeight: 'bold',
     marginTop: 2,
   },
@@ -982,6 +1032,5 @@ const styles = StyleSheet.create({
     padding: 24,
     width: 320,
     alignItems: 'center',
-    backgroundColor: '#fff',
   },
 })
