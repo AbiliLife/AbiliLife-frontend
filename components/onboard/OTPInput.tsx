@@ -6,6 +6,7 @@ import {
   Text
 } from 'react-native';
 import Colors from '@/constants/Colors';
+import { ThemeContext } from '@/contexts/ThemeContext';
 
 interface OTPInputProps {
   length?: number;
@@ -20,6 +21,8 @@ export default function OTPInput({
   onChange,
   error
 }: OTPInputProps) {
+  const { currentTheme } = React.useContext(ThemeContext);
+
   const inputRefs = useRef<Array<TextInput | null>>([]);
   const [focusedIndex, setFocusedIndex] = useState(0);
 
@@ -76,6 +79,7 @@ export default function OTPInput({
             style={[
               styles.input,
               focusedIndex === index && styles.inputFocused,
+              currentTheme === 'light' ? { borderColor: Colors.secondary, color: Colors.primary } : { borderColor: Colors.white, color: Colors.lightGray },
               error && styles.inputError
             ]}
             value={value[index] || ''}
@@ -111,16 +115,12 @@ const styles = StyleSheet.create({
     width: 50,
     height: 56,
     borderWidth: 1,
-    borderColor: Colors.lightGray,
     borderRadius: 12,
     textAlign: 'center',
     fontSize: 24,
     fontWeight: '600',
-    backgroundColor: Colors.white,
-    color: Colors.primary,
   },
   inputFocused: {
-    borderColor: Colors.primary,
     borderWidth: 2,
   },
   inputError: {

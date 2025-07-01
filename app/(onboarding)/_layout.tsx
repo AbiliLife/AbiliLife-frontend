@@ -1,7 +1,13 @@
+import React from 'react';
 import { Stack } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { ThemeContext } from '@/contexts/ThemeContext';
+
+import Colors from '@/constants/Colors';
 
 export default function OnboardingLayout() {
+  const { currentTheme } = React.useContext(ThemeContext);
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#F5F5F5' }}>
       <Stack>
@@ -17,6 +23,7 @@ export default function OnboardingLayout() {
           },
         }} />
       </Stack>
+      <StatusBar backgroundColor={currentTheme === 'light' ? Colors.lightContainer : Colors.black} style={currentTheme === 'light' ? 'dark' : 'light'} />
     </SafeAreaView>
   );
 }

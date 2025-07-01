@@ -8,6 +8,7 @@ import {
     TextStyle
 } from 'react-native';
 import Colors from '@/constants/Colors';
+import { ThemeContext } from '@/contexts/ThemeContext';
 
 interface ButtonProps {
     title: string;
@@ -28,11 +29,14 @@ export default function Button({
     style,
     textStyle
 }: ButtonProps) {
+
+    const { currentTheme } = React.useContext(ThemeContext);
+
     const buttonStyles = [
         styles.button,
         variant === 'primary' && styles.primaryButton,
         variant === 'secondary' && styles.secondaryButton,
-        variant === 'outline' && styles.outlineButton,
+        variant === 'outline' && (currentTheme === 'light' ? styles.outlineButton : { borderColor: Colors.white, borderWidth: 1 }),
         disabled && styles.disabledButton,
         style
     ];
@@ -41,7 +45,7 @@ export default function Button({
         styles.text,
         variant === 'primary' && styles.primaryText,
         variant === 'secondary' && styles.secondaryText,
-        variant === 'outline' && styles.outlineText,
+        variant === 'outline' && (currentTheme === 'light' ? styles.outlineText : { color: Colors.white }),
         disabled && styles.disabledText,
         textStyle
     ];

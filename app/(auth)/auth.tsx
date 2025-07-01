@@ -5,8 +5,11 @@ import * as Haptics from 'expo-haptics';
 
 import { images } from '@/constants/Images';
 import Colors from '@/constants/Colors';
+
 import Button from '@/components/onboard/Button';
 import FormField from '@/components/common/FormField';
+
+import { ThemeContext } from '@/contexts/ThemeContext';
 import { useOnboardingStore } from '@/store/onboardingStore';
 
 type AuthTab = 'login' | 'signup';
@@ -22,7 +25,8 @@ export default function AuthScreen() {
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
 
-    const { updateUser, setCurrentStep } = useOnboardingStore();
+    const { currentTheme } = React.useContext(ThemeContext);
+    const { updateUser, setCurrentStep, user } = useOnboardingStore();
 
     const handleTabChange = (tab: AuthTab) => {
         if (Platform.OS !== 'web') {
@@ -43,39 +47,43 @@ export default function AuthScreen() {
             if (!fullName.trim()) newErrors.fullName = 'Full name is required';
 
             if (!email.trim()) {
-            newErrors.email = 'Email is required';
+                newErrors.email = 'Email is required';
             } else if (!emailRegex.test(email)) {
-            newErrors.email = 'Invalid email address';
+                newErrors.email = 'Invalid email address';
             }
 
             if (!phone.trim()) {
-            newErrors.phone = 'Phone number is required';
+                newErrors.phone = 'Phone number is required';
             } else if (!phoneRegex.test(phone)) {
-            newErrors.phone = 'Invalid phone number';
+                newErrors.phone = 'Invalid phone number';
             }
 
             if (!newPassword.trim()) {
-            newErrors.newPassword = 'Password is required';
+                newErrors.newPassword = 'Password is required';
             } else if (!passwordRegex.test(newPassword)) {
-            newErrors.newPassword = 'Password must be at least 8 characters and include a letter and a number';
+                newErrors.newPassword = 'Password must be at least 8 characters and include a letter and a number';
             }
 
             if (!confirmPassword.trim()) {
-            newErrors.confirmPassword = 'Please confirm your password';
+                newErrors.confirmPassword = 'Please confirm your password';
             } else if (newPassword !== confirmPassword) {
-            newErrors.confirmPassword = 'Passwords do not match';
+                newErrors.confirmPassword = 'Passwords do not match';
             }
         }
 
         if (activeTab === 'login') {
             if (!email.trim()) {
-            newErrors.email = 'Email is required';
+                newErrors.email = 'Email is required';
             } else if (!emailRegex.test(email)) {
-            newErrors.email = 'Invalid email address';
+                newErrors.email = 'Invalid email address';
             }
 
             if (!password.trim()) {
-            newErrors.password = 'Password is required';
+                newErrors.password = 'Password is required';
+            }
+
+            if (user.email && user.email !== email) {
+                newErrors.email = 'Email does not match our records';
             }
         }
 
@@ -95,15 +103,50 @@ export default function AuthScreen() {
             // Mock API call delay
             await new Promise(resolve => setTimeout(resolve, 1000));
 
-            // Update user data
-            updateUser({
-                fullName: activeTab === 'signup' ? fullName : '',
-                email,
-                phone,
-            });
 
-            setCurrentStep(2);
-            router.push('/otp');
+            if (activeTab === 'signup') {
+                // Here you would typically call your signup API
+                // For demonstration, we will just log the data
+                console.log('Signing up with:', {
+                    fullName,
+                    email,
+                    phone,
+                    password: newPassword,
+                });
+
+                // Update user data
+                updateUser({
+                    fullName: activeTab === 'signup' ? fullName : '',
+                    email,
+                    phone,
+                });
+
+                // Reset form fields
+                setFullName('');
+                setEmail('');
+                setPhone('');
+                setNewPassword('');
+                setConfirmPassword('');
+
+                // Navigate to OTP screen
+                router.push('/otp');
+                setCurrentStep(2);
+            } else if (activeTab === 'login') {
+                // Here you would typically call your login API
+                // For demonstration, we will just log the data
+                console.log('Logging in with:', {
+                    email,
+                    password,
+                });
+
+                // Reset form fields
+                setEmail('');
+                setPassword('');
+
+                // Navigate to home screen
+                router.push('/(tabs)');
+            }
+
         } catch (error) {
             console.error('Auth error:', error);
             setErrors({ general: 'An error occurred. Please try again.' });
@@ -113,262 +156,282 @@ export default function AuthScreen() {
     };
 
     return (
-        <View style={styles.container}>
-            <KeyboardAvoidingView
-                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                style={styles.keyboardAvoidingView}
-            >
-                    <View style={styles.header}>
-                        <Text style={styles.title} accessibilityRole="header" accessibilityLabel="Auth Screen Title">
-                            {activeTab === 'login' ? "Welcome Back!" : "Create an Account"}
-                        </Text>
-                        <Text style={styles.subtitle} accessibilityRole="text" accessibilityLabel="Auth Screen Subtitle">
-                            {activeTab === 'login'
-                                ? "Enter your credentials to access your account."
-                                : "Fill in the details to create a new account."}
-                        </Text>
-                    </View>
+        <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={[styles.container, { backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer }]}
+        >
+            <View style={styles.header}>
+                <Text style={[styles.title, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole="header" accessibilityLabel={activeTab === 'login' ? "Welcome Back!" : "Create an Account"}>
+                    {activeTab === 'login' ? "Welcome Back!" : "Create an Account"}
+                </Text>
+                <Text style={[styles.subtitle, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel={activeTab === 'login' ? "Enter your credentials to access your account." : "Fill in the details to create a new account."}>
+                    {activeTab === 'login'
+                        ? "Enter your credentials to access your account."
+                        : "Fill in the details to create a new account."}
+                </Text>
+            </View>
 
-                    <View style={styles.tabContainer}>
-                        <TouchableOpacity
-                            style={[styles.tab, activeTab === 'login' && styles.activeTab]}
-                            onPress={() => handleTabChange('login')}
-                            accessibilityRole="tab"
-                            accessibilityState={{ selected: activeTab === 'login' }}
-                            accessibilityLabel="Login Tab"
-                            accessibilityHint="Switch to login tab"
-                        >
-                            <Text
-                                style={[styles.tabText, activeTab === 'login' && styles.activeTabText]}
-                            >
-                                Log In
-                            </Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={[styles.tab, activeTab === 'signup' && styles.activeTab]}
-                            onPress={() => handleTabChange('signup')}
-                            accessibilityRole="tab"
-                            accessibilityState={{ selected: activeTab === 'signup' }}
-                            accessibilityLabel="Sign Up Tab"
-                            accessibilityHint="Switch to sign up tab"
-                        >
-                            <Text
-                                style={[styles.tabText, activeTab === 'signup' && styles.activeTabText]}
-                            >
-                                Sign Up
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
-                <ScrollView
-                    contentContainerStyle={styles.scrollContent}
-                    keyboardShouldPersistTaps="handled"
+            <View style={[styles.tabContainer, { backgroundColor: currentTheme === 'light' ? Colors.lightGray : Colors.mediumGray }]}>
+                <TouchableOpacity
+                    style={[
+                        styles.tab,
+                        {
+                            backgroundColor:
+                                activeTab === 'login'
+                                    ? (currentTheme === 'light' ? Colors.white : Colors.darkGray)
+                                    : (currentTheme === 'light' ? Colors.lightGray : Colors.mediumGray),
+                        },
+                    ]}
+                    onPress={() => handleTabChange('login')}
+                    accessibilityRole="tab"
+                    accessibilityState={{ selected: activeTab === 'login' }}
+                    accessibilityLabel="Login Tab"
+                    accessibilityHint="Switch to login tab"
                 >
+                    <Text
+                        style={[
+                            styles.tabText,
+                            activeTab === 'login'
+                                ? (currentTheme === 'light' ? styles.activeTabText : { color: Colors.white })
+                                : { color: currentTheme === 'light' ? Colors.primary : Colors.lightGray },
+                        ]}
+                    >
+                        Log In
+                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={[
+                        styles.tab,
+                        {
+                            backgroundColor:
+                                activeTab === 'signup'
+                                    ? (currentTheme === 'light' ? Colors.white : Colors.darkGray)
+                                    : (currentTheme === 'light' ? Colors.lightGray : Colors.mediumGray),
+                        },
+                    ]}
+                    onPress={() => handleTabChange('signup')}
+                    accessibilityRole="tab"
+                    accessibilityState={{ selected: activeTab === 'signup' }}
+                    accessibilityLabel="Sign Up Tab"
+                    accessibilityHint="Switch to sign up tab"
+                >
+                    <Text
+                        style={[
+                            styles.tabText,
+                            activeTab === 'signup'
+                                ? (currentTheme === 'light' ? styles.activeTabText : { color: Colors.white })
+                                : { color: currentTheme === 'light' ? Colors.primary : Colors.lightGray },
+                        ]}
+                    >
+                        Sign Up
+                    </Text>
+                </TouchableOpacity>
+            </View>
+            <ScrollView
+                contentContainerStyle={styles.scrollContent}
+                keyboardShouldPersistTaps="handled"
+            >
 
-                    <View style={styles.formContainer}>
-                        {activeTab === 'signup' && (
-                            <>
-                                <Image
-                                    source={images.signup}
-                                    style={{ width: '100%', height: 200, borderRadius: 10, marginBottom: 20 }}
-                                    resizeMode='contain'
-                                    accessibilityLabel="Signup Header Image"
-                                    accessibilityHint="An image representing the signup process"
-                                    accessibilityRole="image"
+                <View style={styles.formContainer}>
+                    {activeTab === 'signup' && (
+                        <>
+                            <Image
+                                source={images.signup}
+                                style={{ width: '100%', height: 200, borderRadius: 10, marginBottom: 20 }}
+                                resizeMode='contain'
+                                accessibilityLabel="Signup Header Image"
+                                accessibilityHint="An image representing the signup process"
+                                accessibilityRole="image"
+                            />
+                            <View>
+                                <Text style={[styles.label, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole="text" accessibilityLabel="Full Name Label">
+                                    Full Name
+                                </Text>
+                                <FormField
+                                    icon={true}
+                                    iconName="person"
+                                    iconFamily="Ionicons"
+                                    title="Full Name"
+                                    type="text"
+                                    placeholder="Enter your full name"
+                                    value={fullName}
+                                    onChangeText={setFullName}
+                                    autoCapitalize="words"
+                                    accessibilityLabel="Full name input"
+                                    accessibilityHint="Enter your full name"
                                 />
-                                <View>
-                                    <Text style={styles.label} accessibilityRole="text" accessibilityLabel="Full Name Label">
-                                        Full Name
-                                    </Text>
-                                    <FormField
-                                        icon={true}
-                                        iconName="person"
-                                        iconFamily="Ionicons"
-                                        title="Full Name"
-                                        type="text"
-                                        placeholder="Enter your full name"
-                                        value={fullName}
-                                        onChangeText={setFullName}
-                                        autoCapitalize="words"
-                                        accessibilityLabel="Full name input"
-                                        accessibilityHint="Enter your full name"
-                                    />
-                                </View>
-                                {errors.fullName && (
-                                    <Text style={styles.errorText}>
-                                        {errors.fullName}
-                                    </Text>
-                                )}
+                            </View>
+                            {errors.fullName && (
+                                <Text style={styles.errorText}>
+                                    {errors.fullName}
+                                </Text>
+                            )}
 
-                                <View>
-                                    <Text style={styles.label} accessibilityRole="text" accessibilityLabel="Email Address Label">
-                                        Email Address
-                                    </Text>
-                                    <FormField
-                                        icon={true}
-                                        iconName="mail"
-                                        iconFamily="Ionicons"
-                                        title="Email"
-                                        type="email"
-                                        placeholder='Enter your email address'
-                                        value={email}
-                                        onChangeText={setEmail}
-                                        accessibilityLabel="Email input"
-                                        accessibilityHint="Enter your email address"
-                                    />
-                                </View>
-                                {errors.email && (
-                                    <Text style={styles.errorText}>
-                                        {errors.email}
-                                    </Text>
-                                )}
-
-                                <View>
-                                    <Text style={styles.label} accessibilityRole="text" accessibilityLabel="Phone Number Label">
-                                        Phone Number
-                                    </Text>
-                                    <FormField
-                                        icon={true}
-                                        iconName="call"
-                                        iconFamily="Ionicons"
-                                        title="Phone"
-                                        type="phone"
-                                        placeholder='Enter your phone number'
-                                        value={phone}
-                                        onChangeText={setPhone}
-                                        accessibilityLabel="Phone input"
-                                        accessibilityHint="Enter your phone number"
-                                    />
-                                </View>
-                                {errors.phone && (
-                                    <Text style={styles.errorText}>
-                                        {errors.phone}
-                                    </Text>
-                                )}
-
-                                <View>
-                                    <Text style={styles.label} accessibilityRole="text" accessibilityLabel="Create Password Label">
-                                        Create Password
-                                    </Text>
-                                    <FormField
-                                        icon={true}
-                                        iconName="lock-closed"
-                                        iconFamily="Ionicons"
-                                        title="Password"
-                                        type="password"
-                                        placeholder='Enter your password'
-                                        value={newPassword}
-                                        onChangeText={setNewPassword}
-                                        accessibilityLabel="Password input"
-                                        accessibilityHint="Create a password for your account"
-                                    />
-                                </View>
-
-                                <View>
-                                    <Text style={styles.label} accessibilityRole="text" accessibilityLabel="Confirm Password Label">
-                                        Confirm Password
-                                    </Text>
-                                    <FormField
-                                        icon={true}
-                                        iconName="lock-closed"
-                                        iconFamily="Ionicons"
-                                        title="Confirm Password"
-                                        type="password"
-                                        placeholder='Re-enter your password'
-                                        value={confirmPassword}
-                                        onChangeText={setConfirmPassword}
-                                        accessibilityLabel="Confirm password input"
-                                        accessibilityHint="Re-enter your password to confirm"
-                                    />
-                                </View>
-                                {errors.newPassword && (
-                                    <Text style={styles.errorText}>
-                                        {errors.newPassword}
-                                    </Text>
-                                )}
-                            </>
-                        )}
-
-                        {activeTab === 'login' && (
-                            <>
-                                <Image
-                                    source={images.login}
-                                    style={{ width: '100%', height: 200, borderRadius: 10, marginBottom: 20 }}
-                                    resizeMode='contain'
-                                    accessibilityLabel="Login Header Image"
-                                    accessibilityHint="An image representing the login process"
-                                    accessibilityRole="image"
+                            <View>
+                                <Text style={[styles.label, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole="text" accessibilityLabel="Email Address Label">
+                                    Email Address
+                                </Text>
+                                <FormField
+                                    icon={true}
+                                    iconName="mail"
+                                    iconFamily="Ionicons"
+                                    title="Email"
+                                    type="email"
+                                    placeholder='Enter your email address'
+                                    value={email}
+                                    onChangeText={setEmail}
+                                    accessibilityLabel="Email input"
+                                    accessibilityHint="Enter your email address"
                                 />
-                                <View>
-                                    <Text style={styles.label}>
-                                        Email Address
-                                    </Text>
-                                    <FormField
-                                        icon={true}
-                                        iconName="mail"
-                                        iconFamily="Ionicons"
-                                        title="Email"
-                                        type="email"
-                                        placeholder='Enter your email address'
-                                        value={email}
-                                        onChangeText={setEmail}
-                                        accessibilityLabel="Email input"
-                                        accessibilityHint="Enter your email address"
-                                    />
-                                </View>
-                                {errors.email && (
-                                    <Text style={styles.errorText}>
-                                        {errors.email}
-                                    </Text>
-                                )}
+                            </View>
+                            {errors.email && (
+                                <Text style={styles.errorText}>
+                                    {errors.email}
+                                </Text>
+                            )}
 
-                                <View>
-                                    <Text style={styles.label}>
-                                        Password
-                                    </Text>
-                                    <FormField
-                                        icon={true}
-                                        iconName="lock-closed"
-                                        iconFamily="Ionicons"
-                                        title="Password"
-                                        type="password"
-                                        placeholder='Enter your password'
-                                        value={password}
-                                        onChangeText={setPassword}
-                                        accessibilityLabel="Password input"
-                                        accessibilityHint="Enter your password'"
-                                    />
-                                </View>
-                                {errors.password && (
-                                    <Text style={styles.errorText}>
-                                        {errors.password}
-                                    </Text>
-                                )}
-                            </>
+                            <View>
+                                <Text style={[styles.label, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole="text" accessibilityLabel="Phone Number Label">
+                                    Phone Number
+                                </Text>
+                                <FormField
+                                    icon={true}
+                                    iconName="call"
+                                    iconFamily="Ionicons"
+                                    title="Phone"
+                                    type="phone"
+                                    placeholder='Enter your phone number'
+                                    value={phone}
+                                    onChangeText={setPhone}
+                                    accessibilityLabel="Phone input"
+                                    accessibilityHint="Enter your phone number"
+                                />
+                            </View>
+                            {errors.phone && (
+                                <Text style={styles.errorText}>
+                                    {errors.phone}
+                                </Text>
+                            )}
 
-                        )}
-                    </View>
+                            <View>
+                                <Text style={[styles.label, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole="text" accessibilityLabel="Create Password Label">
+                                    Create Password
+                                </Text>
+                                <FormField
+                                    icon={true}
+                                    iconName="lock-closed"
+                                    iconFamily="Ionicons"
+                                    title="Password"
+                                    type="password"
+                                    placeholder='Enter your password'
+                                    value={newPassword}
+                                    onChangeText={setNewPassword}
+                                    accessibilityLabel="Password input"
+                                    accessibilityHint="Create a password for your account"
+                                />
+                            </View>
 
-                </ScrollView>
+                            <View>
+                                <Text style={[styles.label, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole="text" accessibilityLabel="Confirm Password Label">
+                                    Confirm Password
+                                </Text>
+                                <FormField
+                                    icon={true}
+                                    iconName="lock-closed"
+                                    iconFamily="Ionicons"
+                                    title="Confirm Password"
+                                    type="password"
+                                    placeholder='Re-enter your password'
+                                    value={confirmPassword}
+                                    onChangeText={setConfirmPassword}
+                                    accessibilityLabel="Confirm password input"
+                                    accessibilityHint="Re-enter your password to confirm"
+                                />
+                            </View>
+                            {errors.newPassword && (
+                                <Text style={styles.errorText}>
+                                    {errors.newPassword}
+                                </Text>
+                            )}
+                        </>
+                    )}
 
-                <View style={styles.footer}>
-                    <Button
-                        title="Continue"
-                        onPress={handleContinue}
-                        loading={loading}
-                        style={styles.button}
-                    />
+                    {activeTab === 'login' && (
+                        <>
+                            <Image
+                                source={images.login}
+                                style={{ width: '100%', height: 200, borderRadius: 10, marginBottom: 20 }}
+                                resizeMode='contain'
+                                accessibilityLabel="Login Header Image"
+                                accessibilityHint="An image representing the login process"
+                                accessibilityRole="image"
+                            />
+                            <View>
+                                <Text style={[styles.label, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole="text" accessibilityLabel="Email Address Label">
+                                    Email Address
+                                </Text>
+                                <FormField
+                                    icon={true}
+                                    iconName="mail"
+                                    iconFamily="Ionicons"
+                                    title="Email"
+                                    type="email"
+                                    placeholder='Enter your email address'
+                                    value={email}
+                                    onChangeText={setEmail}
+                                    accessibilityLabel="Email input"
+                                    accessibilityHint="Enter your email address"
+                                />
+                            </View>
+                            {errors.email && (
+                                <Text style={styles.errorText}>
+                                    {errors.email}
+                                </Text>
+                            )}
+
+                            <View>
+                                <Text style={[styles.label, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole="text" accessibilityLabel="Password Label">
+                                    Password
+                                </Text>
+                                <FormField
+                                    icon={true}
+                                    iconName="lock-closed"
+                                    iconFamily="Ionicons"
+                                    title="Password"
+                                    type="password"
+                                    placeholder='Enter your password'
+                                    value={password}
+                                    onChangeText={setPassword}
+                                    accessibilityLabel="Password input"
+                                    accessibilityHint="Enter your password'"
+                                />
+                            </View>
+                            {errors.password && (
+                                <Text style={styles.errorText}>
+                                    {errors.password}
+                                </Text>
+                            )}
+                        </>
+
+                    )}
                 </View>
-            </KeyboardAvoidingView>
-        </View>
+
+            </ScrollView>
+
+            <View style={[styles.footer, { borderTopColor: currentTheme === 'light' ? Colors.lightGray : Colors.darkGray }]}>
+                <Button
+                    title="Continue"
+                    onPress={handleContinue}
+                    loading={loading}
+                    style={styles.button}
+                />
+            </View>
+        </KeyboardAvoidingView>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: Colors.background,
-    },
-    keyboardAvoidingView: {
         flex: 1,
     },
     scrollContent: {
@@ -409,7 +472,6 @@ const styles = StyleSheet.create({
     tabText: {
         fontSize: 16,
         fontWeight: '500',
-        color: Colors.accent,
     },
     activeTabText: {
         color: Colors.primary,
@@ -422,7 +484,6 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '500',
         marginBottom: 8,
-        color: Colors.darkGray,
     },
     errorText: {
         color: Colors.error,
@@ -431,7 +492,8 @@ const styles = StyleSheet.create({
     },
     footer: {
         padding: 24,
-        backgroundColor: Colors.background,
+        backgroundColor: Colors.transparent,
+        borderTopWidth: 1,
     },
     button: {
         width: '100%',

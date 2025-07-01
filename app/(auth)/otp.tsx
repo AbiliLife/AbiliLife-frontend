@@ -5,8 +5,11 @@ import * as Haptics from 'expo-haptics';
 
 import { images } from '@/constants/Images';
 import Colors from '@/constants/Colors';
+
 import Button from '@/components/onboard/Button';
 import OTPInput from '@/components/onboard/OTPInput';
+
+import { ThemeContext } from '@/contexts/ThemeContext';
 import { useOnboardingStore } from '@/store/onboardingStore';
 
 export default function OTPVerificationScreen() {
@@ -15,6 +18,7 @@ export default function OTPVerificationScreen() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
+    const { currentTheme } = React.useContext(ThemeContext);
     const { user, setAuthenticated, setCurrentStep } = useOnboardingStore();
 
     useEffect(() => {
@@ -68,72 +72,73 @@ export default function OTPVerificationScreen() {
     };
 
     return (
-            <KeyboardAvoidingView
-                behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-                style={styles.container}
+        <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+            style={[styles.container, { backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer }]}
+        >
+            <ScrollView
+                contentContainerStyle={styles.scrollContent}
+                keyboardShouldPersistTaps="handled"
             >
-                <ScrollView
-                    contentContainerStyle={styles.scrollContent}
-                    keyboardShouldPersistTaps="handled"
-                >
 
-                    <Image
-                        source={images.signup}
-                        style={{ width: '100%', height: 300, borderRadius: 10, marginBottom: 20 }}
-                        resizeMode='contain'
-                        accessibilityLabel="Signup Header Image"
-                        accessibilityHint="An image representing the signup process"
-                        accessibilityRole="image"
-                    />
-                    <Text style={styles.subtitle}>
-                        We've sent a 6-digit code to{' '}
-                        <Text style={styles.contactInfo}>
-                            {user.phone || user.email}
-                        </Text>
+                <Image
+                    source={images.signup}
+                    style={{ width: '100%', height: 300, borderRadius: 10, marginBottom: 20 }}
+                    resizeMode='contain'
+                    accessibilityLabel="Signup Header Image"
+                    accessibilityHint="An image representing the signup process"
+                    accessibilityRole="image"
+                />
+                <Text style={[styles.subtitle, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel={`Verify your phone number to continue. We've sent a 6-digit code to ${user.phone || user.email}`}>
+                    We've sent a 6-digit code to{' '}
+                    <Text style={styles.contactInfo}>
+                        {user.phone || user.email}
                     </Text>
+                </Text>
 
-                    <OTPInput
-                        length={6}
-                        value={otp}
-                        onChange={setOtp}
-                        error={error}
-                    />
+                <OTPInput
+                    length={6}
+                    value={otp}
+                    onChange={setOtp}
+                    error={error}
+                />
 
-                    <View style={styles.resendContainer}>
-                        <Text style={styles.resendText}>Didn't receive the code? </Text>
-                        <TouchableOpacity
-                            onPress={handleResendCode}
-                            disabled={timeLeft > 0}
-                            accessibilityRole="button"
-                            accessibilityLabel="Resend verification code"
-                            accessibilityHint={timeLeft > 0 ? `Wait ${timeLeft} seconds to resend` : "Tap to resend verification code"}
-                        >
-                            <Text style={[
-                                styles.resendButton,
-                                timeLeft > 0 && styles.resendButtonDisabled
-                            ]}>
-                                {timeLeft > 0 ? `Resend in ${timeLeft}s` : 'Resend Code'}
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
-                </ScrollView>
-                <View style={styles.footer}>
-                    <Button
-                        title="Verify"
-                        onPress={handleVerify}
-                        loading={loading}
-                        style={styles.button}
-                    />
+                <View style={styles.resendContainer}>
+                    <Text style={[styles.resendText, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel="Didn't receive the code?">
+                        Didn't receive the code?{' '}
+                    </Text>
+                    <TouchableOpacity
+                        onPress={handleResendCode}
+                        disabled={timeLeft > 0}
+                        accessibilityRole="button"
+                        accessibilityLabel="Resend verification code"
+                        accessibilityHint={timeLeft > 0 ? `Wait ${timeLeft} seconds to resend` : "Tap to resend verification code"}
+                    >
+                        <Text style={[
+                            styles.resendButton,
+                            timeLeft > 0 && styles.resendButtonDisabled,
+                        ]}>
+                            {timeLeft > 0 ? `Resend in ${timeLeft}s` : 'Resend Code'}
+                        </Text>
+                    </TouchableOpacity>
                 </View>
+            </ScrollView>
+            <View style={[styles.footer, { borderTopColor: currentTheme === 'light' ? Colors.lightGray : Colors.darkGray }]}>
+                <Button
+                    title="Verify"
+                    onPress={handleVerify}
+                    loading={loading}
+                    style={styles.button}
+                />
+            </View>
 
-            </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: Colors.background,
     },
     scrollContent: {
         flexGrow: 1,
@@ -147,7 +152,7 @@ const styles = StyleSheet.create({
     },
     contactInfo: {
         fontWeight: '600',
-        color: Colors.primary,
+        color: Colors.secondary,
     },
     resendContainer: {
         flexDirection: 'row',
@@ -156,12 +161,11 @@ const styles = StyleSheet.create({
     },
     resendText: {
         fontSize: 14,
-        color: Colors.accent,
     },
     resendButton: {
         fontSize: 14,
         fontWeight: '600',
-        color: Colors.primary,
+        color: Colors.secondary,
     },
     resendButtonDisabled: {
         color: Colors.mediumGray,
@@ -174,7 +178,8 @@ const styles = StyleSheet.create({
     },
     footer: {
         padding: 24,
-        backgroundColor: Colors.background,
+        backgroundColor: Colors.transparent,
+        borderTopWidth: 1,
     },
     button: {
         width: '100%',

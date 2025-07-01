@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     selectedChip: {
-        backgroundColor: Colors.primary,
+        backgroundColor: Colors.secondary,
     },
     unselectedChip: {
         backgroundColor: Colors.white,

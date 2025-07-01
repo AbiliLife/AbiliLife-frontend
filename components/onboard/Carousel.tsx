@@ -8,6 +8,7 @@ import {
     NativeScrollEvent
 } from 'react-native';
 import Colors from '@/constants/Colors';
+import { ThemeContext } from '@/contexts/ThemeContext';
 
 const { width } = Dimensions.get('window');
 
@@ -24,8 +25,10 @@ export default function Carousel({
     onPageChange,
     currentIndex
 }: CarouselProps) {
+    const { currentTheme } = React.useContext(ThemeContext);
+
     const [activeIndex, setActiveIndex] = useState(0);
-    const scrollViewRef = useRef<ScrollView>(null);
+    const scrollViewRef = useRef<ScrollView>(null);7
 
     const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
         const contentOffsetX = event.nativeEvent.contentOffset.x;
@@ -60,6 +63,8 @@ export default function Carousel({
                 onScroll={handleScroll}
                 scrollEventThrottle={16}
                 style={styles.scrollView}
+                accessibilityLabel="Carousel of onboarding slides"
+                accessibilityHint='Swipe left or right to navigate through the slides'
             >
                 {children.map((child, index) => (
                     <View key={index} style={styles.slide}>
@@ -75,7 +80,7 @@ export default function Carousel({
                             key={index}
                             style={[
                                 styles.paginationDot,
-                                index === activeIndex && styles.paginationDotActive
+                                index === activeIndex && (currentTheme === 'light' ? styles.paginationDotActive : { backgroundColor: Colors.white })
                             ]}
                             onTouchEnd={() => scrollToIndex(index)}
                         />
@@ -107,7 +112,7 @@ const styles = StyleSheet.create({
         width: 8,
         height: 8,
         borderRadius: 4,
-        backgroundColor: Colors.lightGray,
+        backgroundColor: Colors.accent,
         marginHorizontal: 4,
     },
     paginationDotActive: {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
     View,
     Text,
@@ -14,15 +14,20 @@ import * as Haptics from 'expo-haptics';
 import { Camera, Upload } from 'lucide-react-native';
 
 import Colors from '@/constants/Colors';
+
 import Button from '@/components/onboard/Button';
 import FormField from '@/components/common/FormField';
 import SelectableChip from '@/components/onboard/SelectableChip';
 import ToggleSwitch from '@/components/onboard/ToggleSwitch';
+
+import { ThemeContext } from '@/contexts/ThemeContext';
 import { useOnboardingStore } from '@/store/onboardingStore';
+
 import { ContactMethod, DisabilityType } from '@/types/onboard';
 
 
 export default function ProfileSetupScreen() {
+    const { currentTheme } = useContext(ThemeContext);
     const { user, updateUser, setCurrentStep } = useOnboardingStore();
 
     const [profilePicture, setProfilePicture] = useState<string | undefined>(user.profilePicture);
@@ -140,10 +145,12 @@ export default function ProfileSetupScreen() {
     };
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer }]}>
             <View style={styles.header}>
-                <Text style={styles.title}>Set Up Your Profile</Text>
-                <Text style={styles.subtitle}>
+                <Text style={[styles.title, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole='header' accessibilityLabel='Set Up Your Profile'>
+                    Set Up Your Profile
+                </Text>
+                <Text style={[styles.subtitle, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole='text' accessibilityLabel='Help us personalize your experience'>
                     Help us personalize your experience
                 </Text>
             </View>
@@ -178,8 +185,10 @@ export default function ProfileSetupScreen() {
                             accessibilityLabel="Take photo"
                             accessibilityHint='Opens camera to take a new profile picture'
                         >
-                            <Camera size={20} color={Colors.primary} />
-                            <Text style={styles.pictureActionText}>Camera</Text>
+                            <Camera size={20} color={currentTheme === 'light' ? Colors.secondary : Colors.white} />
+                            <Text style={[styles.pictureActionText, { color: currentTheme === 'light' ? Colors.secondary : Colors.white }]}>
+                                Camera
+                            </Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity
@@ -189,15 +198,17 @@ export default function ProfileSetupScreen() {
                             accessibilityLabel="Choose from gallery"
                             accessibilityHint='Opens gallery to select a profile picture'
                         >
-                            <Upload size={20} color={Colors.primary} />
-                            <Text style={styles.pictureActionText}>Gallery</Text>
+                            <Upload size={20} color={currentTheme === 'light' ? Colors.secondary : Colors.white} />
+                            <Text style={[styles.pictureActionText, { color: currentTheme === 'light' ? Colors.secondary : Colors.white }]}>
+                                Gallery
+                            </Text>
                         </TouchableOpacity>
                     </View>
                 </View>
 
                 <View style={styles.section}>
-                    <Text style={styles.sectionTitle} accessibilityRole="text" accessibilityLabel="Full Name Label">
-                        Full Name
+                    <Text style={[styles.sectionTitle, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole="text" accessibilityLabel="Full Name Label">
+                        Your Full Name
                     </Text>
                     <FormField
                         icon={true}
@@ -209,13 +220,9 @@ export default function ProfileSetupScreen() {
                         value={fullName}
                         onChangeText={setFullName}
                         autoCapitalize="words"
-                        readOnly={user.fullName !== ''}
                         accessibilityLabel="Full name input"
                         accessibilityHint="Enter your full name"
                     />
-                    <Text style={styles.sectionSubtitle} accessibilityRole="text" accessibilityLabel="Full Name Subtitle">
-                        This will help us personalize your experience
-                    </Text>
                 </View>
                 {errors.fullName && (
                     <Text style={styles.errorText}>
@@ -224,10 +231,10 @@ export default function ProfileSetupScreen() {
                 )}
 
                 <View style={styles.section}>
-                    <Text style={styles.sectionTitle} accessibilityRole='header' accessibilityLabel='Disability Type Title'>
+                    <Text style={[styles.sectionTitle, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole='header' accessibilityLabel='Disability Type Title'>
                         Disability Type
                     </Text>
-                    <Text style={styles.sectionSubtitle} accessibilityRole="text" accessibilityLabel="Disability Type Subtitle">
+                    <Text style={[styles.sectionSubtitle, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel="Disability Type Subtitle">
                         Select all that apply to you
                     </Text>
 
@@ -247,38 +254,44 @@ export default function ProfileSetupScreen() {
                     )}
                 </View>
 
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle} accessibilityRole='header' accessibilityLabel='Accessibility Needs Title'>
-                        Accessibility Needs
-                    </Text>
-                    <Text style={styles.sectionSubtitle} accessibilityRole="text" accessibilityLabel="Accessibility Needs Subtitle">
-                        Let us know if you have any specific needs
-                    </Text>
+                <Text style={[styles.sectionTitle, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole='header' accessibilityLabel='Accessibility Needs Title'>
+                    Accessibility Needs
+                </Text>
+                <Text style={[styles.sectionSubtitle, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel="Accessibility Needs Subtitle">
+                    Let us know if you have any specific needs
+                </Text>
 
-                    <ToggleSwitch
-                        label="Wheelchair Ramp"
-                        value={needsRamp}
-                        onValueChange={setNeedsRamp}
-                        description="I need a vehicle with a ramp"
-                    />
+                <View
+                    style={[styles.accessibilityNeedsCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray, borderColor: currentTheme === 'light' ? Colors.borderLight : Colors.borderDark }]}
+                    accessible={true}
+                    accessibilityLabel="Accessibility needs preferences"
+                >
+                    <View style={styles.needsContainer}>
+                        <ToggleSwitch
+                            label="Wheelchair Ramp"
+                            value={needsRamp}
+                            onValueChange={setNeedsRamp}
+                            description="I need a vehicle with a ramp"
+                        />
 
-                    <ToggleSwitch
-                        label="Assistive Device"
-                        value={needsAssistiveDevice}
-                        onValueChange={setNeedsAssistiveDevice}
-                        description="I use a walker, cane, or other device"
-                    />
+                        <ToggleSwitch
+                            label="Assistive Device"
+                            value={needsAssistiveDevice}
+                            onValueChange={setNeedsAssistiveDevice}
+                            description="I use a walker, cane, or other device"
+                        />
 
-                    <ToggleSwitch
-                        label="Sign Language Support"
-                        value={needsSignLanguage}
-                        onValueChange={setNeedsSignLanguage}
-                        description="I need sign language communication"
-                    />
+                        <ToggleSwitch
+                            label="Sign Language Support"
+                            value={needsSignLanguage}
+                            onValueChange={setNeedsSignLanguage}
+                            description="I need sign language communication"
+                        />
+                    </View>
                 </View>
 
                 <View style={styles.section}>
-                    <Text style={styles.sectionTitle} accessibilityRole='header' accessibilityLabel='Preferred Contact Method Title'>
+                    <Text style={[styles.sectionTitle, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole='header' accessibilityLabel='Preferred Contact Method Title'>
                         Preferred Contact Method
                     </Text>
 
@@ -288,7 +301,8 @@ export default function ProfileSetupScreen() {
                                 key={method}
                                 style={[
                                     styles.contactMethodButton,
-                                    preferredContact === method && styles.contactMethodButtonActive
+                                    preferredContact === method && styles.contactMethodButtonActive,
+                                    { borderColor: currentTheme === 'light' ? Colors.borderLight : Colors.borderDark }
                                 ]}
                                 onPress={() => {
                                     if (Platform.OS !== 'web') {
@@ -319,7 +333,7 @@ export default function ProfileSetupScreen() {
                 )}
             </ScrollView>
 
-            <View style={styles.footer}>
+            <View style={[styles.footer, { borderTopColor: currentTheme === 'light' ? Colors.lightGray : Colors.darkGray }]}>
                 <Button
                     title="Continue"
                     onPress={handleContinue}
@@ -423,13 +437,12 @@ const styles = StyleSheet.create({
         paddingVertical: 12,
         paddingHorizontal: 8,
         borderWidth: 1,
-        borderColor: Colors.lightGray,
         alignItems: 'center',
         justifyContent: 'center',
     },
     contactMethodButtonActive: {
-        backgroundColor: Colors.primary,
-        borderColor: Colors.primary,
+        backgroundColor: Colors.secondary,
+        borderColor: Colors.secondary,
     },
     contactMethodText: {
         fontSize: 14,
@@ -438,6 +451,18 @@ const styles = StyleSheet.create({
     },
     contactMethodTextActive: {
         color: Colors.white,
+    },
+    accessibilityNeedsCard: {
+        borderRadius: 12,
+        marginBottom: 12,
+        padding: 4,
+        borderWidth: 1,
+        overflow: 'hidden',
+    },
+    needsContainer: {
+        paddingTop: 8,
+        paddingHorizontal: 12,
+        paddingBottom: 12,
     },
     label: {
         fontSize: 16,
@@ -452,7 +477,8 @@ const styles = StyleSheet.create({
     },
     footer: {
         padding: 24,
-        backgroundColor: Colors.background,
+        backgroundColor: Colors.transparent,
+        borderTopWidth: 1,
     },
     button: {
         width: '100%',
