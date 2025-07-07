@@ -2,8 +2,9 @@ import React from 'react'
 import { ActivityIndicator, ScrollView, StyleSheet, TouchableOpacity, View, Text } from 'react-native'
 import { router } from 'expo-router';
 import { FontAwesome5, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { ChevronLeft } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
+import Colors from '@/constants/Colors';
 
 // Context
 import { useAccessibility } from '@/contexts/AccessibilityContext';
@@ -13,6 +14,7 @@ import SearchBar from '@/components/common/SearchBar';
 import { DoctorCard } from '@/components/doctors/DoctorCard';
 import AccessibilityDrawer from '@/components/accessibility/AccessibilityDrawer';
 import AccessibilityOption from '@/components/accessibility/AccessibilityOption';
+import ModuleHeader from '@/components/common/ModuleHeader';
 
 // Types
 import { Doctor } from '@/types/doctor';
@@ -120,22 +122,13 @@ const { accessibilityDrawerVisible, toggleAccessibilityDrawer } = useAccessibili
     return (
         <SafeAreaView style={{ flex: 1 }} edges={['top', 'left', 'right']}>
             {/* Header */}
-            <View style={styles.headerContainer}>
-                <TouchableOpacity style={styles.headerButton} onPress={() => router.back()}>
-                    <ChevronLeft size={32} color="white" />
-                </TouchableOpacity>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: 'transparent' }}>
-                    <Ionicons name="heart-outline" size={40} color="white" />
-                    <View style={{ backgroundColor: 'transparent' }}>
-                        <Text style={[styles.headerTitle, { color: 'white' }]}>
-                            AbiliLife Care
-                        </Text>
-                        <Text style={[styles.headerSubtitle, { color: 'white' }]}>
-                            Find and access healthcare services easily
-                        </Text>
-                    </View>
-                </View>
-            </View>
+            <ModuleHeader
+                title="AbiliLife Care"
+                subtitle="Find and access healthcare services easily"
+                onBackPress={() => router.back()}
+                color={Colors.headerRed}
+                iconName='heart-outline'
+            />
 
             <ScrollView contentContainerStyle={styles.container}>
                 {/* Search Bar */}
@@ -239,37 +232,6 @@ export default HealthcareModule
 const styles = StyleSheet.create({
     container: {
         padding: 16,
-    },
-    headerContainer: {
-        height: 150,
-        flexDirection: 'column',
-        justifyContent: 'center',
-        gap: 8,
-        paddingVertical: 50,
-        paddingHorizontal: 16,
-        width: '100%',
-        borderBottomWidth: 1,
-        borderBottomEndRadius: 20,
-        borderBottomStartRadius: 20,
-        borderBottomColor: '#F44336', // Red color
-        marginBottom: 16,
-        backgroundColor: '#F44336', // Red color
-    },
-    headerButton: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    headerTitle: {
-        fontSize: 26,
-        fontWeight: 'bold',
-        color: 'white',
-    },
-    headerSubtitle: {
-        fontSize: 14,
-        color: 'white',
     },
     sectionHeader: {
         flexDirection: 'row',
