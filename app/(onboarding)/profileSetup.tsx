@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
+import uuid from 'react-native-uuid';
 
 import Colors from '@/constants/Colors';
 import { ThemeContext } from '@/contexts/ThemeContext';
@@ -25,11 +26,8 @@ import {
     AccessibilityPreferences,
     RelationshipType
 } from '@/types/onboard';
+import CareRelationshipForm from '@/components/onboard/CareRelationshipForm';
 
-// Simple ID generator
-const generateId = () => {
-    return Date.now().toString(36) + Math.random().toString(36).substr(2);
-};
 
 const ONBOARDING_STEPS = [
     { id: 1, title: 'Basic Info', description: 'Tell us about yourself' },
@@ -479,61 +477,20 @@ export default function ProfileSetupScreen() {
     );
 
     const renderCareNetworkStep = () => (
-        <View style={styles.stepContainer}>
-            <Text style={[styles.stepTitle, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole="header" accessibilityLabel="Care Network">
-                Care Network
-            </Text>
-            <Text style={[styles.stepSubtitle, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel="Add people who can help you book services or be contacted about your rides">
-                Add people who can help you book services or be contacted about your rides
-            </Text>
-
-            {/* Simplified Care Network Form */}
-            <View style={styles.careNetworkContainer}>
-                {careRelationships?.map((relationship) => (
-                    <View key={relationship.id} style={[styles.contactCard, {
-                        backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray
-                    }]}>
-                        <View style={styles.contactHeader}>
-                            <View style={styles.contactInfo}>
-                                <Text style={[styles.contactName, { color: currentTheme === 'light' ? Colors.black : Colors.white }]}>
-                                    {relationship.name}
-                                </Text>
-                                <Text style={[styles.contactDetails, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]}>
-                                    {relationship.relationship} • {relationship.phone}
-                                </Text>
-                                <Text style={[styles.contactDetails, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]}>
-                                    Can book for me: {relationship.canBookForMe ? 'Yes' : 'No'}
-                                </Text>
-                            </View>
-                            <TouchableOpacity
-                                onPress={() => setCareRelationships(prev => (prev || []).filter(r => r.id !== relationship.id))}
-                                style={styles.removeButton}
-                            >
-                                <Ionicons name="trash-outline" size={20} color={Colors.error} />
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                ))}
-
-                <CustomButton
-                    title="+ Add Care Network Member"
-                    handlePress={() => {
-                        // Simple add form - this will be expanded later
-                        const newRelationship: CareRelationship = {
-                            id: generateId(),
-                            name: 'New Contact',
-                            relationship: 'caregiver',
-                            phone: '',
-                            email: '',
-                            canBookForMe: true,
-                            isPrimary: (careRelationships?.length || 0) === 0,
-                        };
-                        setCareRelationships(prev => [...(prev || []), newRelationship]);
-                    }}
-                    containerStyle={styles.addContactButton}
-                />
-            </View>
-        </View>
+        <CareRelationshipForm
+            relationships={careRelationships || []}
+            onAddRelationship={(relationship) => {
+                Haptics.selectionAsync();
+                setCareRelationships(prev => [...(prev || []), { ...relationship, id: uuid.v4(), isPrimary: false }]);
+            }}
+            onRemoveRelationship={(id) => setCareRelationships(prev => (prev || []).filter(r => r.id !== id))}
+            onUpdateRelationship={(id, updates) =>{
+                Haptics.selectionAsync();
+                setCareRelationships(prev =>
+                    (prev || []).map(r => r.id === id ? { ...r, ...updates  } : r)
+                );
+            }}
+        />
     );
 
     const renderEmergencyContactsStep = () => (
@@ -813,25 +770,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
     },
-    chip: {
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-        borderRadius: 20,
-        margin: 4,
-        borderWidth: 1,
-        borderColor: Colors.lightGray,
-    },
-    chipActive: {
-        backgroundColor: Colors.primary,
-        borderColor: Colors.primary,
-    },
-    chipText: {
-        fontSize: 14,
-        fontWeight: '500',
-    },
-    chipTextActive: {
-        color: Colors.white,
-    },
     contactMethodContainer: {
         flexDirection: 'row',
         marginTop: 8,
@@ -855,40 +793,6 @@ const styles = StyleSheet.create({
     },
     contactMethodTextActive: {
         color: Colors.white,
-    },
-    careNetworkContainer: {
-        marginBottom: 24,
-    },
-    contactCard: {
-        borderRadius: 12,
-        padding: 16,
-        marginBottom: 12,
-        borderWidth: 1,
-        borderColor: Colors.lightGray,
-    },
-    contactHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'flex-start',
-    },
-    contactInfo: {
-        flex: 1,
-    },
-    contactName: {
-        fontSize: 16,
-        fontWeight: '600',
-        marginBottom: 4,
-    },
-    contactDetails: {
-        fontSize: 14,
-        marginBottom: 2,
-    },
-    removeButton: {
-        padding: 4,
-    },
-    addContactButton: {
-        backgroundColor: Colors.secondary,
-        marginTop: 12,
     },
     reviewSection: {
         borderRadius: 12,
