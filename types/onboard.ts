@@ -1,6 +1,6 @@
 export type DisabilityType = 'Physical' | 'Visual' | 'Hearing' | 'Cognitive' | 'Other';
 export type ContactMethod = 'WhatsApp' | 'SMS' | 'Email';
-export type UserRole = 'self' | 'caregiver' | 'family_member' | 'guardian';
+export type UserRole = 'PWD' | 'caregiver' | 'family_member' | 'guardian';
 export type RelationshipType = 'parent' | 'child' | 'sibling' | 'spouse' | 'caregiver' | 'friend' | 'guardian' | 'other';
 
 // Enhanced types for better onboarding

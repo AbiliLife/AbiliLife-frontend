@@ -49,7 +49,7 @@ export default function ProfileSetupScreen() {
     // Basic Info (Step 1) - Add safety checks for undefined values
     const [profilePicture, setProfilePicture] = useState<string | undefined>(user?.profilePicture);
     const [fullName, setFullName] = useState(user?.fullName || '');
-    const [role, setRole] = useState<UserRole>(user?.role || 'self');
+    const [role, setRole] = useState<UserRole>(user?.role || 'PWD');
     const [selectedDisabilities, setSelectedDisabilities] = useState<DisabilityType[]>(user?.disabilityTypes || []);
     const [preferredContact, setPreferredContact] = useState<ContactMethod>(user?.preferredContactMethod || 'WhatsApp');
     const [preferredLanguage, setPreferredLanguage] = useState(user?.preferredLanguage || 'English');
@@ -99,7 +99,7 @@ export default function ProfileSetupScreen() {
 
     const disabilityTypes: DisabilityType[] = ['Physical', 'Visual', 'Hearing', 'Cognitive', 'Other'];
     const contactMethods: ContactMethod[] = ['WhatsApp', 'SMS', 'Email'];
-    const userRoles: UserRole[] = ['self', 'caregiver', 'family_member', 'guardian'];
+    const userRoles: UserRole[] = ['PWD', 'caregiver', 'family_member', 'guardian'];
     const languages = ['English', 'Swahili'];
     const relationshipTypes: RelationshipType[] = ['parent', 'child', 'sibling', 'spouse', 'caregiver', 'friend', 'guardian', 'other'];
 
@@ -131,7 +131,7 @@ export default function ProfileSetupScreen() {
         if (fullName?.trim()) score += 10;
         if (profilePicture) score += 5;
         if (selectedDisabilities?.length > 0) score += 10;
-        if (role !== 'self') score += 5;
+        if (role !== 'PWD') score += 5;
 
         // Care network (20 points)
         if (careRelationships?.length > 0) score += 20;
@@ -382,7 +382,7 @@ export default function ProfileSetupScreen() {
                     {userRoles.map((userRole) => (
                         <SelectableChip
                             key={userRole}
-                            label={userRole === 'self' ? 'Person with disability' :
+                            label={userRole === 'PWD' ? 'Person with disability' :
                                 userRole === 'caregiver' ? 'Caregiver' :
                                     userRole === 'family_member' ? 'Family member' : 'Guardian'}
                             selected={role === userRole}
@@ -568,7 +568,7 @@ export default function ProfileSetupScreen() {
                     </Text>
                     {careRelationships?.map((relationship) => (
                         <Text key={relationship.id} style={[styles.reviewItem, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]}>
-                            {relationship.name} ({relationship.relationship})
+                            {relationship.name} ({relationship.relationship}) {relationship.isPrimary && '- Primary'}
                         </Text>
                     ))}
                 </View>
@@ -652,7 +652,7 @@ export default function ProfileSetupScreen() {
                     )}
 
                     <CustomButton
-                        title={currentOnboardingStep === ONBOARDING_STEPS.length ? "Complete Setup" : "Next"}
+                        title={currentOnboardingStep === ONBOARDING_STEPS.length ? "DONE" : "Next"}
                         handlePress={handleNext}
                         containerStyle={[styles.footerButton, styles.nextButton]}
                         loading={loading}
@@ -706,9 +706,8 @@ const styles = StyleSheet.create({
         marginBottom: 8,
     },
     stepSubtitle: {
-        fontSize: 16,
-        marginBottom: 24,
-        lineHeight: 22,
+        fontSize: 14,
+        marginBottom: 16,
     },
     profilePictureContainer: {
         alignItems: 'center',
