@@ -13,9 +13,10 @@ import { useOnboardingStore } from '@/store/onboardingStore';
 import CustomButton from '@/components/common/CustomButton';
 import FormField from '@/components/common/FormField';
 import StepIndicator from '@/components/onboard/StepIndicator';
-import EmergencyContactForm from '@/components/onboard/EmergencyContactForm';
 import AccessibilityPreferencesForm from '@/components/onboard/AccessibilityPreferencesForm';
 import SelectableChip from '@/components/onboard/SelectableChip';
+import CareRelationshipForm from '@/components/onboard/CareRelationshipForm';
+import EmergencyContactForm from '@/components/onboard/EmergencyContactForm';
 
 import {
     ContactMethod,
@@ -26,7 +27,6 @@ import {
     AccessibilityPreferences,
     RelationshipType
 } from '@/types/onboard';
-import CareRelationshipForm from '@/components/onboard/CareRelationshipForm';
 
 
 const ONBOARDING_STEPS = [
@@ -472,29 +472,32 @@ export default function ProfileSetupScreen() {
                     ))}
                 </View>
             </View>
-                
+
         </View>
     );
 
     const renderCareNetworkStep = () => (
-        <CareRelationshipForm
-            relationships={careRelationships || []}
-            onAddRelationship={(relationship) => {
-                Haptics.selectionAsync();
-                setCareRelationships(prev => [...(prev || []), { ...relationship, id: uuid.v4(), isPrimary: false }]);
-            }}
-            onRemoveRelationship={(id) => setCareRelationships(prev => (prev || []).filter(r => r.id !== id))}
-            onUpdateRelationship={(id, updates) =>{
-                Haptics.selectionAsync();
-                setCareRelationships(prev =>
-                    (prev || []).map(r => r.id === id ? { ...r, ...updates  } : r)
-                );
-            }}
-        />
+        <View>
+            <CareRelationshipForm
+                relationships={careRelationships || []}
+                onAddRelationship={(relationship) => {
+                    Haptics.selectionAsync();
+                    setCareRelationships(prev => [...(prev || []), { ...relationship, id: uuid.v4(), isPrimary: false }]);
+                }}
+                onRemoveRelationship={(id) => setCareRelationships(prev => (prev || []).filter(r => r.id !== id))}
+                onUpdateRelationship={(id, updates) => {
+                    Haptics.selectionAsync();
+                    setCareRelationships(prev =>
+                        (prev || []).map(r => r.id === id ? { ...r, ...updates } : r)
+                    );
+                }}
+            />
+            {errors.careRelationships && <Text style={styles.errorText}>{errors.careRelationships}</Text>}
+        </View>
     );
 
     const renderEmergencyContactsStep = () => (
-        <View style={styles.stepContainer}>
+        <View>
             <EmergencyContactForm
                 contacts={emergencyContacts || []}
                 onAddContact={(contact) => setEmergencyContacts(prev => [...(prev || []), contact])}
@@ -502,7 +505,6 @@ export default function ProfileSetupScreen() {
                 onUpdateContact={(id, updates) => setEmergencyContacts(prev =>
                     (prev || []).map(c => c.id === id ? { ...c, ...updates } : c)
                 )}
-                currentTheme={currentTheme}
             />
             {errors.emergencyContacts && <Text style={styles.errorText}>{errors.emergencyContacts}</Text>}
         </View>

@@ -1,23 +1,23 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import React, { useContext, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, Switch, Modal, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import uuid from 'react-native-uuid';
 
-import Colors from '@/constants/Colors';
-import FormField from '@/components/common/FormField';
-import CustomButton from '@/components/common/CustomButton';
 import { EmergencyContact, RelationshipType } from '@/types/onboard';
 
-// Simple UUID generator for React Native
-const generateId = () => {
-  return Date.now().toString(36) + Math.random().toString(36).substr(2);
-};
+import Colors from '@/constants/Colors';
+
+import { ThemeContext } from '@/contexts/ThemeContext';
+
+import FormField from '@/components/common/FormField';
+import CustomButton from '@/components/common/CustomButton';
+import SelectableChip from './SelectableChip';
 
 interface Props {
   contacts: EmergencyContact[];
   onAddContact: (contact: EmergencyContact) => void;
   onRemoveContact: (id: string) => void;
   onUpdateContact: (id: string, contact: Partial<EmergencyContact>) => void;
-  currentTheme: 'light' | 'dark';
 }
 
 const relationshipTypes: RelationshipType[] = [
@@ -29,8 +29,9 @@ const EmergencyContactForm: React.FC<Props> = ({
   onAddContact,
   onRemoveContact,
   onUpdateContact,
-  currentTheme
 }) => {
+  const { currentTheme } = useContext(ThemeContext);
+
   const [showAddForm, setShowAddForm] = useState(false);
   const [newContact, setNewContact] = useState({
     name: '',
@@ -40,13 +41,16 @@ const EmergencyContactForm: React.FC<Props> = ({
   });
 
   const handleAddContact = () => {
+    // Validate input
+    // Ensure at least name and phone are provided
     if (!newContact.name.trim() || !newContact.phone.trim()) {
       Alert.alert('Error', 'Please fill in at least name and phone number');
       return;
     }
 
+    // Prepare new contact object
     const contact: EmergencyContact = {
-      id: generateId(),
+      id: uuid.v4().toString(),
       name: newContact.name.trim(),
       relationship: newContact.relationship,
       phone: newContact.phone.trim(),
@@ -59,145 +63,181 @@ const EmergencyContactForm: React.FC<Props> = ({
       },
     };
 
+    // Add the new contact
     onAddContact(contact);
+
+    // Reset form
     setNewContact({ name: '', relationship: 'caregiver', phone: '', email: '' });
     setShowAddForm(false);
   };
 
   const togglePrimary = (id: string) => {
-    // Set all to non-primary first
-    contacts.forEach(contact => {
-      if (contact.isPrimary) {
-        onUpdateContact(contact.id, { isPrimary: false });
-      }
-    });
-    // Set selected as primary
-    onUpdateContact(id, { isPrimary: true });
+    const selectedContact = contacts.find(contact => contact.id === id);
+    if (!selectedContact) return;
+
+    if (selectedContact.isPrimary) {
+      // If already primary, unset it (allow no primary)
+      onUpdateContact(id, { isPrimary: false });
+    } else {
+      // Set all to non-primary first
+      contacts.forEach(contact => {
+        if (contact.isPrimary) {
+          onUpdateContact(contact.id, { isPrimary: false });
+        }
+      });
+      // Set selected as primary
+      onUpdateContact(id, { isPrimary: true });
+    }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={[styles.sectionTitle, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}>
+      <Text style={[styles.sectionTitle, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole='header' accessibilityLabel='Emergency Contacts'>
         Emergency Contacts
       </Text>
-      <Text style={[styles.sectionSubtitle, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]}>
-        Add people who should be contacted in case of emergencies
+      <Text style={[styles.sectionSubtitle, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole='text' accessibilityLabel='Add people who should be contacted in case of emergencies'>
+        Add people who should be contacted in case of emergencies {`\n`}
+        <Text style={{ color: Colors.error }}>
+          It is important to have at least one primary contact as your emergency contact.
+        </Text>
       </Text>
 
       {/* Existing Contacts */}
       {contacts.map((contact) => (
-        <View key={contact.id} style={[styles.contactCard, { 
+        <View key={contact.id} style={[styles.contactCard, {
           backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray,
           borderColor: contact.isPrimary ? Colors.primary : Colors.lightGray
         }]}>
           <View style={styles.contactHeader}>
             <View style={styles.contactInfo}>
-              <Text style={[styles.contactName, { color: currentTheme === 'light' ? Colors.black : Colors.white }]}>
+              <Text style={[styles.contactName, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole='text' accessibilityLabel={`Contact Name: ${contact.name}`}>
                 {contact.name}
               </Text>
-              <Text style={[styles.contactDetails, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]}>
+
+              <Text style={[styles.contactDetails, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole='text' accessibilityLabel={`Relationship: ${contact.relationship}, Phone: ${contact.phone}`}>
                 {contact.relationship} • {contact.phone}
               </Text>
+
               {contact.email && (
-                <Text style={[styles.contactDetails, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]}>
+                <Text style={[styles.contactDetails, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole='text' accessibilityLabel={`Email: ${contact.email}`}>
                   {contact.email}
                 </Text>
               )}
             </View>
-            <View style={styles.contactActions}>
-              <TouchableOpacity
-                onPress={() => togglePrimary(contact.id)}
-                style={[styles.primaryButton, contact.isPrimary && styles.primaryButtonActive]}
-              >
-                <Text style={[styles.primaryButtonText, contact.isPrimary && styles.primaryButtonTextActive]}>
-                  {contact.isPrimary ? 'Primary' : 'Set Primary'}
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => onRemoveContact(contact.id)}
-                style={styles.removeButton}
-              >
-                <Ionicons name="trash-outline" size={20} color={Colors.error} />
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity
+              onPress={() => onRemoveContact(contact.id)}
+              style={styles.removeButton}
+              accessibilityRole="button"
+              accessibilityLabel={`Remove contact ${contact.name} from emergency contacts`}
+              accessibilityHint='This will remove the contact from your emergency contacts list'
+            >
+              <Ionicons name="trash-outline" size={20} color={Colors.error} />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.contactActions}>
+            <TouchableOpacity
+              onPress={() => togglePrimary(contact.id)}
+              style={[styles.primaryButton, contact.isPrimary && styles.primaryButtonActive]}
+              accessibilityRole="button"
+              accessibilityLabel={contact.isPrimary ? `Unset ${contact.name} as primary contact` : `Set ${contact.name} as primary contact`}
+              accessibilityHint={contact.isPrimary ? 'This will remove the primary status from this contact' : 'This will set this contact as your primary emergency contact'}
+            >
+              <Text style={[styles.primaryButtonText, contact.isPrimary && styles.primaryButtonTextActive]} accessibilityRole='text' accessibilityLabel={contact.isPrimary ? 'Primary contact' : 'Set as primary contact'}>
+                {contact.isPrimary ? 'Primary' : 'Set Primary'}
+              </Text>
+            </TouchableOpacity>
+
           </View>
         </View>
       ))}
 
       {/* Add Contact Form */}
-      {showAddForm ? (
-        <View style={[styles.addForm, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}>
-          <FormField
-            type='text'
-            title="Name"
-            placeholder="Enter contact name"
-            value={newContact.name}
-            onChangeText={(text) => setNewContact(prev => ({ ...prev, name: text }))}
-          />
-          
-          <FormField
-            type='phone'
-            title="Phone"
-            placeholder="Enter phone number"
-            value={newContact.phone}
-            onChangeText={(text) => setNewContact(prev => ({ ...prev, phone: text }))}
-          />
-          
-          <FormField
-            type='email'
-            title="Email (Optional)"
-            placeholder="Enter email address"
-            value={newContact.email}
-            onChangeText={(text) => setNewContact(prev => ({ ...prev, email: text }))}
-          />
+      <CustomButton
+        title="+ Add Emergency Contact"
+        handlePress={() => setShowAddForm(true)}
+        containerStyle={styles.addContactButton}
+      />
 
-          {/* Relationship Selector */}
-          <Text style={[styles.label, { color: currentTheme === 'light' ? Colors.black : Colors.white }]}>
-            Relationship
-          </Text>
-          <View style={styles.relationshipGrid}>
-            {relationshipTypes.map((type) => (
-              <TouchableOpacity
-                key={type}
-                style={[
-                  styles.relationshipChip,
-                  newContact.relationship === type && styles.relationshipChipActive,
-                  { backgroundColor: currentTheme === 'light' ? Colors.lightGray : Colors.mediumGray }
-                ]}
-                onPress={() => setNewContact(prev => ({ ...prev, relationship: type }))}
-              >
-                <Text style={[
-                  styles.relationshipChipText,
-                  newContact.relationship === type && styles.relationshipChipTextActive,
-                  { color: currentTheme === 'light' ? Colors.black : Colors.white }
-                ]}>
-                  {type.charAt(0).toUpperCase() + type.slice(1)}
-                </Text>
-              </TouchableOpacity>
-            ))}
+      {/* Add Contact Modal */}
+      <Modal
+        visible={showAddForm}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setShowAddForm(false)}
+      >
+        <View style={[styles.modalContainer, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}>
+          <View style={styles.modalHeader}>
+            <Text style={[styles.modalTitle, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole="header" accessibilityLabel="Add Emergency Contact">
+              Add Emergency Contact
+            </Text>
+            <TouchableOpacity
+              onPress={() => setShowAddForm(false)}
+              style={styles.closeButton}
+              accessibilityRole="button"
+              accessibilityLabel="Close add contact form"
+            >
+              <Ionicons name="close" size={24} color={currentTheme === 'light' ? Colors.black : Colors.white} />
+            </TouchableOpacity>
           </View>
 
-          <View style={styles.formActions}>
-            <CustomButton
-              title="Cancel"
-              handlePress={() => setShowAddForm(false)}
-              containerStyle={[styles.actionButton, styles.cancelButton]}
-              textStyle={styles.cancelButtonText}
+          <View style={styles.modalContent}>
+            <FormField
+              type='text'
+              title="Name"
+              placeholder="Enter contact name"
+              value={newContact.name}
+              onChangeText={(text) => setNewContact(prev => ({ ...prev, name: text }))}
             />
-            <CustomButton
-              title="Add Contact"
-              handlePress={handleAddContact}
-              containerStyle={[styles.actionButton, styles.addButton]}
+
+            <FormField
+              type='phone'
+              title="Phone"
+              placeholder="Enter phone number"
+              value={newContact.phone}
+              onChangeText={(text) => setNewContact(prev => ({ ...prev, phone: text }))}
             />
+
+            <FormField
+              type='email'
+              title="Email (Optional)"
+              placeholder="Enter email address"
+              value={newContact.email}
+              onChangeText={(text) => setNewContact(prev => ({ ...prev, email: text }))}
+            />
+
+            {/* Relationship Selector */}
+            <Text style={[styles.label, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole="text" accessibilityLabel="Relationship">
+              Relationship
+            </Text>
+            <View style={styles.relationshipGrid}>
+              {relationshipTypes.map((type) => (
+                <SelectableChip
+                  key={type}
+                  label={type.charAt(0).toUpperCase() + type.slice(1)}
+                  selected={newContact.relationship === type}
+                  onPress={() => setNewContact(prev => ({ ...prev, relationship: type }))}
+                />
+              ))}
+            </View>
+
+            <View style={{ flex: 1 }} />
+
+            <View style={styles.formActions}>
+              <CustomButton
+                title="Cancel"
+                handlePress={() => setShowAddForm(false)}
+                containerStyle={[styles.actionButton, styles.cancelButton]}
+                textStyle={styles.cancelButtonText}
+              />
+              <CustomButton
+                title="Add Contact"
+                handlePress={handleAddContact}
+                containerStyle={[styles.actionButton, styles.addButton]}
+              />
+            </View>
           </View>
         </View>
-      ) : (
-        <CustomButton
-          title="+ Add Emergency Contact"
-          handlePress={() => setShowAddForm(true)}
-          containerStyle={styles.addContactButton}
-        />
-      )}
+      </Modal>
     </View>
   );
 };
@@ -207,8 +247,8 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: 24,
+    fontWeight: 'bold',
     marginBottom: 8,
   },
   sectionSubtitle: {
@@ -225,6 +265,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
+    marginBottom: 12,
   },
   contactInfo: {
     flex: 1,
@@ -239,7 +280,10 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   contactActions: {
-    alignItems: 'flex-end',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexWrap: 'wrap',
   },
   primaryButton: {
     paddingHorizontal: 12,
@@ -261,14 +305,9 @@ const styles = StyleSheet.create({
   removeButton: {
     padding: 4,
   },
-  addForm: {
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-  },
   label: {
-    fontSize: 16,
-    fontWeight: '500',
+    fontSize: 18,
+    fontWeight: 'bold',
     marginBottom: 8,
   },
   relationshipGrid: {
@@ -276,24 +315,10 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     marginBottom: 16,
   },
-  relationshipChip: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 20,
-    margin: 4,
-  },
-  relationshipChipActive: {
-    backgroundColor: Colors.primary,
-  },
-  relationshipChipText: {
-    fontSize: 14,
-  },
-  relationshipChipTextActive: {
-    color: Colors.white,
-  },
   formActions: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginBottom: 24,
   },
   actionButton: {
     flex: 1,
@@ -306,10 +331,34 @@ const styles = StyleSheet.create({
     color: Colors.accent,
   },
   addButton: {
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.secondary,
   },
   addContactButton: {
     backgroundColor: Colors.secondary,
+  },
+  modalContainer: {
+    flex: 1,
+    paddingTop: 30,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.lightGray,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  closeButton: {
+    padding: 8,
+  },
+  modalContent: {
+    flex: 1,
+    padding: 20,
   },
 });
 
