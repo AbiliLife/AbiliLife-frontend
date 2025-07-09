@@ -511,13 +511,10 @@ export default function ProfileSetupScreen() {
     );
 
     const renderAccessibilityStep = () => (
-        <View style={styles.stepContainer}>
-            <AccessibilityPreferencesForm
-                preferences={accessibilityPreferences}
-                onUpdatePreferences={setAccessibilityPreferences}
-                currentTheme={currentTheme}
-            />
-        </View>
+        <AccessibilityPreferencesForm
+            preferences={accessibilityPreferences}
+            onUpdatePreferences={setAccessibilityPreferences}
+        />
     );
 
     const renderReviewStep = () => (

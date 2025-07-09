@@ -1,23 +1,28 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Switch } from 'react-native';
+import React, { useContext } from 'react';
+import { View, Text, StyleSheet, Switch } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 
-import Colors from '@/constants/Colors';
-import FormField from '@/components/common/FormField';
 import { AccessibilityPreferences } from '@/types/onboard';
+
+import Colors from '@/constants/Colors';
+
+import { ThemeContext } from '@/contexts/ThemeContext';
+
+import FormField from '@/components/common/FormField';
 
 interface Props {
   preferences: AccessibilityPreferences;
   onUpdatePreferences: (preferences: AccessibilityPreferences) => void;
-  currentTheme: 'light' | 'dark';
 }
 
 const AccessibilityPreferencesForm: React.FC<Props> = ({
   preferences,
   onUpdatePreferences,
-  currentTheme
 }) => {
+  const { currentTheme } = useContext(ThemeContext);
   
+  // Update functions for each preference category
+  // These functions will merge the existing preferences with the updates provided
   const updateMobilityPrefs = (updates: Partial<AccessibilityPreferences['mobility']>) => {
     onUpdatePreferences({
       ...preferences,
@@ -46,10 +51,13 @@ const AccessibilityPreferencesForm: React.FC<Props> = ({
     });
   };
 
+
+  // Components for rendering each section and switch
+  // These components will be used to structure the form and make it more readable
   const PreferenceSection = ({ 
     title, 
     icon, 
-    children 
+    children // The children will be the switches and fields for each section
   }: { 
     title: string; 
     icon: React.ReactNode; 
@@ -58,7 +66,7 @@ const AccessibilityPreferencesForm: React.FC<Props> = ({
     <View style={[styles.section, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}>
       <View style={styles.sectionHeader}>
         {icon}
-        <Text style={[styles.sectionTitle, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}>
+        <Text style={[styles.sectionTitle, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole="header" accessibilityLabel={title}>
           {title}
         </Text>
       </View>
@@ -79,11 +87,11 @@ const AccessibilityPreferencesForm: React.FC<Props> = ({
   }) => (
     <View style={styles.switchContainer}>
       <View style={styles.switchTextContainer}>
-        <Text style={[styles.switchLabel, { color: currentTheme === 'light' ? Colors.black : Colors.white }]}>
+        <Text style={[styles.switchLabel, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole="text" accessibilityLabel={label}>
           {label}
         </Text>
         {description && (
-          <Text style={[styles.switchDescription, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]}>
+          <Text style={[styles.switchDescription, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel={description}>
             {description}
           </Text>
         )}
@@ -93,16 +101,18 @@ const AccessibilityPreferencesForm: React.FC<Props> = ({
         onValueChange={onValueChange}
         trackColor={{ false: Colors.lightGray, true: Colors.primary }}
         thumbColor={value ? Colors.white : Colors.mediumGray}
+        accessibilityRole="switch"
+        accessibilityLabel={`${label} switch`}
       />
     </View>
   );
 
   return (
     <View style={styles.container}>
-      <Text style={[styles.mainTitle, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}>
+      <Text style={[styles.mainTitle, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole="header" accessibilityLabel="Accessibility Preferences">
         Accessibility Preferences
       </Text>
-      <Text style={[styles.mainSubtitle, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]}>
+      <Text style={[styles.mainSubtitle, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel="Help us understand your specific needs to provide better services">
         Help us understand your specific needs to provide better services
       </Text>
 
@@ -275,8 +285,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   mainTitle: {
-    fontSize: 20,
-    fontWeight: '600',
+    fontSize: 24,
+    fontWeight: 'bold',
     marginBottom: 8,
   },
   mainSubtitle: {
