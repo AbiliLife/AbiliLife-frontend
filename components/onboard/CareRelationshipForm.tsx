@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, Switch, Modal } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, Switch, Modal, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import uuid from 'react-native-uuid';
 
@@ -12,7 +12,6 @@ import { ThemeContext } from '@/contexts/ThemeContext';
 import FormField from '@/components/common/FormField';
 import CustomButton from '@/components/common/CustomButton';
 import SelectableChip from './SelectableChip';
-import { Platform } from 'react-native';
 
 interface Props {
     relationships: CareRelationship[];
@@ -94,7 +93,9 @@ const CareRelationshipForm: React.FC<Props> = ({
             </Text>
             <Text style={[styles.sectionSubtitle, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel="Add people who can help you book rides and make decisions on your behalf">
                 Add people who can help you book rides and make decisions on your behalf {`\n`}
-                It is important to have at least one primary contact who can book rides for you.
+                <Text style={{ color: Colors.error }}>
+                    It is important to have at least one primary contact who can book rides for you.
+                </Text>
             </Text>
 
             {/* Existing Relationships */}
