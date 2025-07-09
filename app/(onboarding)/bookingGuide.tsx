@@ -1,17 +1,28 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, Dimensions, Platform, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
 
+import { useAccessibility } from '@/contexts/AccessibilityContext';
+import { ThemeContext } from '@/contexts/ThemeContext';
+
 import Colors from '@/constants/Colors';
+import { guideSteps } from '@/constants/Onboard';
+
 import Button from '@/components/onboard/Button';
 import Carousel from '@/components/onboard/Carousel';
-import { guideSteps } from '@/constants/Onboard';
+import AccessibilityDrawer from '@/components/accessibility/AccessibilityDrawer';
+import AccessibilityOption from '@/components/accessibility/AccessibilityOption';
+import { opacity } from 'react-native-reanimated/lib/typescript/Colors';
 
 const { width } = Dimensions.get('window');
 
 export default function BookingGuide() {
+    const { currentTheme } = React.useContext(ThemeContext);
+    const { accessibilityDrawerVisible, toggleAccessibilityDrawer } = useAccessibility();
+
     const [currentSlide, setCurrentSlide] = useState(0);
 
     const handleFinish = () => {
@@ -19,7 +30,7 @@ export default function BookingGuide() {
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         }
 
-        router.replace('/mobility');
+        router.back();
     };
     const goToNextSlide = () => {
         if (currentSlide < guideSteps.length - 1) {
@@ -41,8 +52,18 @@ export default function BookingGuide() {
         }
     };
 
+    const cancelGuide = () => {
+        if (Platform.OS !== 'web') {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+        }
+        router.back();
+    }
+
     return (
-        <View style={styles.container}>
+        <SafeAreaView
+            style={{ flex: 1, backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer }}
+            edges={['top', 'left', 'right']}
+        >
             <Carousel
                 currentIndex={currentSlide}
                 showPagination={true}
@@ -63,7 +84,7 @@ export default function BookingGuide() {
 
             <View style={styles.contentContainer}>
                 <Text
-                    style={styles.stepTitle}
+                    style={[styles.stepTitle, { color: currentTheme === 'light' ? Colors.blue : Colors.white }]}
                     accessibilityRole="header"
                     accessibilityLabel={`Step ${currentSlide + 1} of ${guideSteps.length}: ${guideSteps[currentSlide].title}`}
                     accessibilityHint="This is the title of the current step in the guide"
@@ -75,15 +96,20 @@ export default function BookingGuide() {
                     {guideSteps[currentSlide].steps.map((step, idx) => (
                         <View key={idx} style={styles.stepItem}>
                             <View style={styles.stepContent}>
-                                <Text style={styles.stepText}>{step.main}</Text>
+                                <Text style={[styles.stepText, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole='text' accessibilityLabel={`Step ${idx + 1} of ${guideSteps[currentSlide].steps.length}: ${step.main}`}>
+                                    {step.main}
+                                </Text>
 
                                 {/* Sub-steps with bullets */}
                                 {step.subSteps && step.subSteps.length > 0 && (
                                     <View style={styles.subStepsContainer}>
                                         {step.subSteps.map((subStep, subIdx) => (
                                             <View key={subIdx} style={styles.subStepItem}>
-                                                <Text style={styles.bulletPoint}>•</Text>
-                                                <Text style={styles.subStepText} accessibilityRole='text' accessibilityLabel={`Sub-step ${subIdx + 1} of ${step.subSteps?.length}: ${subStep}`}>
+                                                {/* <Text style={styles.bulletPoint}>•</Text> */}
+                                                <Text style={[styles.bulletPoint, { color: currentTheme === 'light' ? Colors.darkGray : Colors.lightGray }]}>
+                                                    •
+                                                </Text>
+                                                <Text style={[styles.subStepText, { color: currentTheme === 'light' ? Colors.darkGray : Colors.lightGray }]} accessibilityRole='text' accessibilityLabel={`Sub-step ${subIdx + 1} of ${step.subSteps?.length}: ${subStep}`}>
                                                     {subStep}
                                                 </Text>
                                             </View>
@@ -98,48 +124,64 @@ export default function BookingGuide() {
 
             <View style={styles.navigationContainer}>
                 <TouchableOpacity
-                    style={[styles.navButton, currentSlide === 0 && styles.navButtonDisabled]}
-                    onPress={goToPreviousSlide}
-                    disabled={currentSlide === 0}
+                    style={styles.navButton}
+                    onPress={currentSlide === 0 ? cancelGuide : goToPreviousSlide}
                     accessibilityRole="button"
                     accessibilityLabel="Previous step"
                     accessibilityHint="Go to the previous step in the guide"
                 >
-                    <Ionicons
-                        name="chevron-back"
-                        size={24}
-                        color={currentSlide === 0 ? '#CCCCCC' : '#7135B1'}
-                    />
-                    <Text style={[styles.navButtonText, currentSlide === 0 && styles.navButtonTextDisabled]}>
-                        Previous
+                    {currentSlide !== 0 && (
+                        <Ionicons
+                            name="chevron-back"
+                            size={24}
+                            color={currentTheme === 'light' ? Colors.blue : Colors.white}
+                        />
+                    )}
+                    <Text style={[styles.navButtonText, { color: currentSlide === 0 ? Colors.mediumGray : currentTheme === 'light' ? Colors.blue : Colors.white }]}>
+                        {currentSlide === 0 ? 'Cancel' : 'Previous'}
                     </Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                    style={[styles.navButton, currentSlide === guideSteps.length - 1 && styles.navButtonDisabled]}
+                    style={styles.navButton}
                     onPress={currentSlide < guideSteps.length - 1 ? goToNextSlide : handleFinish}
                     accessibilityRole="button"
                     accessibilityLabel="Next step"
                     accessibilityHint="Go to the next step in the guide"
                 >
-                    <Text style={styles.navButtonText}>
-                        {currentSlide < guideSteps.length - 1 ? 'Next' : 'Finish'}
+                    <Text style={[styles.navButtonText, { color: currentTheme === 'light' ? Colors.blue : Colors.white }]}>
+                        {currentSlide < guideSteps.length - 1 ? 'Next' : 'Done'}
                     </Text>
-                    <Ionicons
-                        name="chevron-forward"
-                        size={24}
-                        color='#7135B1'
-                    />
+
+                    {currentSlide < guideSteps.length - 1 && (
+                        <Ionicons
+                            name="chevron-forward"
+                            size={24}
+                            color={currentTheme === 'light' ? Colors.blue : Colors.white}
+                        />
+                    )}
                 </TouchableOpacity>
             </View>
-        </View>
+
+            {/* Accessibility Settings Button (fixed position) */}
+            <AccessibilityOption
+                handlePress={toggleAccessibilityDrawer}
+                otherStyle={{ position: 'absolute', top: 0, left: 20, backgroundColor: Colors.blue, opacity: 0.8 }}
+            />
+
+            {/* Accessibility Drawer */}
+            {accessibilityDrawerVisible && (
+                <AccessibilityDrawer
+                    handlePress={toggleAccessibilityDrawer}
+                />
+            )}
+        </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: Colors.background,
     },
     slide: {
         flex: 1,
@@ -170,12 +212,11 @@ const styles = StyleSheet.create({
     },
     contentContainer: {
         padding: 16,
-        height: '40%',
+        height: '50%',
     },
     stepTitle: {
         fontSize: 20,
         fontWeight: 'bold',
-        color: '#46216E',
         marginBottom: 16,
         textAlign: 'center',
     },
@@ -186,27 +227,11 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         marginBottom: 16,
     },
-    stepNumberContainer: {
-        width: 24,
-        height: 24,
-        borderRadius: 12,
-        backgroundColor: '#7135B1',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginRight: 12,
-        marginTop: 2,
-    },
-    stepNumber: {
-        color: '#FFFFFF',
-        fontWeight: 'bold',
-        fontSize: 14,
-    },
     stepContent: {
         flex: 1,
     },
     stepText: {
         fontSize: 16,
-        color: '#333333',
         marginBottom: 8,
     },
     subStepsContainer: {
@@ -220,13 +245,11 @@ const styles = StyleSheet.create({
     },
     bulletPoint: {
         fontSize: 18,
-        color: '#7135B1',
         marginRight: 8,
         lineHeight: 20,
     },
     subStepText: {
         fontSize: 14,
-        color: '#666666',
         flex: 1,
     },
     navigationContainer: {
@@ -234,7 +257,6 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         padding: 16,
         borderTopWidth: 1,
-        borderTopColor: '#EEEEEE',
     },
     navButton: {
         flexDirection: 'row',
@@ -246,11 +268,7 @@ const styles = StyleSheet.create({
     },
     navButtonText: {
         fontSize: 16,
-        color: '#7135B1',
         fontWeight: '500',
-    },
-    navButtonTextDisabled: {
-        color: '#CCCCCC',
     },
     footer: {
         padding: 24,
