@@ -10,7 +10,7 @@ const initialUserState: UserProfile = {
     email: '',
     phone: '',
     profilePicture: undefined,
-    role: 'self',
+    role: 'PWD',
     disabilityTypes: [],
     needsRamp: false,
     needsAssistiveDevice: false,
