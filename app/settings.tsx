@@ -34,7 +34,7 @@ export default function SettingsScreen() {
                         <X size={24} color={currentTheme === 'light' ? Colors.primary : Colors.white} />
                     </TouchableOpacity>
                 ),
-                headerTitle: 'General Settings',
+                headerTitle: 'App Settings',
                 headerTitleAlign: 'center',
                 headerTitleStyle: {
                     fontSize: 20,
@@ -82,7 +82,11 @@ export default function SettingsScreen() {
             </View>
 
             <TouchableOpacity
-                style={[styles.settingRow, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray, borderColor: currentTheme === 'light' ? Colors.borderLight : Colors.borderDark }, !isSystemTheme && currentTheme === 'light' && styles.selectedRow]}
+                style={[
+                    styles.settingRow,
+                    { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray, borderColor: currentTheme === 'light' ? Colors.borderLight : Colors.borderDark },
+                    !isSystemTheme && currentTheme === 'light' && styles.selectedRow
+                ]}
                 activeOpacity={0.7}
                 onPress={() => toggleTheme('light')}
             >
@@ -94,7 +98,7 @@ export default function SettingsScreen() {
                     />
                     <Text style={[
                         styles.settingLabel,
-                        { color: !isSystemTheme && currentTheme === 'light' ? Colors.white : Colors.white }
+                        { color: !isSystemTheme && currentTheme === 'light' ? Colors.white : currentTheme === 'light' ? Colors.primary : Colors.white }
                     ]}>
                         Light
                     </Text>
@@ -140,14 +144,6 @@ export default function SettingsScreen() {
                     </Text>
                 </View>
             </TouchableOpacity>
-
-            <View style={{ height: 1, backgroundColor: currentTheme === 'light' ? Colors.borderLight : Colors.borderDark, marginVertical: 16 }} />
-
-            <View style={styles.sectionHeader}>
-                <Text style={[styles.sectionTitle, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}>
-                    Other Settings
-                </Text>
-            </View>
         </ScrollView>
     )
 }
