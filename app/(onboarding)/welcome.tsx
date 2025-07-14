@@ -1,5 +1,6 @@
-import React from 'react'
-import { View, Text, Image, StyleSheet } from 'react-native'
+import React from 'react';
+import { View, Text, Image, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
 import { images } from '@/constants/Images';
@@ -15,7 +16,10 @@ const Welcome = () => {
     const { currentTheme } = React.useContext(ThemeContext);
 
     return (
-        <View style={[styles.container, { backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer }]}>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer }}
+      edges={['top', 'left', 'right']}
+    >
             <Image
                 source={images.welcome}
                 style={styles.image}
@@ -47,7 +51,7 @@ const Welcome = () => {
                     style={{ marginTop: 10 }}
                 />
             </View>
-        </View>
+        </SafeAreaView>
     )
 }
 
