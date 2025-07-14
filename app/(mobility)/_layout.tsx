@@ -9,21 +9,7 @@ export default function MobilityLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: '#fff' }}>
       <Stack>
-        <Stack.Screen name="mobility" options={{
-          headerTitle: 'AbiliLife Mobility',
-          headerTitleAlign: 'center',
-          headerShadowVisible: false,
-          headerTitleStyle: {
-            fontSize: 20,
-            fontWeight: 'bold',
-            color: currentTheme === 'light' ? Colors.primary : Colors.white,
-          },
-          headerBackButtonDisplayMode: 'minimal',
-          headerTintColor: currentTheme === 'light' ? Colors.primary : Colors.white,
-          headerStyle: {
-            backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer,
-          },
-        }} />
+        <Stack.Screen name="mobility" options={{ headerShown: false }} />
         <Stack.Screen name="caregiverBook" options={{
           headerTitle: 'Caregiver Booking',
           headerTitleAlign: 'center',
@@ -31,10 +17,10 @@ export default function MobilityLayout() {
           headerTitleStyle: {
             fontSize: 20,
             fontWeight: '600',
-            color: currentTheme === 'light' ? Colors.primary : Colors.white,
+            color: currentTheme === 'light' ? Colors.blue : Colors.white,
           },
           headerBackButtonDisplayMode: 'minimal',
-          headerTintColor: currentTheme === 'light' ? Colors.primary : Colors.white,
+          headerTintColor: currentTheme === 'light' ? Colors.blue : Colors.white,
           headerStyle: {
             backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer,
           },
@@ -46,10 +32,10 @@ export default function MobilityLayout() {
           headerTitleStyle: {
             fontSize: 20,
             fontWeight: '600',
-            color: currentTheme === 'light' ? Colors.primary : Colors.white,
+            color: currentTheme === 'light' ? Colors.blue : Colors.white,
           },
           headerBackButtonDisplayMode: 'minimal',
-          headerTintColor: currentTheme === 'light' ? Colors.primary : Colors.white,
+          headerTintColor: currentTheme === 'light' ? Colors.blue : Colors.white,
           headerStyle: {
             backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer,
           },
