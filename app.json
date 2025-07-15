@@ -4,7 +4,6 @@
     "slug": "abililife",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
     "scheme": "abililife-app",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -16,13 +15,17 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.abililife.app",
+      "icon": {
+        "dark": "./assets/icons/ios-icon.png",
+        "light": "./assets/icons/ios-icon.png"
+      },
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "This app uses your location to show maps."
       }
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/icons/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.abililife.app",
@@ -39,6 +42,15 @@
     "plugins": [
       "expo-router",
       [
+        "expo-splash-screen",
+        {
+          "image": "./assets/icons/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        }
+      ],
+      [
         "expo-location",
         {
           "locationAlwaysAndWhenInUsePermission": "AbiliLife needs access to your location to provide personalized features and services."
@@ -48,6 +60,12 @@
         "expo-image-picker",
         {
           "photosPermission": "AbiliLife accesses your photos to allow you to upload profile pictures and share images."
+        }
+      ],
+      [
+        "expo-web-browser",
+        {
+          "experimentalLauncherActivity": true
         }
       ]
     ],
