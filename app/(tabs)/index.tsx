@@ -19,29 +19,29 @@ export default function HomeScreen() {
     const { accessibilityDrawerVisible, toggleAccessibilityDrawer } = useAccessibility();
     const { user: userProfile } = useOnboardingStore();
 
-    // // Calendar state with simple date handling
-    // const [selectedDate, setSelectedDate] = useState(() => new Date(2025, 6, 15)); // July 15, 2025
-    // const [calendarViewMode, setCalendarViewMode] = useState<'week' | 'month'>('week');
+    // Calendar state with simple date handling
+    const [selectedDate, setSelectedDate] = useState(() => new Date(2025, 6, 15)); // July 15, 2025
+    const [calendarViewMode, setCalendarViewMode] = useState<'week' | 'month'>('week');
 
-    // // Mock appointments data with simple dates
-    // const [upcomingAppointments] = useState([
-    //     {
-    //         id: '1',
-    //         title: 'Doctor Appointment',
-    //         date: new Date(2025, 6, 16), // July 16, 2025
-    //         time: '10:00 AM',
-    //         type: 'healthcare',
-    //         location: 'City Hospital'
-    //     },
-    //     {
-    //         id: '2',
-    //         title: 'Mobility Service',
-    //         date: new Date(2025, 6, 18), // July 18, 2025
-    //         time: '2:30 PM',
-    //         type: 'mobility',
-    //         location: 'Shopping Mall'
-    //     }
-    // ]);
+    // Mock appointments data with simple dates
+    const [upcomingAppointments] = useState([
+        {
+            id: '1',
+            title: 'Doctor Appointment',
+            date: new Date(2025, 6, 16), // July 16, 2025
+            time: '10:00 AM',
+            type: 'healthcare',
+            location: 'City Hospital'
+        },
+        {
+            id: '2',
+            title: 'Mobility Service',
+            date: new Date(2025, 6, 18), // July 18, 2025
+            time: '2:30 PM',
+            type: 'mobility',
+            location: 'Shopping Mall'
+        }
+    ]);
 
     // Helper function to get safe time-based greeting
     const getGreeting = () => {
@@ -55,38 +55,38 @@ export default function HomeScreen() {
         }
     };
 
-    // // Helper function to safely format calendar month ID
-    // const getCalendarMonthId = () => {
-    //     try {
-    //         const year = selectedDate.getFullYear();
-    //         const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
-    //         return `${year}-${month}`;
-    //     } catch (error) {
-    //         return '2025-07'; // Fallback to July 2025
-    //     }
-    // };
+    // Helper function to safely format calendar month ID
+    const getCalendarMonthId = () => {
+        try {
+            const year = selectedDate.getFullYear();
+            const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+            return `${year}-${month}`;
+        } catch (error) {
+            return '2025-07'; // Fallback to July 2025
+        }
+    };
 
-    // // Helper function to format date as "Month Year"
-    // const formatMonthYear = (date: Date) => {
-    //     try {
-    //         const months = ['January', 'February', 'March', 'April', 'May', 'June',
-    //             'July', 'August', 'September', 'October', 'November', 'December'];
-    //         return `${months[date.getMonth()]} ${date.getFullYear()}`;
-    //     } catch (error) {
-    //         return 'July 2025';
-    //     }
-    // };
+    // Helper function to format date as "Month Year"
+    const formatMonthYear = (date: Date) => {
+        try {
+            const months = ['January', 'February', 'March', 'April', 'May', 'June',
+                'July', 'August', 'September', 'October', 'November', 'December'];
+            return `${months[date.getMonth()]} ${date.getFullYear()}`;
+        } catch (error) {
+            return 'July 2025';
+        }
+    };
 
-    // // Helper function to format date as "Mon DD"
-    // const formatMonthDay = (date: Date) => {
-    //     try {
-    //         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    //             'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    //         return `${months[date.getMonth()]} ${date.getDate()}`;
-    //     } catch (error) {
-    //         return 'Jul 15';
-    //     }
-    // };
+    // Helper function to format date as "Mon DD"
+    const formatMonthDay = (date: Date) => {
+        try {
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            return `${months[date.getMonth()]} ${date.getDate()}`;
+        } catch (error) {
+            return 'Jul 15';
+        }
+    };
     const getProfileCompleteness = () => {
         let completeness = 0;
         const totalFields = 7;
@@ -469,7 +469,7 @@ export default function HomeScreen() {
                 )}
                 {/* Calendar & Appointments */}
                 <View style={styles.section}>
-                    {/* <View style={styles.sectionHeader}>
+                    <View style={styles.sectionHeader}>
                         <Text style={[styles.sectionTitle, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}>
                             Upcoming Appointments
                         </Text>
@@ -481,9 +481,9 @@ export default function HomeScreen() {
                                 {calendarViewMode === 'week' ? 'Month' : 'Week'}
                             </Text>
                         </TouchableOpacity>
-                    </View> */}
+                    </View>
 
-                    {/* <View style={[styles.calendarContainer, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}>
+                    <View style={[styles.calendarContainer, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}>
                         <View style={styles.calendarHeader}>
                             <Text style={[styles.calendarTitle, { color: currentTheme === 'light' ? Colors.black : Colors.white }]}>
                                 {formatMonthYear(selectedDate)}
@@ -498,10 +498,10 @@ export default function HomeScreen() {
                                 Interactive calendar coming soon
                             </Text>
                         </View>
-                    </View> */}
+                    </View>
 
                     {/* Upcoming Appointments List */}
-                    {/* <View style={styles.appointmentsList}>
+                    <View style={styles.appointmentsList}>
                         {upcomingAppointments.length > 0 ? (
                             upcomingAppointments.map((appointment) => (
                                 <View
@@ -542,7 +542,7 @@ export default function HomeScreen() {
                             leadingIconName="add"
                             leading
                         />
-                    </View> */}
+                    </View>
                 </View>
             </ScrollView>
 
