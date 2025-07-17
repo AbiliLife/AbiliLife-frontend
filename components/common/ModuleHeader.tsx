@@ -46,7 +46,7 @@ const ModuleHeader: React.FC<ModuleHeaderProps> = ({
                         color={Colors.white}
                     />
                 )}
-                <View style={{ backgroundColor: Colors.transparent }}>
+                <View style={{ backgroundColor: Colors.transparent, width: "90%" }}>
                     <Text style={styles.headerTitle} accessibilityRole='header' accessibilityLabel={title}>
                         {title}
                     </Text>
