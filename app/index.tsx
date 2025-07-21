@@ -1,19 +1,24 @@
-import { useEffect } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { useContext, useEffect } from 'react';
+import { StyleSheet, View } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
-import { router } from 'expo-router';
-import Animated, { 
-  useSharedValue, 
-  useAnimatedStyle, 
-  withTiming, 
+import { useRouter } from 'expo-router';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
   withSequence,
   Easing,
 } from 'react-native-reanimated';
+import Colors from '@/constants/Colors';
+import { ThemeContext } from '@/contexts/ThemeContext';
 
 // Prevent the splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
 
 export default function Splash() {
+  const router = useRouter();
+  const { currentTheme } = useContext(ThemeContext);
+
   // Animation values
   const scale = useSharedValue(1);
   const opacity = useSharedValue(0);
@@ -37,10 +42,10 @@ export default function Splash() {
       withTiming(1, { duration: 500, easing: Easing.bezier(0.25, 0.1, 0.25, 1) })
     );
 
-    // Navigate to the login screen after animation
+    // Navigate to the welcome screen after animation
     const navigationTimer = setTimeout(() => {
       router.replace('/welcome');
-    }, 2500);
+    }, 2600);
 
     return () => {
       clearTimeout(navigationTimer);
@@ -48,11 +53,13 @@ export default function Splash() {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <Animated.View style={[styles.textContainer, animatedStyle]}>
-        <Text style={styles.textLarge}>AbiliLife</Text>
-        <Text style={styles.version}>Version 1.0</Text>
-      </Animated.View>
+    <View style={[styles.container, { backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer }]}>
+        <Animated.Text style={[styles.textLarge, { color: currentTheme === 'light' ? Colors.primary : Colors.white }, animatedStyle]}>
+          AbiliLife
+        </Animated.Text>
+      <Animated.Text style={[styles.version, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }, animatedStyle]}>
+        Version 1.0.0
+      </Animated.Text>
     </View>
   );
 }
@@ -63,9 +70,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  textContainer: {
-    alignItems: 'center',
-  },
   textLarge: {
     fontSize: 24,
     fontWeight: '500',
@@ -73,6 +77,7 @@ const styles = StyleSheet.create({
   version: {
     fontSize: 12,
     marginTop: 8,
-    color: '#666',
+    position: 'absolute',
+    bottom: '10%',
   }
 });
