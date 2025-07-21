@@ -16,10 +16,10 @@ const Welcome = () => {
     const { currentTheme } = React.useContext(ThemeContext);
 
     return (
-    <SafeAreaView
-      style={{ flex: 1, backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer }}
-      edges={['top', 'left', 'right']}
-    >
+        <SafeAreaView
+            style={{ flex: 1, backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer }}
+            edges={['top', 'left', 'right']}
+        >
             <Image
                 source={images.welcome}
                 style={styles.image}
@@ -29,28 +29,37 @@ const Welcome = () => {
                 accessibilityLabel="Welcome illustration"
                 accessibilityHint="Illustration welcoming users to AbiliLife"
             />
-            <View style={styles.textContainer}>
-                <Text style={[styles.title, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole="header" accessibilityLabel="Welcome to AbiliLife">
-                    Welcome to AbiliLife
-                </Text>
-                <Text style={[styles.subtitle, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel="Your journey to a more accessible life starts here.">
-                    Your journey to a more accessible life starts here.
-                </Text>
-            </View>
+                <View style={styles.textContainer}>
+                    <Text style={[styles.title, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole="header" accessibilityLabel="Welcome to AbiliLife">
+                        Welcome to AbiliLife
+                    </Text>
+                    <Text style={[styles.subtitle, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel="Your journey to a more accessible life starts here.">
+                        Your journey to a more accessible life starts here.
+                    </Text>
+                </View>
 
-            <View style={styles.buttonContainer}>
-                <Button
-                    title="Get Started"
-                    onPress={() => router.push('/onboard')}
-                    variant="primary"
-                />
-                <Button
+                <View style={styles.buttonContainer}>
+                    <Button
+                        title="Get Started"
+                        onPress={() => router.push('/onboard')}
+                        variant="primary"
+                    />
+                    <Text style={{ color: currentTheme === 'light' ? Colors.accent : Colors.lightGray, textAlign: 'center', marginTop: 20 }}>
+                        Already have an account?
+                    </Text>
+                    <Button
+                        title="Sign In"
+                        onPress={() => router.push('/auth')}
+                        variant="outline"
+                        style={{ marginTop: 10 }}
+                    />
+                    {/* <Button
                     title="Guest/Developer Mode"
                     onPress={() => router.push('/(tabs)')}
                     variant="secondary"
                     style={{ marginTop: 10 }}
-                />
-            </View>
+                /> */}
+                </View>
         </SafeAreaView>
     )
 }
@@ -61,7 +70,7 @@ const styles = StyleSheet.create({
     },
     image: {
         width: '100%',
-        height: '60%',
+        height: '55%',
         resizeMode: 'cover',
     },
     textContainer: {
