@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
 import { View, Text, Image, StyleSheet, Dimensions } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import illustrations from '@/assets/data/illustrations';
 
-import { images } from '@/constants/Images';
+import illustrations from '@/assets/data/illustrations';
 import Colors from '@/constants/Colors';
+
 import Button from '@/components/onboard/Button';
 import Carousel from '@/components/onboard/Carousel';
 
@@ -22,7 +23,7 @@ const Welcome = () => {
     const { setCurrentStep } = useOnboardingStore();
 
     const handleNext = () => {
-        if (currentSlide < 1) {
+        if (currentSlide < slides.length - 1) {
             setCurrentSlide(currentSlide + 1);
         } else {
             handleGetStarted();
@@ -31,24 +32,50 @@ const Welcome = () => {
 
     const handleGetStarted = () => {
         setCurrentStep(1);
-        router.replace('/auth');
+        router.replace({
+            pathname: '/auth',
+            params: { fromOnboarding: 'true' }
+        });
     };
 
     const slides = [
         {
             title: "Welcome to AbiliLife",
-            subtitle: "Your journey to a more accessible life starts here.",
+            subtitle: "Empowering independence through accessible solutions",
             image: illustrations.welcome,
         },
         {
-            title: "Accessible Rides at Your Fingertips",
-            subtitle: "Book, plan, and track mobility with ease",
-            image: illustrations.accessibleRide,
+            title: "Explore Mobility Options",
+            subtitle: "Find the best transport solutions tailored for you",
+            image: illustrations.mobilityOption,
+        },
+        {
+            title: "Book Your Ride",
+            subtitle: "Schedule rides with just a few taps",
+            image: illustrations.bookRide,
+        },
+        {
+            title: "Caregiver Support",
+            subtitle: "Connect with caregivers for added assistance",
+            image: illustrations.caregiver,
+        },
+        {
+            title: "Personalize Your Experience",
+            subtitle: "Set preferences to enhance your journey",
+            image: illustrations.preferences,
+        },
+        {
+            title: "We're Here to Help",
+            subtitle: "24/7 support for all your needs",
+            image: illustrations.support,
         }
     ];
 
     return (
-        <View style={[styles.container, { backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer }]}>
+        <SafeAreaView
+            style={{ flex: 1, backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer }}
+            edges={['top', 'left', 'right']}
+        >
             <View style={styles.skipContainer}>
                 <Button
                     title="Skip"
@@ -86,12 +113,12 @@ const Welcome = () => {
 
             <View style={styles.footer}>
                 <Button
-                    title={currentSlide < slides.length - 1 ? "Next" : "Get Started"}
+                    title={currentSlide < slides.length - 1 ? "Next" : "Create an Account"}
                     onPress={handleNext}
                     style={styles.button}
                 />
             </View>
-        </View>
+        </SafeAreaView>
     )
 }
 
