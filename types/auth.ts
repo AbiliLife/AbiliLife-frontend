@@ -33,6 +33,12 @@ export interface OTPVerification {
     otp: string; // OTP code received via SMS
 }
 
+export interface OTPSuccessResponse {
+  success: boolean;
+  message: string;
+  verificationId: string; // Verification ID for OTP verification
+}
+
 export interface SignUpRequest {
     email: string; // User email address
     password: string; // User password
@@ -43,4 +49,20 @@ export interface SignUpRequest {
 export interface LoginRequest {
     email: string; // User email address
     password: string; // User password
+}
+
+export interface AuthContextType {
+    isAuthenticated: boolean; // Whether user is authenticated
+    isAuthLoading: boolean; // Whether authentication is loading
+    userData: User | null; // Authenticated user data
+    setUserData?: (user: User) => void; // Set user data function
+    clearUserData?: () => void; // Clear user data function
+    authToken: string | null; // Auth token
+    setAuthToken?: (token: string) => void; // Set auth token function
+    clearAuthToken?: () => void; // Clear auth token function
+    login: (credentials: LoginRequest) => Promise<AuthResponse>; // Login function
+    signup: (data: SignUpRequest) => Promise<AuthResponse>; // Signup function
+    logout: () => Promise<void>; // Logout function
+    requestOTP: (data: OTPRequest) => Promise<OTPSuccessResponse>; // Request OTP function
+    verifyOTP: (data: OTPVerification) => Promise<AuthResponse>; // Verify OTP function
 }
