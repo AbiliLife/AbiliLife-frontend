@@ -41,9 +41,9 @@ export interface OTPSuccessResponse {
 
 export interface SignUpRequest {
     email: string; // User email address
+    phone: string; // Phone number in international format
+    fullName: string; // User display name
     password: string; // User password
-    displayName?: string; // Optional user display name
-    phone?: string; // Optional phone number in international format
 }
 
 export interface LoginRequest {

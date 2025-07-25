@@ -1,4 +1,5 @@
 // Authentication context
+import { AxiosError } from 'axios';
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { getToken, saveToken, deleteToken } from '@/lib/storage';
 import { AuthContextType, AuthResponse, LoginRequest, OTPRequest, OTPSuccessResponse, OTPVerification, SignUpRequest, User } from '@/types/auth';
@@ -91,10 +92,10 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
                     token: ''
                 };
             }
-        } catch (error: any) {
+        } catch (error: AxiosError | any) {
             return {
                 success: false,
-                message: error?.message || 'Login error',
+                message: error?.response?.data?.message || error?.message || 'Login error',
                 user: emptyUser,
                 token: ''
             };
@@ -131,10 +132,10 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
                     token: ''
                 };
             }
-        } catch (error: any) {
+        } catch (error: AxiosError | any) {
             return {
                 success: false,
-                message: error?.message || 'Signup error',
+                message: error?.response?.data?.message || error?.message || 'Signup error',
                 user: emptyUser,
                 token: ''
             };
