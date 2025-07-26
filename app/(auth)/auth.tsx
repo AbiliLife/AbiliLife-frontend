@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Image, Modal, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import * as Haptics from 'expo-haptics';
@@ -25,22 +25,25 @@ export default function AuthScreen() {
     const [activeTab, setActiveTab] = useState<AuthTab>(fromOnboarding === 'true' ? 'signup' : 'login');
 
     // Login Form State
-    const [loginEmail, setLoginEmail] = useState('muthokaelikeli@gmail.com');
-    const [loginPassword, setLoginPassword] = useState('');
+    const [loginEmail, setLoginEmail] = useState('muthokaelikeli@gmail.com'); // TEMPORARY TEST EMAIL
+    const [loginPassword, setLoginPassword] = useState('qwerty123'); // TEMPORARY TEST PASSWORD
 
     // Signup Form State
-    const [email, setEmail] = useState('muthokaelikeli@gmail.com');
-    const [newPassword, setNewPassword] = useState('qwerty123');
-    const [confirmPassword, setConfirmPassword] = useState('qwerty123');
-    const [phone, setPhone] = useState('+254742560540');
-    const [fullName, setFullName] = useState('Eli Keli Muthoka');
+    const [email, setEmail] = useState('muthokaelikeli@gmail.com'); // TEMPORARY TEST EMAIL
+    const [newPassword, setNewPassword] = useState('qwerty123'); // TEMPORARY TEST PASSWORD
+    const [confirmPassword, setConfirmPassword] = useState('qwerty123'); // TEMPORARY TEST PASSWORD
+    const [phone, setPhone] = useState('+254742560540'); // TEMPORARY TEST PHONE
+    const [fullName, setFullName] = useState('Eli Keli Muthoka'); // TEMPORARY TEST NAME
 
     const [errors, setErrors] = useState<Record<string, string>>({});
 
+    // State for otp modal
+    const [otpModalVisible, setOtpModalVisible] = useState(false);
+
     // Obtain Context and Store
     const { currentTheme } = React.useContext(ThemeContext);
-    const { updateUser, setCurrentStep, user } = useOnboardingStore();
-    const { isAuthLoading, login, signup } = useAuth();
+    const { updateUser } = useOnboardingStore();
+    const { isAuthLoading, login, signup, requestOTP } = useAuth();
 
     const handleTabChange = (tab: AuthTab) => {
         if (Platform.OS !== 'web') {
@@ -142,8 +145,8 @@ export default function AuthScreen() {
         }
     }, [activeTab, loginEmail, loginPassword, fullName, email, phone, newPassword, confirmPassword]);
 
-    // Update handleLogin and handleSignup to use validateAllFields
     const handleLogin = async () => {
+        // 1. Validate all fields
         if (!validateAllFields()) {
             Toast.show({
                 type: 'warn',
@@ -174,6 +177,13 @@ export default function AuthScreen() {
                 Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
             }
 
+            updateUser({
+                fullName: loginResponse.user.displayName,
+                email: loginEmail,
+                phone: loginResponse.user.phone,
+                isEmailVerified: loginResponse.user.emailVerified,
+            })
+
             setLoginEmail('');
             setLoginPassword('');
 
@@ -195,6 +205,7 @@ export default function AuthScreen() {
     };
 
     const handleSignup = async () => {
+        // 1. Validate all fields
         if (!validateAllFields()) {
             Toast.show({
                 type: 'warn',
@@ -206,7 +217,8 @@ export default function AuthScreen() {
             });
             return;
         }
-        // ...rest of the function remains unchanged
+
+        // 2. Call signup function from context
         const signupResponse = await signup({
             fullName,
             email,
@@ -214,6 +226,7 @@ export default function AuthScreen() {
             password: newPassword,
         });
 
+        // 3. Handle signup response
         if (signupResponse.success) {
             Toast.show({
                 type: 'success',
@@ -224,24 +237,22 @@ export default function AuthScreen() {
                 theme: currentTheme === 'light' ? 'light' : 'dark',
             });
 
+            // Update user data in onboarding store
             updateUser({
-                fullName,
-                email,
-                phone: formatPhoneNumber(phone),
+                fullName: signupResponse.user.displayName,
+                email: signupResponse.user.email,
+                phone: signupResponse.user.phone,
+                isEmailVerified: signupResponse.user.emailVerified,
             });
-            setCurrentStep(1);
 
             if (Platform.OS !== 'web') {
                 Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
             }
 
-            setFullName('');
-            setEmail('');
-            setPhone('');
-            setNewPassword('');
-            setConfirmPassword('');
+            // Show OTP modal
+            setOtpModalVisible(true);
 
-            router.push('/otp');
+            // navigate will be handled in the OTP modal
         } else {
             Toast.show({
                 type: 'error',
@@ -257,17 +268,6 @@ export default function AuthScreen() {
             }
         }
     };
-
-    // const testToast = () => {
-    //     Toast.show({
-    //         type: 'success',
-    //         text1: 'This is the main message',
-    //         text2: 'This is the secondary message',
-    //         visibilityTime: 4000,
-    //         position: 'top',
-    //         theme: currentTheme === 'light' ? 'light' : 'dark',
-    //     });
-    // }
 
     return (
         <SafeAreaView
@@ -545,6 +545,86 @@ export default function AuthScreen() {
                     />
                 </View>
             </KeyboardAvoidingView>
+
+            <Modal
+                visible={otpModalVisible}
+                transparent={true}
+                animationType="slide"
+                onRequestClose={() => setOtpModalVisible(false)}
+            >
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+                    <View style={{ width: '90%', backgroundColor: Colors.white, borderRadius: 10, padding: 20 }}>
+                        <Text style={{ fontSize: 20, fontWeight: 'bold', color: Colors.primary, marginBottom: 20 }}>Request OTP</Text>
+                        <Text style={{ color: Colors.accent, marginBottom: 20 }}>We need to verify your phone number to proceed with the signup.</Text>
+                        <Button
+                            title="Request OTP"
+                            onPress={async () => {
+                                const otpResponse = await requestOTP({ phone: formatPhoneNumber(phone) });
+                                if (otpResponse.success) {
+                                    Toast.show({
+                                        type: 'success',
+                                        text1: 'OTP Sent',
+                                        text2: otpResponse.message,
+                                        visibilityTime: 3000,
+                                        position: 'top',
+                                        theme: currentTheme === 'light' ? 'light' : 'dark',
+                                    });
+                                    setOtpModalVisible(false);
+
+                                    // Reset form fields
+                                    setFullName('');
+                                    setEmail('');
+                                    setPhone('');
+                                    setNewPassword('');
+                                    setConfirmPassword('');
+
+                                    router.replace('/otp');
+                                } else {
+                                    Toast.show({
+                                        type: 'error',
+                                        text1: 'Error',
+                                        text2: otpResponse.message,
+                                        visibilityTime: 3000,
+                                        position: 'top',
+                                        theme: currentTheme === 'light' ? 'light' : 'dark',
+                                    });
+                                }
+                            }}
+                            loading={isAuthLoading}
+                            disabled={isAuthLoading}
+                        />
+                        <TouchableOpacity
+                            onPress={() => Alert.alert(
+                                'Cancel OTP Request',
+                                'Are you sure you want to cancel the OTP request? This will keep your phone number unverified.',
+                                [
+                                    {
+                                        text: 'No',
+                                        style: 'cancel',
+                                    },
+                                    {
+                                        text: 'Yes',
+                                        onPress: () => {
+                                            setOtpModalVisible(false);
+                                            setActiveTab('login');
+                                            Toast.show({
+                                                type: 'info',
+                                                text1: 'OTP Request Cancelled',
+                                                visibilityTime: 3000,
+                                                position: 'top',
+                                                theme: currentTheme === 'light' ? 'light' : 'dark',
+                                            });
+                                        },
+                                    },
+                                ]
+                            )}
+                            style={{ marginTop: 20 }}
+                        >
+                            <Text style={{ color: Colors.primary, textAlign: 'center' }}>Cancel</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
         </SafeAreaView>
     );
 }
