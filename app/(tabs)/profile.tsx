@@ -3,12 +3,14 @@ import { StyleSheet, View, Text, ScrollView, Image, TouchableOpacity, Switch, Al
 import { Stack, useRouter } from 'expo-router';
 import { Ionicons, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import Slider from '@react-native-community/slider';
+import { Toast } from 'toastify-react-native';
 import { CareRelationship, EmergencyContact, AccessibilityPreferences, DisabilityType, ContactMethod, UserRole } from '@/types/onboard';
 
 import Colors from '@/constants/Colors';
 
 import { useOnboardingStore } from '@/store/onboardingStore';
 import { ThemeContext } from '@/contexts/ThemeContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 import { formatHiddenPhoneNumber } from '@/utils/formatPhone';
 
@@ -17,12 +19,14 @@ import CareRelationshipForm from '@/components/onboard/CareRelationshipForm';
 import EmergencyContactForm from '@/components/onboard/EmergencyContactForm';
 import AccessibilityPreferencesForm from '@/components/onboard/AccessibilityPreferencesForm';
 import SelectableChip from '@/components/onboard/SelectableChip';
+import CustomButton from '@/components/common/CustomButton';
 
 export default function ProfileScreen() {
   const router = useRouter();
-  
+
   const { currentTheme } = useContext(ThemeContext);
   const { user: userProfile, updateUser } = useOnboardingStore();
+  const { logout } = useAuth();
 
   // Editing states
   const [editingSection, setEditingSection] = useState<string | null>(null);
@@ -118,6 +122,35 @@ export default function ProfileScreen() {
         fontSize,
       }
     });
+  };
+
+  const handleLogout = async () => {
+    Alert.alert(
+      'Logout',
+      'Are you sure you want to logout?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Logout',
+          onPress: async () => {
+            await logout();
+            Toast.show({
+              type: 'success',
+              text1: 'Logged out successfully',
+              text2: 'You can log in again anytime',
+              position: 'top',
+              visibilityTime: 2000,
+              theme: currentTheme === 'light' ? 'light' : 'dark',
+            });
+            router.replace('/auth')
+          },
+        },
+      ],
+      { cancelable: true }
+    )
   };
 
   const renderSectionHeader = (title: string, icon: string, sectionKey: string, canEdit: boolean = true) => (
@@ -622,7 +655,18 @@ export default function ProfileScreen() {
           )}
         </View>
 
+
         <View style={{ height: 50 }} />
+
+        {/* Logout Button */}
+        <CustomButton
+          leading={true}
+          leadingIconName='exit-outline'
+          title='Logout'
+          handlePress={handleLogout}
+          containerStyle={styles.logoutButton}
+          textStyle={styles.logoutButtonText}
+        />
       </ScrollView>
     </>
   );
@@ -852,5 +896,18 @@ const styles = StyleSheet.create({
   slider: {
     width: 120,
     height: 40,
+  },
+  logoutButton: {
+    backgroundColor: Colors.red,
+    paddingVertical: 12,
+    borderRadius: 8,
+    marginHorizontal: 16,
+    marginBottom: 24,
+    alignItems: 'center',
+  },
+  logoutButtonText: {
+    color: Colors.white,
+    fontSize: 16,
+    fontWeight: '500',
   },
 });
