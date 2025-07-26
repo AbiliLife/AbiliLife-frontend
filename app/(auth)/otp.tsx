@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, KeyboardAvoidingView, ScrollView, Platform, TouchableOpacity, Image } from 'react-native';
 import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
+import { Toast } from 'toastify-react-native';
 
 import { images } from '@/constants/Images';
 import Colors from '@/constants/Colors';
@@ -11,15 +12,18 @@ import OTPInput from '@/components/onboard/OTPInput';
 
 import { ThemeContext } from '@/contexts/ThemeContext';
 import { useOnboardingStore } from '@/store/onboardingStore';
+import { useAuth } from '@/contexts/AuthContext';
+
+import { formatHiddenPhoneNumber } from '@/utils/formatPhone';
 
 export default function OTPVerificationScreen() {
     const [otp, setOtp] = useState('');
-    const [timeLeft, setTimeLeft] = useState(60);
-    const [loading, setLoading] = useState(false);
+    const [timeLeft, setTimeLeft] = useState(5 * 60 * 1000); // 5 minutes in seconds
     const [error, setError] = useState('');
 
     const { currentTheme } = React.useContext(ThemeContext);
-    const { user, setAuthenticated, setCurrentStep } = useOnboardingStore();
+    const { user } = useOnboardingStore();
+    const { verifyOTP, isAuthLoading } = useAuth();
 
     useEffect(() => {
         if (timeLeft > 0) {
@@ -33,47 +37,68 @@ export default function OTPVerificationScreen() {
             if (Platform.OS !== 'web') {
                 Haptics.selectionAsync();
             }
-            setTimeLeft(60);
+            setTimeLeft(5 * 60 * 1000);
             setError('');
-            // Mock resend code logic
+            Toast.show({
+                type: 'info',
+                text1: 'Code Resent',
+                text2: 'A new verification code has been sent to your phone.',
+                position: 'bottom',
+                visibilityTime: 2000,
+                theme: currentTheme,
+            });
         }
     };
 
     const handleVerify = async () => {
+        // 1. Validate OTP length
         if (otp.length !== 6) {
-            setError('Please enter a valid 6-digit code');
-            return;
-        }
-
-        try {
-            setLoading(true);
-            setError('');
-
-            // Mock verification delay
-            await new Promise(resolve => setTimeout(resolve, 1500));
-
-            // For demo purposes, any 6-digit code is valid
-            if (Platform.OS !== 'web') {
-                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-            }
-
-            setAuthenticated(true);
-            setCurrentStep(3);
-            router.replace('/profileSetup');
-        } catch (error) {
-            console.error('OTP verification error:', error);
-            setError('Invalid verification code. Please try again.');
+            Toast.error('Please enter a valid 6-digit code');
             if (Platform.OS !== 'web') {
                 Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
             }
-        } finally {
-            setLoading(false);
+            return;
+        }
+
+        // 2. Send OTP for verification
+        const otpResponseData = await verifyOTP({
+            phone: user.phone,
+            otp: otp,
+        });
+
+        // 3. Handle response
+        if (otpResponseData.success) {
+            Toast.show({
+                type: 'success',
+                text1: 'Verification Successful',
+                text2: otpResponseData.message,
+                position: 'top',
+                visibilityTime: 2000,
+                theme: currentTheme,
+                onHide: () => router.replace('/profileSetup')
+            })
+            if (Platform.OS !== 'web') {
+                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            }
+        } else {
+            Toast.show({
+                type: 'error',
+                text1: 'Verification Failed',
+                text2: otpResponseData.message,
+                position: 'bottom',
+                visibilityTime: 2000,
+                theme: currentTheme,
+            });
+            if (Platform.OS !== 'web') {
+                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+            }
+            setError(otpResponseData.message || 'Verification failed. Please try again.');
         }
     };
 
     return (
         <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             style={[styles.container, { backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer }]}
         >
             <ScrollView
@@ -89,10 +114,11 @@ export default function OTPVerificationScreen() {
                     accessibilityHint="An image representing the signup process"
                     accessibilityRole="image"
                 />
-                <Text style={[styles.subtitle, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel={`Verify your phone number to continue. We've sent a 6-digit code to ${user.phone || user.email}`}>
-                    We've sent a 6-digit code to{' '}
+
+                <Text style={[styles.subtitle, { color: currentTheme === 'light' ? Colors.black : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel={`Verify your phone number to continue. We've sent a 6-digit code to ${user.phone}`}>
+                    We've sent a 6-digit code to{`\n`}
                     <Text style={styles.contactInfo}>
-                        {user.phone || user.email}
+                        {formatHiddenPhoneNumber(user.phone)}
                     </Text>
                 </Text>
 
@@ -104,7 +130,7 @@ export default function OTPVerificationScreen() {
                 />
 
                 <View style={styles.resendContainer}>
-                    <Text style={[styles.resendText, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel="Didn't receive the code?">
+                    <Text style={[styles.resendText, { color: currentTheme === 'light' ? Colors.black : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel="Didn't receive the code?">
                         Didn't receive the code?{' '}
                     </Text>
                     <TouchableOpacity
@@ -123,11 +149,12 @@ export default function OTPVerificationScreen() {
                     </TouchableOpacity>
                 </View>
             </ScrollView>
+
             <View style={[styles.footer, { borderTopColor: currentTheme === 'light' ? Colors.lightGray : Colors.darkGray }]}>
                 <Button
                     title="Verify"
                     onPress={handleVerify}
-                    loading={loading}
+                    loading={isAuthLoading}
                     style={styles.button}
                 />
             </View>
@@ -153,6 +180,7 @@ const styles = StyleSheet.create({
     contactInfo: {
         fontWeight: '600',
         color: Colors.secondary,
+        fontSize: 16,
     },
     resendContainer: {
         flexDirection: 'row',
