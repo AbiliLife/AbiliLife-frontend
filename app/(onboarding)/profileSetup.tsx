@@ -6,18 +6,23 @@ import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
 import uuid from 'react-native-uuid';
 
+// Assets & Constants
 import Colors from '@/constants/Colors';
-import { ThemeContext } from '@/contexts/ThemeContext';
-import { useOnboardingStore } from '@/store/onboardingStore';
 
+// Components
 import CustomButton from '@/components/common/CustomButton';
 import FormField from '@/components/common/FormField';
+import SelectableChip from '@/components/onboard/SelectableChip';
 import StepIndicator from '@/components/onboard/StepIndicator';
 import AccessibilityPreferencesForm from '@/components/onboard/AccessibilityPreferencesForm';
-import SelectableChip from '@/components/onboard/SelectableChip';
 import CareRelationshipForm from '@/components/onboard/CareRelationshipForm';
 import EmergencyContactForm from '@/components/onboard/EmergencyContactForm';
 
+// Context & Store
+import { ThemeContext } from '@/contexts/ThemeContext';
+import { useOnboardingStore } from '@/store/onboardingStore';
+
+// Types - Onboard
 import {
     ContactMethod,
     DisabilityType,
@@ -39,28 +44,26 @@ const ONBOARDING_STEPS = [
 
 export default function ProfileSetupScreen() {
     const router = useRouter();
+
+    // Obtain context values
     const { currentTheme } = useContext(ThemeContext);
-    const { user, updateUser, setCurrentStep } = useOnboardingStore();
+    const { user, updateUser, currentOnboardingStep, completedSteps, setCurrentOnboardingStep, setCompletedSteps } = useOnboardingStore();
 
-    // Multi-step state
-    const [currentOnboardingStep, setCurrentOnboardingStep] = useState(1);
-    const [completedSteps, setCompletedSteps] = useState<number[]>([]);
-
-    // Basic Info (Step 1) - Add safety checks for undefined values
+    // Local States -  Basic Info (Step 1)
     const [profilePicture, setProfilePicture] = useState<string | undefined>(user?.profilePicture);
-    const [fullName, setFullName] = useState(user?.fullName || '');
-    const [role, setRole] = useState<UserRole>(user?.role || 'PWD');
+    const [fullName, setFullName] = useState<string>(user?.fullName);
+    const [role, setRole] = useState<UserRole>(user?.role);
     const [selectedDisabilities, setSelectedDisabilities] = useState<DisabilityType[]>(user?.disabilityTypes || []);
-    const [preferredContact, setPreferredContact] = useState<ContactMethod>(user?.preferredContactMethod || 'WhatsApp');
-    const [preferredLanguage, setPreferredLanguage] = useState(user?.preferredLanguage || 'English');
+    const [preferredContact, setPreferredContact] = useState<ContactMethod>(user?.preferredContactMethod);
+    const [preferredLanguage, setPreferredLanguage] = useState<string>(user?.communicationPreferences?.preferredLanguage || '');
 
-    // Care Network (Step 2) - Add safety checks
+    // Local State - Care Network (Step 2)
     const [careRelationships, setCareRelationships] = useState<CareRelationship[]>(user?.careRelationships || []);
 
-    // Emergency Contacts (Step 3) - Add safety checks
+    // Local State - Emergency Contacts (Step 3)
     const [emergencyContacts, setEmergencyContacts] = useState<EmergencyContact[]>(user?.emergencyContacts || []);
 
-    // Accessibility Preferences (Step 4) - Add safety checks
+    // Local State - Accessibility Preferences (Step 4)
     const [accessibilityPreferences, setAccessibilityPreferences] = useState<AccessibilityPreferences>(
         user?.accessibilityPreferences || {
             mobility: {
@@ -93,12 +96,12 @@ export default function ProfileSetupScreen() {
         }
     );
 
-    // Form state
+    // Other Local States
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
 
     const disabilityTypes: DisabilityType[] = ['Physical', 'Visual', 'Hearing', 'Cognitive', 'Other'];
-    const contactMethods: ContactMethod[] = ['WhatsApp', 'SMS', 'Email'];
+    const contactMethods: ContactMethod[] = ['WhatsApp', 'SMS', 'Email', 'In-App'];
     const userRoles: UserRole[] = ['PWD', 'caregiver', 'family_member', 'guardian'];
     const languages = ['English', 'Swahili'];
     const relationshipTypes: RelationshipType[] = ['parent', 'child', 'sibling', 'spouse', 'caregiver', 'friend', 'guardian', 'other'];
@@ -111,7 +114,6 @@ export default function ProfileSetupScreen() {
             role,
             disabilityTypes: selectedDisabilities,
             preferredContactMethod: preferredContact,
-            preferredLanguage,
             careRelationships,
             emergencyContacts,
             accessibilityPreferences,
@@ -128,17 +130,18 @@ export default function ProfileSetupScreen() {
         const maxScore = 100;
 
         // Basic info (30 points)
-        if (fullName?.trim()) score += 10;
-        if (profilePicture) score += 5;
-        if (selectedDisabilities?.length > 0) score += 10;
-        if (role !== 'PWD') score += 5;
+        if (fullName?.trim()) score += 10; // User's full name
+        if (profilePicture) score += 5; // Profile picture uploaded
+        if (selectedDisabilities?.length > 0) score += 10; // At least one disability selected
+        if (role) score += 5; // Role selected
 
         // Care network (20 points)
-        if (careRelationships?.length > 0) score += 20;
+        if (careRelationships?.length > 0) score += 15; // At least one care relationship
+        if (careRelationships?.some(c => c?.isPrimary)) score += 5; // Primary caregiver identified
 
         // Emergency contacts (20 points)
-        if (emergencyContacts?.length > 0) score += 15;
-        if (emergencyContacts?.some(c => c?.isPrimary)) score += 5;
+        if (emergencyContacts?.length > 0) score += 15; // At least one emergency contact
+        if (emergencyContacts?.some(c => c?.isPrimary)) score += 5; // Primary emergency contact identified
 
         // Accessibility preferences (30 points)
         const hasAccessibilityPrefs = accessibilityPreferences && Object.values(accessibilityPreferences).some(category =>
@@ -146,7 +149,7 @@ export default function ProfileSetupScreen() {
         );
         if (hasAccessibilityPrefs) score += 30;
 
-        return Math.min(score, maxScore);
+        return Math.min(score, maxScore); // Ensure score does not exceed max score
     };
 
     const pickImage = async (useCamera: boolean) => {
@@ -207,10 +210,16 @@ export default function ProfileSetupScreen() {
         switch (currentOnboardingStep) {
             case 1:
                 if (!fullName?.trim()) {
-                    newErrors.fullName = 'Full name is required';
+                    newErrors.fullName = '*Enter your full name to continue*';
+                }
+                if (!role) {
+                    newErrors.role = '*Please select a role*';
                 }
                 if (!selectedDisabilities?.length) {
-                    newErrors.disabilities = 'Please select at least one disability type';
+                    newErrors.disabilities = '*Please select at least one disability type*';
+                }
+                if (!preferredContact?.trim()) {
+                    newErrors.preferredContact = '*Choose at least one preferred contact method*';
                 }
                 break;
             case 2:
@@ -218,7 +227,7 @@ export default function ProfileSetupScreen() {
                 break;
             case 3:
                 if (!emergencyContacts?.length) {
-                    newErrors.emergencyContacts = 'At least one emergency contact is recommended';
+                    newErrors.emergencyContacts = '*At least one emergency contact is recommended*';
                 }
                 break;
             case 4:
@@ -230,6 +239,9 @@ export default function ProfileSetupScreen() {
         return Object.keys(newErrors).length === 0;
     };
 
+
+    // NAVIGATION & COMPLETION
+
     const handleNext = () => {
         if (!validateCurrentStep()) return;
 
@@ -237,19 +249,32 @@ export default function ProfileSetupScreen() {
             Haptics.selectionAsync();
         }
 
-        // Mark current step as completed
-        setCompletedSteps(prev => [...prev, currentOnboardingStep]);
-
+        // Update current step
         if (currentOnboardingStep < ONBOARDING_STEPS.length) {
-            setCurrentOnboardingStep(prev => prev + 1);
+            setCurrentOnboardingStep(currentOnboardingStep + 1);
         } else {
             handleComplete();
         }
+
+        // Mark current step as completed
+        const safeCompletedSteps = Array.isArray(completedSteps) ? completedSteps : [];
+        const nextStep = currentOnboardingStep;
+        const nextCompletedSteps = safeCompletedSteps.includes(nextStep)
+            ? safeCompletedSteps
+            : [...safeCompletedSteps, nextStep];
+
+        setCompletedSteps(nextCompletedSteps);
     };
 
     const handleBack = () => {
         if (currentOnboardingStep > 1) {
-            setCurrentOnboardingStep(prev => prev - 1);
+            setCurrentOnboardingStep(currentOnboardingStep - 1);
+
+            // Mark previous step as incomplete
+            const safeCompletedSteps = Array.isArray(completedSteps) ? completedSteps : [];
+            const prevStep = currentOnboardingStep - 1;
+            const nextCompletedSteps = safeCompletedSteps.filter(step => step !== prevStep);
+            setCompletedSteps(nextCompletedSteps);
         }
     };
 
@@ -265,13 +290,17 @@ export default function ProfileSetupScreen() {
                 onboardingCompleted: true,
                 profileCompleteness: calculateProfileCompleteness(),
             });
+            setCurrentOnboardingStep(5); // Set to review step
+            setCompletedSteps([1, 2, 3, 4, 5]); // Mark all previous steps as completed
 
             if (Platform.OS !== 'web') {
                 Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
             }
 
-            setCurrentStep(5);
-            router.replace('/(tabs)');
+            setCurrentOnboardingStep(5); // Set to review step
+            Alert.alert('Profile Setup Complete', 'Your profile has been successfully set up!', [
+                { text: 'OK', onPress: () => router.replace('/(tabs)') }
+            ]);
         } catch (error) {
             console.error('Profile setup error:', error);
             setErrors({ general: 'An error occurred. Please try again.' });
@@ -279,6 +308,8 @@ export default function ProfileSetupScreen() {
             setLoading(false);
         }
     };
+
+    // RENDERING STEPS
 
     const renderCurrentStep = () => {
         switch (currentOnboardingStep) {
@@ -297,8 +328,9 @@ export default function ProfileSetupScreen() {
         }
     };
 
+    // STEP 1
     const renderBasicInfoStep = () => (
-        <View style={styles.stepContainer}>
+        <View style={styles.stepContainer} accessible={true}>
             <Text style={[styles.stepTitle, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole="header" accessibilityLabel="Basic Information">
                 Basic Information
             </Text>
@@ -313,6 +345,7 @@ export default function ProfileSetupScreen() {
                         <Image
                             source={{ uri: profilePicture }}
                             style={styles.profileImage}
+                            accessible={true}
                             accessibilityRole='image'
                             accessibilityLabel="Your profile picture"
                         />
@@ -328,6 +361,7 @@ export default function ProfileSetupScreen() {
                     <TouchableOpacity
                         style={styles.pictureActionButton}
                         onPress={() => pickImage(true)}
+                        accessible={true}
                         accessibilityRole='button'
                         accessibilityLabel="Take photo"
                         accessibilityHint='Opens camera to take a new profile picture'
@@ -339,6 +373,7 @@ export default function ProfileSetupScreen() {
                         style={styles.pictureActionButton}
                         onPress={() => pickImage(false)}
                         accessibilityRole='button'
+                        accessible={true}
                         accessibilityLabel="Choose from gallery"
                         accessibilityHint='Opens gallery to select a profile picture'
                     >
@@ -353,6 +388,11 @@ export default function ProfileSetupScreen() {
                 <Text style={[styles.sectionTitle, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole="text" accessibilityLabel="Full Name Label">
                     Your Full Name
                 </Text>
+                {errors.fullName && (
+                    <Text style={[styles.errorText, { marginTop: 0 }]} accessibilityRole="alert" accessibilityLabel={errors.fullName}>
+                        {errors.fullName}
+                    </Text>
+                )}
                 <FormField
                     icon={true}
                     iconName="person"
@@ -363,21 +403,22 @@ export default function ProfileSetupScreen() {
                     value={fullName}
                     onChangeText={setFullName}
                     autoCapitalize="words"
+                    accessible={true}
                     accessibilityLabel="Full name input"
                     accessibilityHint="Enter your full name"
                 />
             </View>
-            {errors.fullName && (
-                <Text style={styles.errorText}>
-                    {errors.fullName}
-                </Text>
-            )}
 
             {/* Role Selection */}
             <View style={styles.section}>
                 <Text style={[styles.sectionTitle, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole="header" accessibilityLabel="I am a...">
                     I am a...
                 </Text>
+                {errors.role && (
+                    <Text style={[styles.errorText, { marginTop: 0 }]} accessibilityRole="alert" accessibilityLabel={errors.role}>
+                        {errors.role}
+                    </Text>
+                )}
                 <View style={styles.chipsContainer}>
                     {userRoles.map((userRole) => (
                         <SelectableChip
@@ -386,7 +427,10 @@ export default function ProfileSetupScreen() {
                                 userRole === 'caregiver' ? 'Caregiver' :
                                     userRole === 'family_member' ? 'Family member' : 'Guardian'}
                             selected={role === userRole}
-                            onPress={() => setRole(userRole)}
+                            onPress={() => {
+                                if (Platform.OS !== 'web') Haptics.selectionAsync();
+                                setRole(userRole);
+                            }}
                         />
                     ))}
                 </View>
@@ -397,6 +441,11 @@ export default function ProfileSetupScreen() {
                 <Text style={[styles.sectionTitle, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole='header' accessibilityLabel='Disability Type'>
                     Disability Type
                 </Text>
+                {errors.disabilities && (
+                    <Text style={[styles.errorText, { marginTop: 0 }]} accessibilityRole="alert" accessibilityLabel={errors.disabilities}>
+                        {errors.disabilities}
+                    </Text>
+                )}
                 <Text style={[styles.sectionSubtitle, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel="Select all that apply to you">
                     Select all that apply to you
                 </Text>
@@ -411,10 +460,6 @@ export default function ProfileSetupScreen() {
                         />
                     ))}
                 </View>
-
-                {errors.disabilities && (
-                    <Text style={styles.errorText}>{errors.disabilities}</Text>
-                )}
             </View>
 
             {/* Preferred Contact Method */}
@@ -423,35 +468,23 @@ export default function ProfileSetupScreen() {
                     Preferred Contact Method
                 </Text>
 
-                <View style={styles.contactMethodContainer}>
+                {errors.preferredContact && (
+                    <Text style={[styles.errorText, { marginTop: 0 }]} accessibilityRole="alert" accessibilityLabel={errors.preferredContact}>
+                        {errors.preferredContact}
+                    </Text>
+                )}
+
+                <View style={styles.chipsContainer}>
                     {contactMethods.map(method => (
-                        <TouchableOpacity
+                        <SelectableChip
                             key={method}
-                            style={[
-                                styles.contactMethodButton,
-                                preferredContact === method && styles.contactMethodButtonActive,
-                                { borderColor: currentTheme === 'light' ? Colors.borderLight : Colors.borderDark }
-                            ]}
+                            label={method}
+                            selected={preferredContact === method}
                             onPress={() => {
-                                if (Platform.OS !== 'web') {
-                                    Haptics.selectionAsync();
-                                }
+                                if (Platform.OS !== 'web') Haptics.selectionAsync();
                                 setPreferredContact(method);
                             }}
-                            accessibilityRole="radio"
-                            accessibilityState={{ checked: preferredContact === method }}
-                            accessibilityLabel={`${method} contact method`}
-                            accessibilityHint="Select this contact method for notifications and updates"
-                        >
-                            <Text
-                                style={[
-                                    styles.contactMethodText,
-                                    preferredContact === method && styles.contactMethodTextActive
-                                ]}
-                            >
-                                {method}
-                            </Text>
-                        </TouchableOpacity>
+                        />
                     ))}
                 </View>
             </View>
@@ -476,28 +509,27 @@ export default function ProfileSetupScreen() {
         </View>
     );
 
+    // STEP 2
     const renderCareNetworkStep = () => (
-        <View>
-            <CareRelationshipForm
-                relationships={careRelationships || []}
-                onAddRelationship={(relationship) => {
-                    Haptics.selectionAsync();
-                    setCareRelationships(prev => [...(prev || []), { ...relationship, id: uuid.v4(), isPrimary: false }]);
-                }}
-                onRemoveRelationship={(id) => setCareRelationships(prev => (prev || []).filter(r => r.id !== id))}
-                onUpdateRelationship={(id, updates) => {
-                    Haptics.selectionAsync();
-                    setCareRelationships(prev =>
-                        (prev || []).map(r => r.id === id ? { ...r, ...updates } : r)
-                    );
-                }}
-            />
-            {errors.careRelationships && <Text style={styles.errorText}>{errors.careRelationships}</Text>}
-        </View>
+        <CareRelationshipForm
+            relationships={careRelationships || []}
+            onAddRelationship={(relationship) => {
+                Haptics.selectionAsync();
+                setCareRelationships(prev => [...(prev || []), { ...relationship, id: uuid.v4(), isPrimary: false }]);
+            }}
+            onRemoveRelationship={(id) => setCareRelationships(prev => (prev || []).filter(r => r.id !== id))}
+            onUpdateRelationship={(id, updates) => {
+                Haptics.selectionAsync();
+                setCareRelationships(prev =>
+                    (prev || []).map(r => r.id === id ? { ...r, ...updates } : r)
+                );
+            }}
+        />
     );
 
+    // STEP 3
     const renderEmergencyContactsStep = () => (
-        <View>
+        <>
             <EmergencyContactForm
                 contacts={emergencyContacts || []}
                 onAddContact={(contact) => setEmergencyContacts(prev => [...(prev || []), contact])}
@@ -506,10 +538,15 @@ export default function ProfileSetupScreen() {
                     (prev || []).map(c => c.id === id ? { ...c, ...updates } : c)
                 )}
             />
-            {errors.emergencyContacts && <Text style={styles.errorText}>{errors.emergencyContacts}</Text>}
-        </View>
+            {errors.emergencyContacts && (
+                <Text style={styles.errorText} accessibilityRole="alert" accessibilityLabel={errors.emergencyContacts}>
+                    {errors.emergencyContacts}
+                </Text>
+            )}
+        </>
     );
 
+    // STEP 4
     const renderAccessibilityStep = () => (
         <AccessibilityPreferencesForm
             preferences={accessibilityPreferences}
@@ -517,8 +554,9 @@ export default function ProfileSetupScreen() {
         />
     );
 
+    // STEP 5
     const renderReviewStep = () => (
-        <View style={styles.stepContainer}>
+        <View style={styles.stepContainer} accessible={true}>
             <Text style={[styles.stepTitle, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole="header" accessibilityLabel="Profile Review">
                 Profile Review
             </Text>
@@ -535,7 +573,7 @@ export default function ProfileSetupScreen() {
                     <View style={styles.completenessBar}>
                         <View style={[styles.completenessProgress, { width: `${calculateProfileCompleteness()}%` }]} />
                     </View>
-                    <Text style={[styles.completenessText, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}>
+                    <Text style={[styles.completenessText, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole="text" accessibilityLabel={`Profile completeness is ${calculateProfileCompleteness()} percent`}>
                         {calculateProfileCompleteness()}%
                     </Text>
                 </View>
@@ -543,31 +581,34 @@ export default function ProfileSetupScreen() {
 
             {/* Basic Info Summary */}
             <View style={[styles.reviewSection, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}>
-                <Text style={[styles.reviewTitle, { color: currentTheme === 'light' ? Colors.black : Colors.white }]}>
+                <Text style={[styles.reviewTitle, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole="header" accessibilityLabel="Basic Information">
                     Basic Information
                 </Text>
-                <Text style={[styles.reviewItem, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]}>
+                <Text style={[styles.reviewItem, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel={`Full Name: ${fullName || 'Not provided'}`}>
                     Name: {fullName || 'Not provided'}
                 </Text>
-                <Text style={[styles.reviewItem, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]}>
+                <Text style={[styles.reviewItem, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel={`Role: ${role}`}>
                     Role: {role}
                 </Text>
-                <Text style={[styles.reviewItem, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]}>
+                <Text style={[styles.reviewItem, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel={`Disabilities: ${selectedDisabilities?.join(', ') || 'None selected'}`}>
                     Disabilities: {selectedDisabilities?.join(', ') || 'None selected'}
                 </Text>
-                <Text style={[styles.reviewItem, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]}>
+                <Text style={[styles.reviewItem, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel={`Preferred contact: ${preferredContact}`}>
                     Preferred contact: {preferredContact}
+                </Text>
+                <Text style={[styles.reviewItem, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel={`Preferred language: ${preferredLanguage}`}>
+                    Preferred language: {preferredLanguage}
                 </Text>
             </View>
 
             {/* Care Network Summary */}
             {(careRelationships?.length || 0) > 0 && (
                 <View style={[styles.reviewSection, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}>
-                    <Text style={[styles.reviewTitle, { color: currentTheme === 'light' ? Colors.black : Colors.white }]}>
+                    <Text style={[styles.reviewTitle, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole="header" accessibilityLabel="Care Network">
                         Care Network ({careRelationships?.length || 0} contacts)
                     </Text>
                     {careRelationships?.map((relationship) => (
-                        <Text key={relationship.id} style={[styles.reviewItem, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]}>
+                        <Text key={relationship.id} style={[styles.reviewItem, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel={`Care relationship: ${relationship.name} (${relationship.relationship})`}>
                             {relationship.name} ({relationship.relationship}) {relationship.isPrimary && '- Primary'}
                         </Text>
                     ))}
@@ -577,11 +618,11 @@ export default function ProfileSetupScreen() {
             {/* Emergency Contacts Summary */}
             {(emergencyContacts?.length || 0) > 0 && (
                 <View style={[styles.reviewSection, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}>
-                    <Text style={[styles.reviewTitle, { color: currentTheme === 'light' ? Colors.black : Colors.white }]}>
+                    <Text style={[styles.reviewTitle, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole="header" accessibilityLabel="Emergency Contacts">
                         Emergency Contacts ({emergencyContacts?.length || 0} contacts)
                     </Text>
                     {emergencyContacts?.map((contact) => (
-                        <Text key={contact.id} style={[styles.reviewItem, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]}>
+                        <Text key={contact.id} style={[styles.reviewItem, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel={`Emergency contact: ${contact.name} (${contact.relationship})`}>
                             {contact.name} ({contact.relationship}) {contact.isPrimary && '- Primary'}
                         </Text>
                     ))}
@@ -590,10 +631,10 @@ export default function ProfileSetupScreen() {
 
             {/* Accessibility Summary */}
             <View style={[styles.reviewSection, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}>
-                <Text style={[styles.reviewTitle, { color: currentTheme === 'light' ? Colors.black : Colors.white }]}>
+                <Text style={[styles.reviewTitle, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole="header" accessibilityLabel="Accessibility Preferences">
                     Accessibility Preferences
                 </Text>
-                <Text style={[styles.reviewItem, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]}>
+                <Text style={[styles.reviewItem, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel={`Accessibility preferences: ${accessibilityPreferences ? 'Configured' : 'Not configured'}`}>
                     {accessibilityPreferences && Object.values(accessibilityPreferences).some(category =>
                         category && Object.values(category).some(value => value === true)
                     ) ? 'Configured' : 'Not configured'}
@@ -603,20 +644,7 @@ export default function ProfileSetupScreen() {
     );
 
     return (
-        <View style={[styles.container, { backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer }]}>
-            {/* Header */}
-            <View style={styles.header}>
-                <TouchableOpacity
-                    style={styles.headerBackButton}
-                    onPress={() => router.back()}
-                >
-                    <Ionicons name="arrow-back" size={24} color={Colors.primary} />
-                </TouchableOpacity>
-                <Text style={[styles.headerTitle, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}>
-                    Profile Setup
-                </Text>
-                <View style={styles.headerSpacer} />
-            </View>
+        <View style={[styles.container, { backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer }]} accessible={true}>
 
             {/* Step Indicator */}
             <View style={styles.stepIndicatorContainer}>
@@ -628,17 +656,22 @@ export default function ProfileSetupScreen() {
                 />
             </View>
 
+
+
             {/* Main Content */}
             <ScrollView
                 style={styles.scrollView}
                 contentContainerStyle={styles.scrollContent}
                 showsVerticalScrollIndicator={false}
+                accessible={true}
             >
                 {renderCurrentStep()}
             </ScrollView>
 
+
+
             {/* Footer */}
-            <View style={[styles.footer, { borderTopColor: currentTheme === 'light' ? Colors.lightGray : Colors.darkGray }]}>
+            <View style={[styles.footer, { borderTopColor: currentTheme === 'light' ? Colors.lightGray : Colors.darkGray }]} accessible={true}>
                 {errors.general && <Text style={styles.errorText}>{errors.general}</Text>}
 
                 <View style={styles.footerButtons}>
@@ -799,7 +832,7 @@ const styles = StyleSheet.create({
     },
     reviewTitle: {
         fontSize: 18,
-        fontWeight: '600',
+        fontWeight: 'bold',
         marginBottom: 12,
     },
     reviewItem: {

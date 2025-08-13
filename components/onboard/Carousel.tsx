@@ -28,7 +28,7 @@ export default function Carousel({
     const { currentTheme } = React.useContext(ThemeContext);
 
     const [activeIndex, setActiveIndex] = useState(0);
-    const scrollViewRef = useRef<ScrollView>(null);7
+    const scrollViewRef = useRef<ScrollView>(null);
 
     const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
         const contentOffsetX = event.nativeEvent.contentOffset.x;
@@ -63,6 +63,7 @@ export default function Carousel({
                 onScroll={handleScroll}
                 scrollEventThrottle={16}
                 style={styles.scrollView}
+                accessible={true}
                 accessibilityLabel="Carousel of onboarding slides"
                 accessibilityHint='Swipe left or right to navigate through the slides'
             >
@@ -83,6 +84,8 @@ export default function Carousel({
                                 index === activeIndex && (currentTheme === 'light' ? styles.paginationDotActive : { backgroundColor: Colors.white })
                             ]}
                             onTouchEnd={() => scrollToIndex(index)}
+                            accessible={true}
+                            accessibilityLabel={`Go to slide ${index + 1}`}
                         />
                     ))}
                 </View>

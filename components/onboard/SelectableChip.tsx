@@ -8,7 +8,7 @@ import {
 import Colors from '@/constants/Colors';
 
 interface SelectableChipProps {
-    label: string;
+    label: string | null;
     selected: boolean;
     onPress: () => void;
     style?: ViewStyle;
@@ -29,6 +29,7 @@ export default function SelectableChip({
             ]}
             onPress={onPress}
             activeOpacity={0.7}
+            accessible={true}
             accessibilityRole="button"
             accessibilityState={{ selected }}
             accessibilityLabel={`${label}, ${selected ? 'selected' : 'not selected'}`}

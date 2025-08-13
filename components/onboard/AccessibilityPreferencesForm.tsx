@@ -20,7 +20,7 @@ const AccessibilityPreferencesForm: React.FC<Props> = ({
   onUpdatePreferences,
 }) => {
   const { currentTheme } = useContext(ThemeContext);
-  
+
   // Update functions for each preference category
   // These functions will merge the existing preferences with the updates provided
   const updateMobilityPrefs = (updates: Partial<AccessibilityPreferences['mobility']>) => {
@@ -54,13 +54,13 @@ const AccessibilityPreferencesForm: React.FC<Props> = ({
 
   // Components for rendering each section and switch
   // These components will be used to structure the form and make it more readable
-  const PreferenceSection = ({ 
-    title, 
-    icon, 
+  const PreferenceSection = ({
+    title,
+    icon,
     children // The children will be the switches and fields for each section
-  }: { 
-    title: string; 
-    icon: React.ReactNode; 
+  }: {
+    title: string;
+    icon: React.ReactNode;
     children: React.ReactNode;
   }) => (
     <View style={[styles.section, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}>
@@ -74,18 +74,18 @@ const AccessibilityPreferencesForm: React.FC<Props> = ({
     </View>
   );
 
-  const PreferenceSwitch = ({ 
-    label, 
-    value, 
-    onValueChange, 
-    description 
-  }: { 
-    label: string; 
-    value: boolean; 
-    onValueChange: (value: boolean) => void; 
+  const PreferenceSwitch = ({
+    label,
+    value,
+    onValueChange,
+    description
+  }: {
+    label: string;
+    value: boolean;
+    onValueChange: (value: boolean) => void;
     description?: string;
   }) => (
-    <View style={styles.switchContainer}>
+    <View style={styles.switchContainer} accessible={true}>
       <View style={styles.switchTextContainer}>
         <Text style={[styles.switchLabel, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole="text" accessibilityLabel={label}>
           {label}
@@ -101,8 +101,11 @@ const AccessibilityPreferencesForm: React.FC<Props> = ({
         onValueChange={onValueChange}
         trackColor={{ false: Colors.lightGray, true: Colors.primary }}
         thumbColor={value ? Colors.white : Colors.mediumGray}
+        accessible={true}
         accessibilityRole="switch"
         accessibilityLabel={`${label} switch`}
+        accessibilityHint='Toggle this switch to enable or disable the preference'
+        accessibilityState={{ checked: value }}
       />
     </View>
   );
@@ -127,14 +130,14 @@ const AccessibilityPreferencesForm: React.FC<Props> = ({
           onValueChange={(value) => updateMobilityPrefs({ useWheelchair: value })}
           description="Vehicle needs wheelchair accessibility"
         />
-        
+
         <PreferenceSwitch
           label="I need ramp access"
           value={preferences.mobility.needsRamp}
           onValueChange={(value) => updateMobilityPrefs({ needsRamp: value })}
           description="Accessible entry/exit required"
         />
-        
+
         <PreferenceSwitch
           label="I use assistive devices"
           value={preferences.mobility.needsAssistiveDevice}
@@ -152,7 +155,7 @@ const AccessibilityPreferencesForm: React.FC<Props> = ({
             otherStyles={styles.deviceTypeField}
           />
         )}
-        
+
         <PreferenceSwitch
           label="I need transfer assistance"
           value={preferences.mobility.transferAssistance}
@@ -172,28 +175,28 @@ const AccessibilityPreferencesForm: React.FC<Props> = ({
           onValueChange={(value) => updateVisualPrefs({ isBlind: value })}
           description="Requires audio guidance and assistance"
         />
-        
+
         <PreferenceSwitch
           label="I have low vision"
           value={preferences.visual.hasLowVision}
           onValueChange={(value) => updateVisualPrefs({ hasLowVision: value })}
           description="May need extra lighting or assistance"
         />
-        
+
         <PreferenceSwitch
           label="I need large text"
           value={preferences.visual.needsLargeText}
           onValueChange={(value) => updateVisualPrefs({ needsLargeText: value })}
           description="Increases text size in the app"
         />
-        
+
         <PreferenceSwitch
           label="I need high contrast"
           value={preferences.visual.needsHighContrast}
           onValueChange={(value) => updateVisualPrefs({ needsHighContrast: value })}
           description="Enhanced color contrast for better visibility"
         />
-        
+
         <PreferenceSwitch
           label="I have a guide animal"
           value={preferences.visual.hasGuideAnimal}
@@ -213,28 +216,28 @@ const AccessibilityPreferencesForm: React.FC<Props> = ({
           onValueChange={(value) => updateHearingPrefs({ isDeaf: value })}
           description="Requires visual communication methods"
         />
-        
+
         <PreferenceSwitch
           label="I have hearing loss"
           value={preferences.hearing.hasHearingLoss}
           onValueChange={(value) => updateHearingPrefs({ hasHearingLoss: value })}
           description="May need louder audio or repetition"
         />
-        
+
         <PreferenceSwitch
           label="I use sign language"
           value={preferences.hearing.needsSignLanguage}
           onValueChange={(value) => updateHearingPrefs({ needsSignLanguage: value })}
           description="Preferred communication method"
         />
-        
+
         <PreferenceSwitch
           label="I use hearing aids"
           value={preferences.hearing.hasHearingAid}
           onValueChange={(value) => updateHearingPrefs({ hasHearingAid: value })}
           description="May be sensitive to certain sounds"
         />
-        
+
         <PreferenceSwitch
           label="I prefer written communication"
           value={preferences.hearing.needsWrittenCommunication}
@@ -254,21 +257,21 @@ const AccessibilityPreferencesForm: React.FC<Props> = ({
           onValueChange={(value) => updateCognitivePrefs({ needsSimpleInstructions: value })}
           description="Clear, step-by-step guidance"
         />
-        
+
         <PreferenceSwitch
           label="I need extra time"
           value={preferences.cognitive.needsExtraTime}
           onValueChange={(value) => updateCognitivePrefs({ needsExtraTime: value })}
           description="Allow additional time for processes"
         />
-        
+
         <PreferenceSwitch
           label="I have memory support needs"
           value={preferences.cognitive.hasMemorySupport}
           onValueChange={(value) => updateCognitivePrefs({ hasMemorySupport: value })}
           description="Reminders and confirmation needed"
         />
-        
+
         <PreferenceSwitch
           label="I need a companion"
           value={preferences.cognitive.needsCompanion}

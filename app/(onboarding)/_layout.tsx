@@ -9,7 +9,7 @@ export default function OnboardingLayout() {
   const { currentTheme } = React.useContext(ThemeContext);
   return (
     <Stack>
-      <Stack.Screen name="onboard" options={{ headerShown: false }} />
+      <Stack.Screen name="onboard-slides" options={{ headerShown: false }} />
       <Stack.Screen name="welcome" options={{ headerShown: false }} />
       <Stack.Screen name="profileSetup" options={{
         headerTitle: 'Profile Setup',

@@ -1,20 +1,25 @@
-export type DisabilityType = 'Physical' | 'Visual' | 'Hearing' | 'Cognitive' | 'Other';
-export type ContactMethod = 'WhatsApp' | 'SMS' | 'Email';
-export type UserRole = 'PWD' | 'caregiver' | 'family_member' | 'guardian';
-export type RelationshipType = 'parent' | 'child' | 'sibling' | 'spouse' | 'caregiver' | 'friend' | 'guardian' | 'other';
+/*
+ ** AbiliLife Onboarding Types & Interfaces
+ ** These types are used throughout the onboarding process to ensure consistency and clarity.
+*/
 
-// Enhanced types for better onboarding
-export type ServiceProvider = 'ACE_MOBILITY' | 'BAMM_TOURS' | 'ACCESSIBLE_TRAVEL' | 'OTHER';
-export type VehicleType = 'WHEELCHAIR_ACCESSIBLE' | 'REGULAR' | 'MODIFIED' | 'ANY';
+export type DisabilityType = 'Physical' | 'Visual' | 'Hearing' | 'Cognitive' | 'Other';
+export type ContactMethod = 'WhatsApp' | 'SMS' | 'Email' | 'In-App' | null;
+export type UserRole = 'PWD' | 'caregiver' | 'family_member' | 'guardian' | null;
+export type RelationshipType = 'parent' | 'child' | 'sibling' | 'spouse' | 'caregiver' | 'friend' | 'guardian' | 'other' | null;
+
+// Other types for better onboarding experience
+export type ServiceProvider = 'ACE_MOBILITY' | 'OTHER'; // Other service providers
+export type VehicleType = 'WHEELCHAIR_ACCESSIBLE' | 'REGULAR' | 'MODIFIED' | 'ANY'; // Depends on user needs
 export type DriverGender = 'MALE' | 'FEMALE' | 'NO_PREFERENCE';
-export type PaymentMethod = 'CASH' | 'MPESA' | 'CARD' | 'INSURANCE';
+export type PaymentMethod = 'CASH' | 'MPESA' | 'CARD' | 'INSURANCE'; // Insurance payments will be supported in the future
 
 export interface CareRelationship {
   id: string;
   name: string;
   relationship: RelationshipType;
   phone: string;
-  email?: string;
+  email?: string; // Optional email for communication
   canBookForMe: boolean;
   isPrimary: boolean;
 }
@@ -24,7 +29,7 @@ export interface EmergencyContact {
   name: string;
   relationship: RelationshipType;
   phone: string;
-  email?: string;
+  email?: string; // Optional email for communication
   isPrimary: boolean;
   notificationPreferences: {
     emergencies: boolean;
@@ -38,7 +43,7 @@ export interface AccessibilityPreferences {
     useWheelchair: boolean;
     needsRamp: boolean;
     needsAssistiveDevice: boolean;
-    deviceType?: string;
+    deviceType?: string; // e.g., 'walker', 'cane', 'crutches'
     transferAssistance: boolean;
   };
   visual: {
@@ -63,94 +68,76 @@ export interface AccessibilityPreferences {
   };
 }
 
-interface UserSettings {
-    id: string;
-    userId: string;
-    role: UserRole;
-    careRelationships: CareRelationship[];
-    emergencyContacts: EmergencyContact[];
-    accessibilityPreferences: AccessibilityPreferences;
-    preferredLanguage: string;
-    notificationPreferences: {
-        rideUpdates: boolean;
-        emergencyAlerts: boolean;
-        promotionalOffers: boolean;
-        locationSharing: boolean;
-    };
-    medicalInformation?: {
-        allergies?: string[];
-        medications?: string[];
-        medicalConditions?: string[];
-        preferredHospital?: string;
-    };
-}
 export interface UserProfile {
-    fullName: string;
-    email: string;
-    phone: string;
-    profilePicture?: string;
-    role: UserRole;
-    
-    // Basic accessibility info (kept for backward compatibility)
-    disabilityTypes: DisabilityType[];
-    needsRamp: boolean;
-    needsAssistiveDevice: boolean;
-    needsSignLanguage: boolean;
-    preferredContactMethod: ContactMethod;
-    
-    // Enhanced fields
-    careRelationships: CareRelationship[];
-    emergencyContacts: EmergencyContact[];
-    accessibilityPreferences: AccessibilityPreferences;
-    preferredLanguage: string;
-    
-    // New enhanced features
-    savedLocations: SavedLocation[];
-    servicePreferences: ServicePreferences;
-    communicationPreferences: CommunicationPreferences;
-    billingInformation: BillingInformation;
-    
-    // Notification preferences
-    notificationPreferences: {
-        rideUpdates: boolean;
-        emergencyAlerts: boolean;
-        promotionalOffers: boolean;
-        locationSharing: boolean;
-    };
-    
-    // Optional medical information
-    medicalInformation?: {
-        allergies?: string[];
-        medications?: string[];
-        medicalConditions?: string[];
-        preferredHospital?: string;
-    };
-    
-    onboardingCompleted: boolean;
-    profileCompleteness: number; // 0-100 percentage
+  fullName: string;
+  email: string;
+  phone: string;
+  profilePicture?: string; // Optional profile picture URL
+  isEmailVerified: boolean;
+  isPhoneVerified: boolean;
+  role: UserRole;
+  disabilityTypes: DisabilityType[];
+  preferredContactMethod: ContactMethod;
+
+  // Relationships (Caregivers & Emergency Contacts)
+  careRelationships: CareRelationship[];
+  emergencyContacts: EmergencyContact[];
+
+  savedLocations: SavedLocation[];
+
+  // Accessibility preferences - IMPORTANT
+  accessibilityPreferences: AccessibilityPreferences;
+
+  // Service preferences (this is to enhance user experience)
+  servicePreferences: ServicePreferences;
+
+  // Communication preferences
+  communicationPreferences: CommunicationPreferences;
+
+  // Billing information (optional - for future use)
+  billingInformation: BillingInformation;
+
+  // Notification preferences
+  notificationPreferences: {
+    rideUpdates: boolean;
+    emergencyAlerts: boolean;
+    promotionalOffers: boolean;
+    locationSharing: boolean;
+  };
+
+  // Medical information (optional - for future use)
+  medicalInformation?: {
+    allergies?: string[];
+    medications?: string[];
+    medicalConditions?: string[];
+    preferredHospital?: string;
+  };
+
+  hasSeenOnboardingSlide: boolean;
+  onboardingCompleted: boolean;
+  profileCompleteness: number; // 0-100 percentage
 }
 
 export interface OnboardingState {
-    user: UserProfile;
-    isAuthenticated: boolean;
-    currentStep: number;
-    updateUser: (data: Partial<UserProfile>) => void;
-    setAuthenticated: (value: boolean) => void;
-    setCurrentStep: (step: number) => void;
-    resetOnboarding: () => void;
+  user: UserProfile;
+  currentOnboardingStep: number; // 1 - 5 (1: Start, 5: Complete)
+  completedSteps: number[];
+  updateUser: (data: Partial<UserProfile>) => void;
+  setCurrentOnboardingStep: (step: number) => void;
+  setCompletedSteps: (steps: number[]) => void;
+  resetOnboarding: () => void;
 }
 
 export interface GuideStep {
-    id: number;
-    title: string;
-    image: any;
-    steps: {
-        main: string;
-        subSteps?: string[];
-    }[];
+  id: number;
+  title: string;
+  image: any;
+  steps: {
+    main: string;
+    subSteps?: string[];
+  }[];
 }
 
-// Enhanced location interface
 export interface SavedLocation {
   id: string;
   name: string;
@@ -161,33 +148,30 @@ export interface SavedLocation {
   locationType: 'HOME' | 'WORK' | 'MEDICAL' | 'OTHER';
 }
 
-// Enhanced service preferences
 export interface ServicePreferences {
   preferredProviders: ServiceProvider[];
   vehicleType: VehicleType;
   driverGender: DriverGender;
-  allowCompanion: boolean;
+  allowCompanion: boolean; // Ride with someone
   allowPets: boolean;
-  preferredPickupTime?: string;
-  specialInstructions?: string;
+  preferredPickupTime?: string; // Optional
+  specialInstructions?: string; // Optional
 }
 
-// Enhanced communication preferences
 export interface CommunicationPreferences {
   preferredLanguage: string;
-  fontSize: 'SMALL' | 'MEDIUM' | 'LARGE' | 'EXTRA_LARGE';
-  highContrast: boolean;
-  voiceInstructions: boolean;
-  textToSpeech: boolean;
+  fontSize: 'SMALL' | 'MEDIUM' | 'LARGE' | 'EXTRA_LARGE'; // SMALL - 12px, MEDIUM - 14px, LARGE - 16px, EXTRA_LARGE - 18px
+  highContrast: boolean; // For visually impaired users
+  voiceInstructions: boolean; // For users who prefer auditory guidance (could use screen readers)
+  textToSpeech: boolean; // For users who prefer text-to-speech functionality
   communicationStyle: 'VERBAL' | 'WRITTEN' | 'GESTURE' | 'MIXED';
 }
 
-// Payment and billing information
 export interface BillingInformation {
   preferredPaymentMethods: PaymentMethod[];
   hasInsurance: boolean;
-  insuranceProvider?: string;
-  insurancePolicyNumber?: string;
+  insuranceProvider?: string; // (Optional)
+  insurancePolicyNumber?: string; // (Optional)
   hasDisabilityVouchers: boolean;
-  billingContactId?: string; // Reference to emergency contact for billing
+  billingContactId?: string; // Reference to emergency contact for billing (Optional)
 }

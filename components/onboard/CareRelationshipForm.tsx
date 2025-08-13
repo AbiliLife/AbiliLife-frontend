@@ -45,7 +45,7 @@ const CareRelationshipForm: React.FC<Props> = ({
         // Validate input
         // Ensure at least name and phone are provided
         if (!newRelationship.name.trim() || !newRelationship.phone.trim()) {
-            Alert.alert('Error', 'Please fill in at least name and phone number');
+            Alert.alert('You have not filled in all the required fields', 'Please fill in at least name and phone number');
             return;
         }
 
@@ -87,14 +87,14 @@ const CareRelationshipForm: React.FC<Props> = ({
     };
 
     return (
-        <View style={styles.container}>
+        <View style={styles.container} accessible={true}>
             <Text style={[styles.sectionTitle, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole="header" accessibilityLabel="Caregiver Network">
                 Caregiver Network
             </Text>
             <Text style={[styles.sectionSubtitle, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel="Add people who can help you book rides and make decisions on your behalf">
                 Add people who can help you book rides and make decisions on your behalf {`\n`}
-                <Text style={{ color: Colors.error }}>
-                    It is important to have at least one primary contact who can book rides for you.
+                <Text style={{ color: Colors.info, fontWeight: 'bold' }} accessibilityRole="text" accessibilityLabel="Note: It is recommended to have at least one primary contact who can book rides for you">
+                    Note: It is recommended to have at least one primary contact who can book rides for you.
                 </Text>
             </Text>
 
@@ -103,7 +103,7 @@ const CareRelationshipForm: React.FC<Props> = ({
                 <View key={relationship.id} style={[styles.relationshipCard, {
                     backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray,
                     borderColor: relationship.isPrimary ? Colors.primary : Colors.lightGray
-                }]}>
+                }]} accessible={true}>
                     <View style={styles.relationshipHeader}>
                         <View style={styles.relationshipInfo}>
                             <Text style={[styles.relationshipName, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole="text" accessibilityLabel={`Relationship name: ${relationship.name}`}>
@@ -158,6 +158,9 @@ const CareRelationshipForm: React.FC<Props> = ({
                             />
                         </View>
                     </View>
+                    <Text style={{ color: Colors.info, fontWeight: '500' }} accessibilityRole="text" accessibilityLabel="You can edit this contact later on your profile page.">
+                        You can edit this contact later on your profile page.
+                    </Text>
                 </View>
             ))}
 
@@ -167,6 +170,10 @@ const CareRelationshipForm: React.FC<Props> = ({
                 animationType="slide"
                 presentationStyle={Platform.OS === 'ios' ? 'formSheet' : undefined}
                 onRequestClose={() => setShowAddForm(false)}
+                accessible={true}
+                accessibilityViewIsModal={true}
+                accessibilityLabel="Add Caregiver Contact"
+                accessibilityHint='This is a formsheet to add a new caregiver contact.'
             >
                 <View style={[styles.modalContainer, { backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer }]}>
                     <View style={styles.modalHeader}>
@@ -179,6 +186,10 @@ const CareRelationshipForm: React.FC<Props> = ({
                     </View>
 
                     <View style={styles.modalContent}>
+
+                        <Text style={[styles.label, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole='text' accessibilityLabel='Contact Name'>
+                            Contact Name*
+                        </Text>
                         <FormField
                             type="text"
                             title="Name"
@@ -187,31 +198,44 @@ const CareRelationshipForm: React.FC<Props> = ({
                             onChangeText={(text) => setNewRelationship(prev => ({ ...prev, name: text }))}
                         />
 
+
+
+                        <Text style={[styles.label, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole='text' accessibilityLabel='Contact Phone'>
+                            Contact Phone*
+                        </Text>
                         <FormField
                             type="phone"
                             title="Phone"
                             placeholder="Enter phone number"
                             value={newRelationship.phone}
                             onChangeText={(text) => setNewRelationship(prev => ({ ...prev, phone: text }))}
+                            otherStyles={{ marginBottom: 16 }}
                         />
 
+
+
+                        <Text style={[styles.label, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole='text' accessibilityLabel='Contact Email'>
+                            Contact Email (Optional)
+                        </Text>
                         <FormField
                             type="email"
                             title="Email (Optional)"
                             placeholder="Enter email address"
                             value={newRelationship.email}
                             onChangeText={(text) => setNewRelationship(prev => ({ ...prev, email: text }))}
+                            otherStyles={{ marginBottom: 16 }}
                         />
+
 
                         {/* Relationship Selector */}
                         <Text style={[styles.label, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole="text" accessibilityLabel="Relationship">
-                            Relationship
+                            Relationship*
                         </Text>
                         <View style={styles.relationshipGrid}>
                             {relationshipTypes.map((type) => (
                                 <SelectableChip
                                     key={type}
-                                    label={type.charAt(0).toUpperCase() + type.slice(1)}
+                                    label={typeof type === 'string' ? type.charAt(0).toUpperCase() + type.slice(1) : ''}
                                     selected={newRelationship.relationship === type}
                                     onPress={() => setNewRelationship(prev => ({ ...prev, relationship: type }))}
                                 />
@@ -228,8 +252,10 @@ const CareRelationshipForm: React.FC<Props> = ({
                                 onValueChange={(value) => setNewRelationship(prev => ({ ...prev, canBookForMe: value }))}
                                 trackColor={{ false: Colors.lightGray, true: Colors.secondary }}
                                 thumbColor={newRelationship.canBookForMe ? Colors.white : Colors.mediumGray}
+                                accessible={true}
+                                accessibilityState={{ checked: newRelationship.canBookForMe }}
                                 accessibilityRole="switch"
-                                accessibilityLabel={`Toggle booking permission for ${newRelationship.name}`}
+                                accessibilityLabel={`Toggle booking permission for ${newRelationship.name || 'new contact'}`}
                             />
                         </View>
 
@@ -338,8 +364,8 @@ const styles = StyleSheet.create({
         marginBottom: 16,
     },
     label: {
-        fontSize: 18,
-        fontWeight: 'bold',
+        fontSize: 16,
+        fontWeight: '500',
         marginBottom: 8,
     },
     relationshipGrid: {

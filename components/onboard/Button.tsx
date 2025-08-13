@@ -56,6 +56,7 @@ export default function Button({
             onPress={onPress}
             disabled={disabled || loading}
             activeOpacity={0.8}
+            accessible={true}
             accessibilityRole="button"
             accessibilityState={{ disabled: disabled || loading }}
             accessibilityLabel={title}
@@ -89,9 +90,9 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.accent,
     },
     outlineButton: {
-        backgroundColor: 'transparent',
+        backgroundColor: Colors.transparent,
         borderWidth: 1,
-        borderColor: Colors.primary,
+        borderColor: Colors.secondary,
     },
     disabledButton: {
         backgroundColor: Colors.lightGray,
@@ -108,7 +109,7 @@ const styles = StyleSheet.create({
         color: Colors.white,
     },
     outlineText: {
-        color: Colors.primary,
+        color: Colors.secondary,
     },
     disabledText: {
         color: Colors.mediumGray,

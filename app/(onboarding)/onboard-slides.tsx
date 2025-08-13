@@ -3,24 +3,29 @@ import { View, Text, Image, StyleSheet, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
+// Assets & Contants
 import illustrations from '@/assets/data/illustrations';
 import Colors from '@/constants/Colors';
 
+// Components - Onboard
 import Button from '@/components/onboard/Button';
 import Carousel from '@/components/onboard/Carousel';
 
+// Context & Store
 import { ThemeContext } from '@/contexts/ThemeContext';
 import { useOnboardingStore } from '@/store/onboardingStore';
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get('window'); // This will give us the width of the screen
 
 const Welcome = () => {
     const router = useRouter();
 
+    // Obtain context values
     const { currentTheme } = React.useContext(ThemeContext);
+    const { updateUser } = useOnboardingStore();
 
+    // Local state to track the current slide
     const [currentSlide, setCurrentSlide] = useState(0);
-    const { setCurrentStep } = useOnboardingStore();
 
     const handleNext = () => {
         if (currentSlide < slides.length - 1) {
@@ -31,10 +36,12 @@ const Welcome = () => {
     };
 
     const handleGetStarted = () => {
-        setCurrentStep(1);
+        updateUser({
+            hasSeenOnboardingSlide: true
+        })
         router.replace({
             pathname: '/auth',
-            params: { fromOnboarding: 'true' }
+            params: { fromOnboarding: 'yes' }
         });
     };
 
@@ -45,7 +52,7 @@ const Welcome = () => {
             image: illustrations.welcome,
         },
         {
-            title: "Explore Mobility Options",
+            title: "Accessible Mobility Options",
             subtitle: "Find the best transport solutions tailored for you",
             image: illustrations.mobilityOption,
         },
@@ -56,12 +63,12 @@ const Welcome = () => {
         },
         {
             title: "Caregiver Support",
-            subtitle: "Connect with caregivers for added assistance",
+            subtitle: "Connect with caregivers and family members for added assistance",
             image: illustrations.caregiver,
         },
         {
             title: "Personalize Your Experience",
-            subtitle: "Set preferences to enhance your journey",
+            subtitle: "Set preferences to enhance your experience",
             image: illustrations.preferences,
         },
         {
@@ -76,14 +83,16 @@ const Welcome = () => {
             style={{ flex: 1, backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer }}
             edges={['top', 'left', 'right']}
         >
-            <View style={styles.skipContainer}>
-                <Button
-                    title="Skip"
-                    variant="outline"
-                    onPress={handleGetStarted}
-                    style={styles.skipButton}
-                    textStyle={styles.skipButtonText}
-                />
+            <View style={styles.skipContainer} accessible={true}>
+                {currentSlide < slides.length - 1 && (
+                    <Button
+                        title="Skip"
+                        variant="outline"
+                        onPress={handleGetStarted}
+                        style={styles.skipButton}
+                        textStyle={styles.skipButtonText}
+                    />
+                )}
             </View>
 
             <Carousel
@@ -96,10 +105,12 @@ const Welcome = () => {
                         <Image
                             source={{ uri: slide.image }}
                             style={styles.image}
-                            resizeMode="cover"
+                            accessible={true}
+                            accessibilityRole="image"
                             accessibilityLabel={`Illustration for ${slide.title}`}
+                            resizeMode="cover"
                         />
-                        <View style={styles.textContainer}>
+                        <View style={styles.textContainer} accessible={true}>
                             <Text style={[styles.title, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole='header' accessibilityLabel={slide.title}>
                                 {slide.title}
                             </Text>
@@ -111,7 +122,7 @@ const Welcome = () => {
                 ))}
             </Carousel>
 
-            <View style={styles.footer}>
+            <View style={styles.footer} accessible={true}>
                 <Button
                     title={currentSlide < slides.length - 1 ? "Next" : "Create an Account"}
                     onPress={handleNext}

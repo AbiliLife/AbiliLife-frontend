@@ -63,38 +63,39 @@ const FormField: React.FC<FormFieldProps> = ({
             styles.fieldContainer,
             otherStyles,
             (isFocused || !!value) && styles.fieldContainerFocused,
-            { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray, borderColor: isFocused ? Colors.secondary : !!value ? Colors.white : currentTheme === 'light' ? Colors.borderLight : Colors.borderDark }
+            { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray, borderColor: isFocused ? currentTheme === 'light' ? Colors.primary : Colors.white : !!value ? currentTheme === 'light' ? Colors.primary : Colors.white : currentTheme === 'light' ? Colors.borderLight : Colors.borderDark }
         ]}>
             {icon && iconName && (
-            <View style={styles.iconWrapper}>
-                <IconComponent name={iconName as any} size={20} color={isFocused || !!value ? currentTheme === 'light' ? Colors.secondary : Colors.white : '#A29EB6'} />
-            </View>
+                <View style={styles.iconWrapper}>
+                    <IconComponent name={iconName as any} size={20} color={isFocused || !!value ? currentTheme === 'light' ? Colors.secondary : Colors.white : '#A29EB6'} />
+                </View>
             )}
             <TextInput
-            style={[
-                styles.input,
-                icon && styles.inputWithIcon,
-                { color: currentTheme === 'light' ? Colors.primary : Colors.lightGray }
-            ]}
-            placeholder={placeholder}
-            value={value}
-            onChangeText={onChangeText}
-            keyboardType={keyboardType}
-            secureTextEntry={secureTextEntry}
-            autoCapitalize={type === 'email' ? 'none' : 'sentences'}
-            autoCorrect={type !== 'email' && type !== 'password'}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-            {...props}
+                style={[
+                    styles.input,
+                    icon && styles.inputWithIcon,
+                    { color: currentTheme === 'light' ? Colors.primary : Colors.lightGray }
+                ]}
+                placeholder={placeholder}
+                value={value}
+                onChangeText={onChangeText}
+                keyboardType={keyboardType}
+                secureTextEntry={secureTextEntry}
+                autoCapitalize={type === 'email' ? 'none' : 'sentences'}
+                autoCorrect={type !== 'email' && type !== 'password'}
+                autoComplete={type === 'email' ? 'email' : type === 'phone' ? 'tel' : type === 'password' ? 'password' : 'off'}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
+                {...props}
             />
             {type === 'password' && (
-            <TouchableOpacity
-                style={styles.eyeIcon}
-                onPress={() => setShowPassword(!showPassword)}
-                activeOpacity={0.7}
-            >
-                <Ionicons name={showPassword ? "eye" : "eye-off"} size={20} color="#A29EB6" />
-            </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.eyeIcon}
+                    onPress={() => setShowPassword(!showPassword)}
+                    activeOpacity={0.7}
+                >
+                    <Ionicons name={showPassword ? "eye" : "eye-off"} size={20} color="#A29EB6" />
+                </TouchableOpacity>
             )}
         </View>
     );

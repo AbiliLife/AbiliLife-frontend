@@ -4,27 +4,38 @@ import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { Toast } from 'toastify-react-native';
 
+// Assets & Constants
 import { images } from '@/constants/Images';
 import Colors from '@/constants/Colors';
 
+// Components
 import Button from '@/components/onboard/Button';
 import OTPInput from '@/components/onboard/OTPInput';
+import CustomModal from '@/components/common/CustomModal';
 
+// Context & Store
 import { ThemeContext } from '@/contexts/ThemeContext';
-import { useOnboardingStore } from '@/store/onboardingStore';
 import { useAuth } from '@/contexts/AuthContext';
+import { useOnboardingStore } from '@/store/onboardingStore';
 
-import { formatHiddenPhoneNumber } from '@/utils/formatPhone';
+// Utility Functions
+import { formatHiddenPhoneNumber, formatPhoneNumber } from '@/utils/formatPhone';
+import { formatTime } from '@/utils/formatTimer';
 
 export default function OTPVerificationScreen() {
-    const [otp, setOtp] = useState('');
-    const [timeLeft, setTimeLeft] = useState(5 * 60 * 1000); // 5 minutes in seconds
-    const [error, setError] = useState('');
 
+    // Local state variables
+    const [otp, setOtp] = useState('');
+    const [timeLeft, setTimeLeft] = useState(5 * 60); // 5 minutes in seconds
+    const [error, setError] = useState('');
+    const [resendModalVisible, setResendModalVisible] = useState(false);
+
+    // Obtain context values
     const { currentTheme } = React.useContext(ThemeContext);
     const { user } = useOnboardingStore();
-    const { verifyOTP, isAuthLoading } = useAuth();
+    const { verifyOTP, isAuthLoading, requestOTP } = useAuth();
 
+    // Effect to handle countdown timer
     useEffect(() => {
         if (timeLeft > 0) {
             const timerId = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
@@ -32,21 +43,37 @@ export default function OTPVerificationScreen() {
         }
     }, [timeLeft]);
 
-    const handleResendCode = () => {
+    const handleResendCode = async () => {
         if (timeLeft === 0) {
-            if (Platform.OS !== 'web') {
-                Haptics.selectionAsync();
+            setResendModalVisible(true);
+            const otpResponse = await requestOTP({ phone: formatPhoneNumber(user.phone) });
+            if (otpResponse.success) {
+                if (Platform.OS !== 'web') {
+                    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                };
+                Toast.show({
+                    type: 'success',
+                    text1: 'OTP Sent',
+                    text2: otpResponse.message,
+                    visibilityTime: 3000,
+                    position: 'top',
+                    theme: currentTheme === 'light' ? 'light' : 'dark',
+                });
+                setTimeLeft(5 * 60); // Reset timer to 5 minutes
+                setResendModalVisible(false);
+            } else {
+                if (Platform.OS !== 'web') {
+                    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+                };
+                Toast.show({
+                    type: 'error',
+                    text1: 'Error',
+                    text2: otpResponse.message,
+                    visibilityTime: 3000,
+                    position: 'top',
+                    theme: currentTheme === 'light' ? 'light' : 'dark',
+                });
             }
-            setTimeLeft(5 * 60 * 1000);
-            setError('');
-            Toast.show({
-                type: 'info',
-                text1: 'Code Resent',
-                text2: 'A new verification code has been sent to your phone.',
-                position: 'bottom',
-                visibilityTime: 2000,
-                theme: currentTheme,
-            });
         }
     };
 
@@ -104,15 +131,17 @@ export default function OTPVerificationScreen() {
             <ScrollView
                 contentContainerStyle={styles.scrollContent}
                 keyboardShouldPersistTaps="handled"
+                accessible={true}
             >
 
                 <Image
                     source={images.signup}
                     style={{ width: '100%', height: 300, borderRadius: 10, marginBottom: 20 }}
                     resizeMode='contain'
-                    accessibilityLabel="Signup Header Image"
-                    accessibilityHint="An image representing the signup process"
+                    accessible={true}
                     accessibilityRole="image"
+                    accessibilityLabel="OTP Header Image"
+                    accessibilityHint="An image representing the OTP verification process"
                 />
 
                 <Text style={[styles.subtitle, { color: currentTheme === 'light' ? Colors.black : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel={`Verify your phone number to continue. We've sent a 6-digit code to ${user.phone}`}>
@@ -136,19 +165,34 @@ export default function OTPVerificationScreen() {
                     <TouchableOpacity
                         onPress={handleResendCode}
                         disabled={timeLeft > 0}
+                        accessible={true}
                         accessibilityRole="button"
-                        accessibilityLabel="Resend verification code"
-                        accessibilityHint={timeLeft > 0 ? `Wait ${timeLeft} seconds to resend` : "Tap to resend verification code"}
+                        accessibilityLabel={timeLeft > 0 ? `Resend in ${formatTime(timeLeft)}` : 'Resend Code'}
+                        accessibilityHint={timeLeft > 0 ? `Wait ${formatTime(timeLeft)} to resend` : "Tap to resend verification code"}
                     >
                         <Text style={[
                             styles.resendButton,
                             timeLeft > 0 && styles.resendButtonDisabled,
                         ]}>
-                            {timeLeft > 0 ? `Resend in ${timeLeft}s` : 'Resend Code'}
+                            {timeLeft > 0 ? `Resend in ${formatTime(timeLeft)}` : 'Resend Code'}
                         </Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>
+
+            <CustomModal
+                visible={resendModalVisible}
+                onRequestClose={() => setResendModalVisible(false)}
+                title="Resend Code"
+                message={`Resend the verification code to ${formatHiddenPhoneNumber(user.phone)}?`}
+                handlePressAction={handleResendCode}
+                actionLoading={isAuthLoading}
+                handleCancel={() => setResendModalVisible(false)}
+                otherProps={{
+                    accessibilityLabel: 'OTP Modal',
+                    accessibilityHint: 'A modal for requesting OTP',
+                }}
+            />
 
             <View style={[styles.footer, { borderTopColor: currentTheme === 'light' ? Colors.lightGray : Colors.darkGray }]}>
                 <Button

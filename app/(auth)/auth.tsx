@@ -5,24 +5,31 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { Toast } from 'toastify-react-native';
 
+// Assets & Constants
 import { images } from '@/constants/Images';
 import Colors from '@/constants/Colors';
 
+// Components
 import Button from '@/components/onboard/Button';
 import FormField from '@/components/common/FormField';
+import CustomModal from '@/components/common/CustomModal';
 
+// Context & Store
 import { ThemeContext } from '@/contexts/ThemeContext';
-import { useOnboardingStore } from '@/store/onboardingStore';
 import { useAuth } from '@/contexts/AuthContext';
+import { useOnboardingStore } from '@/store/onboardingStore';
+
+// Utility Functions
 import { formatPhoneNumber } from '@/utils/formatPhone';
 
 type AuthTab = 'login' | 'signup';
 
 export default function AuthScreen() {
     const router = useRouter();
-    const { fromOnboarding } = useLocalSearchParams();
+    const { fromOnboarding } = useLocalSearchParams(); // get the forwarded route param
 
-    const [activeTab, setActiveTab] = useState<AuthTab>(fromOnboarding === 'true' ? 'signup' : 'login');
+    // Local state to track the active tab
+    const [activeTab, setActiveTab] = useState<AuthTab>(fromOnboarding === 'yes' ? 'signup' : 'login');
 
     // Login Form State
     const [loginEmail, setLoginEmail] = useState('muthokaelikeli@gmail.com'); // TEMPORARY TEST EMAIL
@@ -40,7 +47,7 @@ export default function AuthScreen() {
     // State for otp modal
     const [otpModalVisible, setOtpModalVisible] = useState(false);
 
-    // Obtain Context and Store
+    // Obtain context values
     const { currentTheme } = React.useContext(ThemeContext);
     const { updateUser } = useOnboardingStore();
     const { isAuthLoading, login, signup, requestOTP } = useAuth();
@@ -171,23 +178,25 @@ export default function AuthScreen() {
                 visibilityTime: 3000,
                 position: 'top',
                 theme: currentTheme === 'light' ? 'light' : 'dark',
+                onHide: () => {
+                    if (Platform.OS !== 'web') {
+                        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                    }
+
+                    updateUser({
+                        fullName: loginResponse.user.displayName,
+                        email: loginEmail,
+                        phone: loginResponse.user.phone,
+                        isEmailVerified: loginResponse.user.emailVerified,
+                    })
+
+                    setLoginEmail('');
+                    setLoginPassword('');
+
+                    router.replace('/(tabs)');
+                }
             })
 
-            if (Platform.OS !== 'web') {
-                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-            }
-
-            updateUser({
-                fullName: loginResponse.user.displayName,
-                email: loginEmail,
-                phone: loginResponse.user.phone,
-                isEmailVerified: loginResponse.user.emailVerified,
-            })
-
-            setLoginEmail('');
-            setLoginPassword('');
-
-            router.replace('/(tabs)');
         } else {
             Toast.show({
                 type: 'error',
@@ -235,24 +244,26 @@ export default function AuthScreen() {
                 visibilityTime: 3000,
                 position: 'top',
                 theme: currentTheme === 'light' ? 'light' : 'dark',
+                onHide: () => {
+                    // Update user data in onboarding store
+                    updateUser({
+                        fullName: signupResponse.user.displayName,
+                        email: signupResponse.user.email,
+                        phone: signupResponse.user.phone,
+                        isEmailVerified: signupResponse.user.emailVerified,
+                    });
+
+                    if (Platform.OS !== 'web') {
+                        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                    }
+
+                    // Show OTP modal
+                    setOtpModalVisible(true);
+
+                    // navigate will be handled in the OTP modal
+                }
             });
 
-            // Update user data in onboarding store
-            updateUser({
-                fullName: signupResponse.user.displayName,
-                email: signupResponse.user.email,
-                phone: signupResponse.user.phone,
-                isEmailVerified: signupResponse.user.emailVerified,
-            });
-
-            if (Platform.OS !== 'web') {
-                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-            }
-
-            // Show OTP modal
-            setOtpModalVisible(true);
-
-            // navigate will be handled in the OTP modal
         } else {
             Toast.show({
                 type: 'error',
@@ -274,7 +285,7 @@ export default function AuthScreen() {
             style={{ flex: 1, backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer }}
             edges={['top', 'left', 'right']}
         >
-            <View style={[styles.tabContainer, { backgroundColor: currentTheme === 'light' ? Colors.lightGray : Colors.mediumGray }]}>
+            <View style={[styles.tabContainer, { backgroundColor: currentTheme === 'light' ? Colors.lightGray : Colors.mediumGray }]} accessible={true}>
                 <TouchableOpacity
                     style={[
                         styles.tab,
@@ -331,7 +342,7 @@ export default function AuthScreen() {
                 </TouchableOpacity>
             </View>
 
-            <View style={styles.header}>
+            <View style={styles.header} accessible={true}>
                 <Text style={[styles.title, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole="header" accessibilityLabel={activeTab === 'login' ? "Welcome Back!" : "Create an Account"}>
                     {activeTab === 'login' ? "Welcome Back!" : "Create an Account"}
                 </Text>
@@ -546,85 +557,75 @@ export default function AuthScreen() {
                 </View>
             </KeyboardAvoidingView>
 
-            <Modal
+            <CustomModal
                 visible={otpModalVisible}
-                transparent={true}
-                animationType="slide"
                 onRequestClose={() => setOtpModalVisible(false)}
-            >
-                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
-                    <View style={{ width: '90%', backgroundColor: Colors.white, borderRadius: 10, padding: 20 }}>
-                        <Text style={{ fontSize: 20, fontWeight: 'bold', color: Colors.primary, marginBottom: 20 }}>Request OTP</Text>
-                        <Text style={{ color: Colors.accent, marginBottom: 20 }}>We need to verify your phone number to proceed with the signup.</Text>
-                        <Button
-                            title="Request OTP"
-                            onPress={async () => {
-                                const otpResponse = await requestOTP({ phone: formatPhoneNumber(phone) });
-                                if (otpResponse.success) {
-                                    Toast.show({
-                                        type: 'success',
-                                        text1: 'OTP Sent',
-                                        text2: otpResponse.message,
-                                        visibilityTime: 3000,
-                                        position: 'top',
-                                        theme: currentTheme === 'light' ? 'light' : 'dark',
-                                    });
-                                    setOtpModalVisible(false);
+                title="Request OTP"
+                message="We need to verify your phone number to proceed with the signup."
+                handlePressAction={async () => {
+                    const otpResponse = await requestOTP({ phone: formatPhoneNumber(phone) });
+                    if (otpResponse.success) {
+                        setOtpModalVisible(false);
+                        Toast.show({
+                            type: 'success',
+                            text1: 'OTP Sent',
+                            text2: otpResponse.message,
+                            visibilityTime: 3000,
+                            position: 'top',
+                            theme: currentTheme === 'light' ? 'light' : 'dark',
+                            onHide: () => {
 
-                                    // Reset form fields
-                                    setFullName('');
-                                    setEmail('');
-                                    setPhone('');
-                                    setNewPassword('');
-                                    setConfirmPassword('');
+                                // Reset form fields
+                                setFullName('');
+                                setEmail('');
+                                setPhone('');
+                                setNewPassword('');
+                                setConfirmPassword('');
 
-                                    router.replace('/otp');
-                                } else {
-                                    Toast.show({
-                                        type: 'error',
-                                        text1: 'Error',
-                                        text2: otpResponse.message,
-                                        visibilityTime: 3000,
-                                        position: 'top',
-                                        theme: currentTheme === 'light' ? 'light' : 'dark',
-                                    });
-                                }
-                            }}
-                            loading={isAuthLoading}
-                            disabled={isAuthLoading}
-                        />
-                        <TouchableOpacity
-                            onPress={() => Alert.alert(
-                                'Cancel OTP Request',
-                                'Are you sure you want to cancel the OTP request? This will keep your phone number unverified.',
-                                [
-                                    {
-                                        text: 'No',
-                                        style: 'cancel',
-                                    },
-                                    {
-                                        text: 'Yes',
-                                        onPress: () => {
-                                            setOtpModalVisible(false);
-                                            setActiveTab('login');
-                                            Toast.show({
-                                                type: 'info',
-                                                text1: 'OTP Request Cancelled',
-                                                visibilityTime: 3000,
-                                                position: 'top',
-                                                theme: currentTheme === 'light' ? 'light' : 'dark',
-                                            });
-                                        },
-                                    },
-                                ]
-                            )}
-                            style={{ marginTop: 20 }}
-                        >
-                            <Text style={{ color: Colors.primary, textAlign: 'center' }}>Cancel</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </Modal>
+                                router.replace('/otp');
+                            }
+                        });
+                    } else {
+                        Toast.show({
+                            type: 'error',
+                            text1: 'Error',
+                            text2: otpResponse.message,
+                            visibilityTime: 3000,
+                            position: 'top',
+                            theme: currentTheme === 'light' ? 'light' : 'dark',
+                        });
+                    }
+                }}
+                handleCancel={() => Alert.alert(
+                    'Cancel OTP Request',
+                    'Are you sure you want to cancel the OTP request? This will keep your phone number unverified.',
+                    [
+                        {
+                            text: 'No',
+                            style: 'cancel',
+                        },
+                        {
+                            text: 'Yes',
+                            onPress: () => {
+                                setOtpModalVisible(false);
+                                setActiveTab('login');
+                                Toast.show({
+                                    type: 'info',
+                                    text1: 'OTP Request Cancelled',
+                                    visibilityTime: 3000,
+                                    position: 'top',
+                                    theme: currentTheme === 'light' ? 'light' : 'dark',
+                                });
+                            },
+                        },
+                    ]
+                )}
+                actionLoading={isAuthLoading}
+                otherProps={{
+                    accessibilityLabel: 'OTP Modal',
+                    accessibilityHint: 'A modal for requesting OTP',
+                }}
+            />
         </SafeAreaView>
     );
 }
@@ -697,4 +698,5 @@ const styles = StyleSheet.create({
     button: {
         width: '100%',
     },
+
 });

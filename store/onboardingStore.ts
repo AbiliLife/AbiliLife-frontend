@@ -1,7 +1,13 @@
+/*
+ ** AbiliLife Onboarding Store
+ ** This file contains the Zustand store for managing the onboarding state.
+*/
+
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+// Onboarding types
 import { OnboardingState, UserProfile } from '@/types/onboard';
 
 
@@ -10,12 +16,11 @@ const initialUserState: UserProfile = {
     email: '',
     phone: '',
     profilePicture: undefined,
-    role: 'PWD',
+    isEmailVerified: false,
+    isPhoneVerified: false,
+    role: null,
     disabilityTypes: [],
-    needsRamp: false,
-    needsAssistiveDevice: false,
-    needsSignLanguage: false,
-    preferredContactMethod: 'WhatsApp',
+    preferredContactMethod: null,
     careRelationships: [],
     emergencyContacts: [],
     accessibilityPreferences: {
@@ -47,7 +52,6 @@ const initialUserState: UserProfile = {
             needsCompanion: false,
         },
     },
-    preferredLanguage: 'English',
     savedLocations: [],
     servicePreferences: {
         preferredProviders: [],
@@ -77,30 +81,33 @@ const initialUserState: UserProfile = {
         locationSharing: true,
     },
     medicalInformation: undefined,
+    hasSeenOnboardingSlide: false,
     onboardingCompleted: false,
     profileCompleteness: 0,
 };
 
 export const useOnboardingStore = create<OnboardingState>()(
+    // Zustand middleware for persistence
+    // persist - saves the state to storage using AsyncStorage
     persist(
         (set) => ({
             user: initialUserState,
-            isAuthenticated: false,
-            currentStep: 0,
+            currentOnboardingStep: 1, // Start at step 1, end at step 5
+            completedSteps: [], // Track completed steps
             updateUser: (data) => set((state) => ({
                 user: { ...state.user, ...data }
             })),
-            setAuthenticated: (value) => set({ isAuthenticated: value }),
-            setCurrentStep: (step) => set({ currentStep: step }),
+            setCurrentOnboardingStep: (step) => set({ currentOnboardingStep: step }),
+            setCompletedSteps: (steps) => set({ completedSteps: steps }),
             resetOnboarding: () => set({
                 user: initialUserState,
-                isAuthenticated: false,
-                currentStep: 0
+                currentOnboardingStep: 0,
+                completedSteps: []
             }),
         }),
         {
-            name: 'abililife-onboarding',
-            storage: createJSONStorage(() => AsyncStorage),
+            name: 'abililife-onboarding', // Name of the storage (must be unique)
+            storage: createJSONStorage(() => AsyncStorage), // Combining createJSONStorage helps creating a persist storage with JSON.parse and JSON.stringify.
         }
     )
 );
