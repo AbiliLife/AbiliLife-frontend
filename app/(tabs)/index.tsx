@@ -385,66 +385,66 @@ export default function HomeScreen() {
                         </Text>
                         <View style={[styles.careNetworkCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}>
                             {userProfile.careRelationships.length > 0 && userProfile.careRelationships.map((rel, idx) => (
-                                    <View
-                                        key={rel.id || rel.name || idx}
-                                        style={[
-                                            styles.careContact,
-                                            {
-                                                borderBottomWidth:
-                                                    idx < userProfile.careRelationships.length - 1 ||
-                                                        userProfile.emergencyContacts.length > 0
-                                                        ? 1
-                                                        : 0,
-                                            },
-                                        ]}
-                                        accessible={true}
-                                        accessibilityLabel={`Caregiver Card: ${rel.name}`}
-                                    >
-                                        <View style={styles.careContactInfo}>
-                                            <Ionicons name="people" size={20} color={Colors.secondary} />
-                                            <View style={styles.careContactText}>
-                                                <Text
-                                                    style={[
-                                                        styles.careContactName,
-                                                        { color: currentTheme === 'light' ? Colors.black : Colors.white },
-                                                    ]}
-                                                    accessibilityRole="text"
-                                                    accessibilityLabel={`Caregiver: ${rel.name}`}
-                                                >
-                                                    {rel.name}
-                                                </Text>
-                                                <Text
-                                                    style={[
-                                                        styles.careContactRole,
-                                                        { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray },
-                                                    ]}
-                                                    accessibilityRole="text"
-                                                    accessibilityLabel={rel.isPrimary ? 'Primary Caregiver' : 'Caregiver'}
-                                                >
-                                                    {rel.isPrimary ? 'Primary Caregiver' : 'Caregiver'}
-                                                </Text>
-                                            </View>
-                                        </View>
-                                        <View style={styles.careContactActions}>
-                                            <TouchableOpacity
-                                                style={styles.careContactButton}
-                                                onPress={handleContactCaregiver}
-                                                accessibilityRole="button"
-                                                accessibilityLabel={`Call ${rel.name}`}
+                                <View
+                                    key={rel.id || rel.name || idx}
+                                    style={[
+                                        styles.careContact,
+                                        {
+                                            borderBottomWidth:
+                                                idx < userProfile.careRelationships.length - 1 ||
+                                                    userProfile.emergencyContacts.length > 0
+                                                    ? 1
+                                                    : 0,
+                                        },
+                                    ]}
+                                    accessible={true}
+                                    accessibilityLabel={`Caregiver Card: ${rel.name}`}
+                                >
+                                    <View style={styles.careContactInfo}>
+                                        <Ionicons name="people" size={20} color={Colors.secondary} />
+                                        <View style={styles.careContactText}>
+                                            <Text
+                                                style={[
+                                                    styles.careContactName,
+                                                    { color: currentTheme === 'light' ? Colors.black : Colors.white },
+                                                ]}
+                                                accessibilityRole="text"
+                                                accessibilityLabel={`Caregiver: ${rel.name}`}
                                             >
-                                                <Ionicons name="call" size={18} color={Colors.primary} />
-                                            </TouchableOpacity>
-                                            <TouchableOpacity
-                                                style={styles.careContactButton}
-                                                onPress={handleMessageCaregiver}
-                                                accessibilityRole="button"
-                                                accessibilityLabel={`Message ${rel.name}`}
+                                                {rel.name}
+                                            </Text>
+                                            <Text
+                                                style={[
+                                                    styles.careContactRole,
+                                                    { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray },
+                                                ]}
+                                                accessibilityRole="text"
+                                                accessibilityLabel={rel.isPrimary ? 'Primary Caregiver' : 'Caregiver'}
                                             >
-                                                <Ionicons name="chatbubble" size={18} color={Colors.secondary} />
-                                            </TouchableOpacity>
+                                                {rel.isPrimary ? 'Primary Caregiver' : 'Caregiver'}
+                                            </Text>
                                         </View>
                                     </View>
-                                ))}
+                                    <View style={styles.careContactActions}>
+                                        <TouchableOpacity
+                                            style={styles.careContactButton}
+                                            onPress={handleContactCaregiver}
+                                            accessibilityRole="button"
+                                            accessibilityLabel={`Call ${rel.name}`}
+                                        >
+                                            <Ionicons name="call" size={18} color={Colors.primary} />
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
+                                            style={styles.careContactButton}
+                                            onPress={handleMessageCaregiver}
+                                            accessibilityRole="button"
+                                            accessibilityLabel={`Message ${rel.name}`}
+                                        >
+                                            <Ionicons name="chatbubble" size={18} color={Colors.secondary} />
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            ))}
 
                             {userProfile.emergencyContacts.find(contact => contact.isPrimary) && (
                                 <View style={[styles.careContact, { borderBottomWidth: userProfile.careRelationships.length > 1 ? 1 : 0 }]} accessible={true} accessibilityLabel='Emergency Contact Card'>
