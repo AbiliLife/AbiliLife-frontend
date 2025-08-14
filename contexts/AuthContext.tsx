@@ -1,10 +1,17 @@
 // Authentication context
 import { AxiosError } from 'axios';
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { getToken, saveToken, deleteToken } from '@/lib/storage';
-import { AuthContextType, AuthResponse, LoginRequest, OTPRequest, OTPSuccessResponse, OTPVerification, SignUpRequest, User } from '@/types/auth';
-import { useLogin, useSignup, useSendOTP, useVerifyOTP } from '@/hooks/useAuthHooks';
 import { jwtDecode } from "jwt-decode";
+
+// Secure Store
+import { getToken, saveToken, deleteToken } from '@/lib/storage';
+
+// Types
+import { AuthContextType, AuthResponse, LoginRequest, OTPRequest, OTPSuccessResponse, OTPVerification, SignUpRequest, User } from '@/types/auth';
+
+// Auth Hooks
+import { useLogin, useSignup, useSendOTP, useVerifyOTP } from '@/hooks/useAuthHooks';
+
 
 // 1. Create the AuthContext
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -20,49 +27,43 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
     useEffect(() => {
         const initializeAuth = async () => {
             setIsAuthLoading(true);
+            // Try to get the token from storage
             const token = await getToken('idToken');
             if (token) {
-                // Check if token is expired
+                // If token exists, check if it's valid
                 const isExpired = await isTokenExpired(token);
                 if (!isExpired) {
+                    // If token is valid, set it in state and authenticate the user
                     setAuthToken(token);
                     setIsAuthenticated(true);
+                    // Decode token to get user data
+                    const decodedToken = jwtDecode<User>(token);
+                    setUserData(decodedToken);
                 } else {
-                    setIsAuthenticated(false);
+                    // If token is expired, logout the user (which will clear the token and update auth state)
                     await logout();
                 }
             } else {
+                // If no token, set auth state to false
                 setIsAuthenticated(false);
-                await logout();
             }
             setIsAuthLoading(false);
         };
         initializeAuth();
     }, []);
 
-    // 4. Set a timer to check token expiration
-    useEffect(() => {
-        const checkTokenExpiration = async () => {
-            const token = await getToken('idToken');
-            if (token) {
-                // Implement logic to check token expiration
-            }
-        };
-
-        const interval = setInterval(checkTokenExpiration, 60000); // Check every minute
-        return () => clearInterval(interval);
-    }, []);
-
-    // 5. Function to check if token is expired
+    // 4. Function to check if token is expired
     const isTokenExpired = async (token: string): Promise<boolean> => {
         if (!token) return true;
         const currentTime = Math.floor(Date.now() / 1000);
-        const decodedToken = jwtDecode<{ exp: number }>(token);
-        return decodedToken.exp < currentTime;
+        const decodedToken = jwtDecode<{ exp: number }>(token); // this decodes the JWT token to get the expiration time
+        if (!decodedToken.exp) return true; // If no expiration time, consider it expired
+        return decodedToken.exp < currentTime; // Check if current time is past expiration time
     };
 
 
-    // 6. FUNCTIONS FOR AUTHENTICATION ACTIONS
+    // 5. FUNCTIONS FOR AUTHENTICATION ACTIONS - these will be used in the context provider
+    // Login, Signup, Logout, Request OTP, Verify OTP
     const login = async (credentials: LoginRequest): Promise<AuthResponse> => {
         const emptyUser: User = {
             uid: '',
@@ -77,12 +78,12 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 
         try {
             setIsAuthLoading(true);
-            const responseData = await useLogin(credentials);
+            const responseData = await useLogin(credentials); // the useLogin hook will return the AuthResponse
             if (responseData.success) {
                 setIsAuthenticated(true);
                 setUserData(responseData.user);
                 setAuthToken(responseData.token);
-                await saveToken('idToken', responseData.token);
+                await saveToken('idToken', responseData.token); // this saves the firebase custom token or ID token in local secure storage
                 return responseData;
             } else {
                 return {
@@ -92,7 +93,12 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
                     token: ''
                 };
             }
-        } catch (error: AxiosError | any) {
+        } catch (error: AxiosError | any) { // Catch the exact error thrown by the useLogin hook
+            // error?.response?.data - is the error response from the API (ErrorResponse)
+            // error?.message - is the generic axios error message (e.g. network error, timeout, etc.
+
+            // we return a structured AuthResponse with success false and error message
+            // this will be caught in the calling code (in the auth screen)
             return {
                 success: false,
                 message: error?.response?.data?.message || error?.message || 'Login error',
@@ -117,12 +123,12 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
         }
         try {
             setIsAuthLoading(true);
-            const responseData = await useSignup(data);
+            const responseData = await useSignup(data); // the useSignup hook will return the AuthResponse
             if (responseData.success) {
                 setIsAuthenticated(true);
                 setUserData(responseData.user);
                 setAuthToken(responseData.token);
-                await saveToken('idToken', responseData.token);
+                await saveToken('idToken', responseData.token); // this saves the firebase custom token or ID token in local secure storage
                 return responseData;
             } else {
                 return {
@@ -132,7 +138,12 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
                     token: ''
                 };
             }
-        } catch (error: AxiosError | any) {
+        } catch (error: AxiosError | any) {// Catch the exact error thrown by the useSignup hook
+            // error?.response?.data - is the error response from the API (ErrorResponse)
+            // error?.message - is the generic axios error message (e.g. network error, timeout, etc.)
+
+            // we return a structured AuthResponse with success false and error message
+            // this will be caught in the calling code (in the auth screen)
             return {
                 success: false,
                 message: error?.response?.data?.message || error?.message || 'Signup error',

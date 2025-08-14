@@ -5,9 +5,9 @@ import { AuthResponse, LoginRequest, OTPRequest, OTPSuccessResponse, OTPVerifica
 export const useLogin = async (credentials: LoginRequest) => {
     try {
         const response = await BaseAPI.post<AuthResponse>('/api/v1/auth/login', credentials);
-        return response.data;
+        return response.data; // will return the axios response data which includes user info and token (AuthResponse)
     } catch (error) {
-        throw error;
+        throw error; // This will be an AxiosError or any other error thrown by the API (will be caught in the calling code)
     }
 }
 
@@ -15,7 +15,7 @@ export const useLogin = async (credentials: LoginRequest) => {
 export const useSignup = async (data: SignUpRequest) => {
     try {
         const response = await BaseAPI.post<AuthResponse>('/api/v1/auth/signup', data);
-        return response.data;
+        return response.data; // will return the axios response data which includes user info and token (AuthResponse)
     } catch (error) {
         throw error;
     }
@@ -25,7 +25,7 @@ export const useSignup = async (data: SignUpRequest) => {
 export const useSendOTP = async (data: OTPRequest) => {
     try {
         const response = await BaseAPI.post<OTPSuccessResponse>('/api/v1/auth/send-otp', data);
-        return response.data;
+        return response.data; // will return the axios response data which includes success status and verification ID (OTPSuccessResponse)
     } catch (error) {
         throw error;
     }
@@ -35,7 +35,7 @@ export const useSendOTP = async (data: OTPRequest) => {
 export const useVerifyOTP = async (data: OTPVerification) => {
     try {
         const response = await BaseAPI.post<AuthResponse>('/api/v1/auth/verify-otp', data);
-        return response.data;
+        return response.data; // will return the axios response data which includes user info and token (AuthResponse)
     } catch (error) {
         throw error;
     }
@@ -45,7 +45,7 @@ export const useVerifyOTP = async (data: OTPVerification) => {
 export const useGetUserProfile = async (userId: string) => {
     try {
         const response = await BaseAPI.get(`/api/v1/auth/profile/${userId}`);
-        return response.data;
+        return response.data; // will return the axios response data which includes user profile information
     } catch (error) {
         throw error;
     }

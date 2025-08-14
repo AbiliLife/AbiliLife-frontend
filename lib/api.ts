@@ -1,8 +1,12 @@
-// Base API setup
-
 import axios, {AxiosError, AxiosResponse, AxiosInstance, InternalAxiosRequestConfig, AxiosRequestConfig} from 'axios';
+import { router } from 'expo-router';
+import { Toast } from 'toastify-react-native';
+
+// Constants URLs
 import { DEV_BACKEND_URL, PROD_BACKEND_URL } from '@/constants/staticURLs';
-import { getToken, saveToken, deleteToken } from './storage';
+
+// Secure Store
+import { getToken, deleteToken } from './storage';
 
 // 1. Determine the base URL based on environment
 const isDevelopment = process.env.NODE_ENV === 'development';
@@ -11,6 +15,7 @@ const BASE_URL = isDevelopment ? DEV_BACKEND_URL : PROD_BACKEND_URL;
 // 2. Create an Axios instance with the base URL
 export const BaseAPI = axios.create({
   baseURL: BASE_URL,
+  timeout: 10000, // Set a timeout for requests
   headers: {
     'Content-Type': 'application/json',
   },
@@ -25,7 +30,7 @@ export const BaseAPI = axios.create({
  */
 BaseAPI.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
-    const token = await getToken('accessToken');
+    const token = await getToken('idToken');
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
@@ -46,7 +51,7 @@ BaseAPI.interceptors.request.use(
  */
 BaseAPI.interceptors.response.use(
   (response: AxiosResponse) => {
-    return response;
+    return response; // If the response is successful, just return it to the calling code
   },
   async (error: AxiosError) => {
     const { response } = error;
@@ -54,22 +59,46 @@ BaseAPI.interceptors.response.use(
       // Handle specific error codes
       switch (response.status) {
         case 401:
-          // Redirect to login page
+          // TODO: Add refresh token logic
+          // Delete token and redirect to auth screen
+          await deleteToken('idToken');
+          router.replace('/auth');
           break;
         case 403:
           // Show forbidden message
+          Toast.show({
+            type: 'error',
+            text1: 'Access Denied',
+            text2: 'You do not have permission to access this resource.',
+            visibilityTime: 3000,
+            position: 'top',
+          })
           break;
         case 404:
           // Show not found message
+          Toast.show({
+            type: 'error',
+            text1: 'Not Found',
+            text2: 'The requested resource could not be found.',
+            visibilityTime: 3000,
+            position: 'top',
+          });
           break;
         case 500:
           // Show server error message
+          Toast.show({
+            type: 'error',
+            text1: 'Server Error',
+            text2: 'An unexpected error occurred on the server.',
+            visibilityTime: 3000,
+            position: 'top',
+          });
           break;
         default:
           break;
       }
     }
-    return Promise.reject(error);
+    return Promise.reject(error); // Reject the promise with the error (this will be caught by the calling code)
   }
 );
 
@@ -84,12 +113,12 @@ BaseAPI.interceptors.response.use(
 const MAX_RETRIES = 3;
 BaseAPI.interceptors.response.use(
   (response: AxiosResponse) => {
-    return response;
+    return response; // If the response is successful, just return it to the calling code
   },
   async (error: AxiosError) => {
     // Only retry on network errors or 5xx server errors
-    const isNetworkError = !error.response;
-    const isServerError = error.response && error.response.status >= 500;
+    const isNetworkError = !error.response; // No response means it was a network error
+    const isServerError = error.response && error.response.status >= 500; // 5xx status codes indicate server errors
 
     if ((isNetworkError || isServerError) && error.config) {
       const config = error.config as InternalAxiosRequestConfig & { __retryCount?: number };
@@ -104,12 +133,11 @@ BaseAPI.interceptors.response.use(
         const backoff = Math.pow(2, config.__retryCount) * 100; // Exponential backoff
         await new Promise(resolve => setTimeout(resolve, backoff));
 
-        // Return the retried request
-        return BaseAPI(config);
+        return BaseAPI(config); // Retry the request with the updated config (this will call the request interceptor again)
       }
 
-      // If we have maxed out the total number of retries, reject the promise
-      return Promise.reject(new Error(`Max retries reached for request: ${error.config.url}`));
+      // If we have maxed out the total number of retries, reject the promise to be caught by the calling code
+      return Promise.reject(error);
     }
     // If not a retryable error, reject the promise as usual
     return Promise.reject(error);
@@ -119,4 +147,4 @@ BaseAPI.interceptors.response.use(
 
 // 6. Export the BaseAPI instance for use in other parts of the application
 export default BaseAPI;
-export { BASE_URL, isDevelopment };
+export { BASE_URL, isDevelopment }; // (optional) export base URL and environment status for use in other modules
