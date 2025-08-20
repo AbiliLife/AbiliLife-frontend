@@ -53,7 +53,8 @@
     "react-native-vector-icons": "^10.3.0",
     "react-native-web": "^0.20.0",
     "toastify-react-native": "^7.2.3",
-    "zustand": "^5.0.5"
+    "zustand": "^5.0.5",
+    "expo-blur": "~14.1.5"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
