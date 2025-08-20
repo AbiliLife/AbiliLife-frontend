@@ -1,138 +1,307 @@
 import React from 'react';
-import { Pressable, StyleSheet, TouchableOpacity, View, Text } from 'react-native'
+import { StyleSheet, View, Text, ScrollView, TouchableOpacity, Dimensions, Switch } from 'react-native';
+import Animated, {
+    useSharedValue,
+    useAnimatedStyle,
+    withSpring,
+    runOnJS,
+} from 'react-native-reanimated';
+import { BlurView } from 'expo-blur';
+import Slider from '@react-native-community/slider';
+
+// Assets & Constants
+import { X, Type, Contrast, Eye, Palette } from 'lucide-react-native';
+import Colors from '@/constants/Colors';
+
+// Context
+import { useAccessibility } from '@/contexts/AccessibilityContext';
+import { ThemeContext } from '@/contexts/ThemeContext';
+
+// Components
+import SelectableChip from '../onboard/SelectableChip';
+
+const { width: SCREEN_WIDTH } = Dimensions.get('window'); // Get screen width
+const DRAWER_WIDTH = Math.min(320, SCREEN_WIDTH - 40);
 
 interface AccessibilityDrawerProps {
-    handlePress: () => void
+    isVisible: boolean;
+    onClose: () => void;
 }
 
-const AccessibilityDrawer = ({ handlePress }: AccessibilityDrawerProps) => {
+export default function AccessibilityDrawer({ isVisible, onClose }: AccessibilityDrawerProps) {
+
+    // Obtain context values
+    const { state, setTextSize, toggleHighContrast, toggleScreenReader, setColorFilter } = useAccessibility();
+    const { currentTheme } = React.useContext(ThemeContext);
+
+    // Animation values
+    const translateX = useSharedValue(DRAWER_WIDTH);
+    const opacity = useSharedValue(0);
+
+    // Animate drawer visibility
+    React.useEffect(() => {
+        if (isVisible) {
+            opacity.value = withSpring(1, { damping: 20, stiffness: 300 });
+            translateX.value = withSpring(0, { damping: 20, stiffness: 300 });
+        } else {
+            opacity.value = withSpring(0, { damping: 20, stiffness: 300 });
+            translateX.value = withSpring(DRAWER_WIDTH, { damping: 20, stiffness: 300 });
+        }
+    }, [isVisible]);
+
+    const animatedBackdropStyle = useAnimatedStyle(() => ({
+        opacity: opacity.value,
+    }));
+
+    const animatedDrawerStyle = useAnimatedStyle(() => ({
+        transform: [{ translateX: translateX.value }],
+    }));
+
+    const colorFilterOptions = [
+        { label: 'None', value: 'none' as const },
+        { label: 'Protanopia', value: 'protanopia' as const },
+        { label: 'Deuteranopia', value: 'deuteranopia' as const },
+        { label: 'Tritanopia', value: 'tritanopia' as const },
+        { label: 'Monochrome', value: 'monochrome' as const },
+    ];
+
+    if (!isVisible) return null;
+
     return (
-        <View 
-            style={styles.accessibilityDrawerOverlay}
-            accessibilityViewIsModal={true}
-        >
-            <Pressable
-                style={styles.accessibilityDrawerDismiss}
-                onPress={handlePress}
-                accessible={true}
-                accessibilityLabel="Close accessibility menu"
-                accessibilityHint="Dismisses the accessibility settings drawer"
-                accessibilityRole="button"
-            />
-            <View 
-                style={styles.accessibilityDrawer}
-                accessible={true}
-                accessibilityLabel="Accessibility settings drawer"
-                accessibilityRole="menu"
-                importantForAccessibility="yes"
-            >
-                <View style={styles.accessibilityDrawerContent}>
-                    <Text 
-                        style={styles.accessibilityDrawerTitle}
-                        accessibilityRole="header"
-                    >
-                        Accessibility Settings
-                    </Text>
+        <View style={styles.container} accessible={true}>
+            <Animated.View style={[styles.backdrop, animatedBackdropStyle]}>
+                <TouchableOpacity style={StyleSheet.absoluteFill} onPress={onClose} />
+            </Animated.View>
 
-                    <TouchableOpacity 
-                        style={styles.accessibilityOption}
-                        accessible={true}
-                        accessibilityLabel="Voice Commands"
-                        accessibilityHint="Configure voice command settings"
-                        accessibilityRole="menuitem"
-                    >
-                        <Text style={styles.accessibilityOptionText}>Voice Commands</Text>
-                    </TouchableOpacity>
+            <Animated.View style={[styles.panel, animatedDrawerStyle]}>
+                <BlurView intensity={95} style={[styles.blurContainer, { backgroundColor: currentTheme === 'light' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)' }]}>
+                    <View style={[styles.header, { borderBottomColor: currentTheme === 'light' ? Colors.borderLight : Colors.borderDark }]}>
+                        <Text style={[styles.title, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole='header' accessibilityLabel='Accessibility'>
+                            Accessibility
+                        </Text>
+                        <TouchableOpacity onPress={onClose} style={[styles.closeButton, { backgroundColor: currentTheme === 'light' ? Colors.lightGray : Colors.darkGray }]} accessibilityRole='button' accessibilityHint='Close'>
+                            <X size={24} color={currentTheme === 'light' ? Colors.mediumGray : Colors.white} />
+                        </TouchableOpacity>
+                    </View>
 
-                    <TouchableOpacity 
-                        style={styles.accessibilityOption}
-                        accessible={true}
-                        accessibilityLabel="Text Size"
-                        accessibilityHint="Adjust the text size of the application"
-                        accessibilityRole="menuitem"
-                    >
-                        <Text style={styles.accessibilityOptionText}>Text Size</Text>
-                    </TouchableOpacity>
+                    <ScrollView style={styles.content} showsVerticalScrollIndicator={false} accessible={true} accessibilityHint='Scroll through accessibility options'>
+                        {/* Text Size Control */}
+                        <View style={styles.section}>
+                            <View style={styles.sectionHeader}>
+                                <Type size={20} color={currentTheme === 'light' ? Colors.darkGray : Colors.lightGray} />
+                                <Text style={[styles.sectionTitle, { color: currentTheme === 'light' ? Colors.darkGray : Colors.lightGray }]} accessibilityRole='header' accessibilityLabel='Text Size'>
+                                    Text Size
+                                </Text>
+                            </View>
+                            <Text style={[styles.valueText, { color: currentTheme === 'light' ? Colors.primary : Colors.lightGray }]} accessibilityRole='text' accessibilityLabel={`${Math.round(state.textSizeMultiplier * 100)}%`}>
+                                {Math.round(state.textSizeMultiplier * 100)}%
+                            </Text>
+                            <Slider
+                                style={styles.slider}
+                                minimumValue={0.8}
+                                maximumValue={2.0}
+                                step={0.1}
+                                value={state.textSizeMultiplier}
+                                onValueChange={setTextSize}
+                                minimumTrackTintColor={Colors.secondary}
+                                maximumTrackTintColor={Colors.lightGray}
+                                thumbTintColor={Colors.white}
+                                accessible={true}
+                                accessibilityRole='adjustable'
+                                accessibilityHint='Adjust text size'
+                            />
+                            <View style={styles.sliderLabels}>
+                                <Text style={[styles.sliderLabel, { color: currentTheme === 'light' ? Colors.mediumGray : Colors.lightGray }]} accessibilityRole='text' accessibilityLabel='Small'>
+                                    Small
+                                </Text>
+                                <Text style={[styles.sliderLabel, { color: currentTheme === 'light' ? Colors.mediumGray : Colors.lightGray }]} accessibilityRole='text' accessibilityLabel='Large'>
+                                    Large
+                                </Text>
+                            </View>
+                        </View>
 
-                    <TouchableOpacity 
-                        style={styles.accessibilityOption}
-                        accessible={true}
-                        accessibilityLabel="High Contrast"
-                        accessibilityHint="Toggle high contrast mode for better visibility"
-                        accessibilityRole="menuitem"
-                    >
-                        <Text style={styles.accessibilityOptionText}>High Contrast</Text>
-                    </TouchableOpacity>
+                        {/* High Contrast Toggle */}
+                        <View style={styles.section}>
+                            <View style={styles.toggleRow}>
+                                <View style={styles.toggleLeft}>
+                                    <Contrast size={20} color={currentTheme === 'light' ? Colors.darkGray : Colors.lightGray} />
+                                    <View style={styles.toggleTextContainer}>
+                                        <Text style={[styles.toggleTitle, { color: currentTheme === 'light' ? Colors.darkGray : Colors.lightGray }]} accessibilityRole='header' accessibilityLabel='High Contrast'>
+                                            High Contrast
+                                        </Text>
+                                        <Text style={[styles.toggleDescription, { color: currentTheme === 'light' ? Colors.mediumGray : Colors.lightGray }]} accessibilityRole='text' accessibilityLabel='Increases contrast for better visibility'>
+                                            Increases contrast for better visibility
+                                        </Text>
+                                    </View>
+                                </View>
+                                <Switch
+                                    value={state.highContrast}
+                                    onValueChange={toggleHighContrast}
+                                    trackColor={{ false: Colors.lightGray, true: Colors.primary }}
+                                    thumbColor={state.highContrast ? Colors.white : Colors.darkGray}
+                                    ios_backgroundColor={Colors.lightGray}
+                                    accessible={true}
+                                    accessibilityRole='switch'
+                                    accessibilityState={{ checked: state.highContrast }}
+                                    accessibilityHint='Toggle high contrast mode'
+                                />
+                            </View>
+                        </View>
 
-                    <TouchableOpacity 
-                        style={styles.accessibilityOption}
-                        accessible={true}
-                        accessibilityLabel="Screen Reader"
-                        accessibilityHint="Configure screen reader settings"
-                        accessibilityRole="menuitem"
-                    >
-                        <Text style={styles.accessibilityOptionText}>Screen Reader</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
+                        {/* Screen Reader Enhancement */}
+                        <View style={styles.section}>
+                            <View style={styles.toggleRow}>
+                                <Eye size={20} color={currentTheme === 'light' ? Colors.darkGray : Colors.lightGray} />
+                                <View style={styles.toggleTextContainer}>
+                                    <Text style={[styles.toggleTitle, { color: currentTheme === 'light' ? Colors.darkGray : Colors.lightGray }]} accessibilityRole='header' accessibilityLabel='Screen Reader Plus'>
+                                        Screen Reader+
+                                    </Text>
+                                    <Text style={[styles.toggleDescription, { color: currentTheme === 'light' ? Colors.mediumGray : Colors.lightGray }]} accessibilityRole='text' accessibilityLabel='Enhanced descriptions and navigation'>
+                                        Enhanced descriptions and navigation
+                                    </Text>
+                                </View>
+                                <Switch
+                                    value={state.screenReaderEnhanced}
+                                    onValueChange={toggleScreenReader}
+                                    trackColor={{ false: Colors.lightGray, true: Colors.primary }}
+                                    thumbColor={state.screenReaderEnhanced ? Colors.white : Colors.darkGray}
+                                    ios_backgroundColor={Colors.lightGray}
+                                    accessible={true}
+                                    accessibilityRole='switch'
+                                    accessibilityState={{ checked: state.screenReaderEnhanced }}
+                                    accessibilityHint='Toggle screen reader enhancements'
+                                />
+                            </View>
+                        </View>
+
+                        {/* Color Filter Options */}
+                        <View style={styles.section}>
+                            <View style={styles.sectionHeader}>
+                                <Palette size={20} color={currentTheme === 'light' ? Colors.darkGray : Colors.lightGray} />
+                                <Text style={[styles.sectionTitle, { color: currentTheme === 'light' ? Colors.darkGray : Colors.lightGray }]}>
+                                    Color Filter
+                                </Text>
+                            </View>
+                            <View style={styles.colorFilterGrid}>
+                                {colorFilterOptions.map((option) => (
+                                    <SelectableChip
+                                        key={option.value}
+                                        label={option.label}
+                                        selected={state.colorFilter === option.value}
+                                        onPress={() => setColorFilter(option.value)}
+                                    />
+                                ))}
+                            </View>
+                        </View>
+                    </ScrollView>
+                </BlurView>
+            </Animated.View>
         </View>
     )
 }
 
-export default AccessibilityDrawer
-
 const styles = StyleSheet.create({
-    accessibilityDrawerOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    zIndex: 1001,
-  },
-  accessibilityDrawerDismiss: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 1002,
-  },
-  accessibilityDrawer: {
-    position: 'absolute',
-    right: 20,
-    bottom: 80, // Position above the accessibility button
-    zIndex: 1003,
-    borderRadius: 16,
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
-    width: 250,
-  },
-  accessibilityDrawerContent: {
-    backgroundColor: '#f8f2ff', // Light purple background
-    padding: 16,
-  },
-  accessibilityDrawerTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#7135B1',
-    marginBottom: 16,
-    textAlign: 'center',
-  },
-  accessibilityOption: {
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    marginBottom: 8,
-    backgroundColor: '#fff',
-  },
-  accessibilityOptionText: {
-    fontSize: 16,
-    color: '#46216E',
-  },
-})
+    container: {
+        ...StyleSheet.absoluteFillObject,
+        justifyContent: 'center',
+        alignItems: 'flex-end',
+        zIndex: 1000,
+    },
+    backdrop: {
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    panel: {
+        width: DRAWER_WIDTH,
+        height: '80%',
+        marginRight: 20,
+        borderRadius: 16,
+        overflow: 'hidden',
+        elevation: 12,
+        shadowColor: Colors.black,
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.3,
+        shadowRadius: 16,
+    },
+    blurContainer: {
+        flex: 1,
+    },
+    header: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: 20,
+        borderBottomWidth: 1,
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: '700',
+    },
+    closeButton: {
+        padding: 8,
+        borderRadius: 20,
+    },
+    content: {
+        flex: 1,
+        padding: 20,
+    },
+    section: {
+        marginBottom: 32,
+    },
+    sectionHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 16,
+    },
+    sectionTitle: {
+        fontSize: 18,
+        fontWeight: '600',
+        marginLeft: 12,
+    },
+    valueText: {
+        fontSize: 16,
+        fontWeight: '500',
+        textAlign: 'center',
+        marginBottom: 8,
+    },
+    slider: {
+        width: '100%',
+        height: 40,
+    },
+    sliderLabels: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 4,
+    },
+    sliderLabel: {
+        fontSize: 12,
+    },
+    toggleRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingVertical: 4,
+    },
+    toggleLeft: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        flex: 1,
+    },
+    toggleTextContainer: {
+        marginLeft: 12,
+        flex: 1,
+    },
+    toggleTitle: {
+        fontSize: 16,
+        fontWeight: '500',
+        marginBottom: 2,
+    },
+    toggleDescription: {
+        fontSize: 14,
+        lineHeight: 18,
+    },
+    colorFilterGrid: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+    },
+});

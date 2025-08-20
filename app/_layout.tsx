@@ -5,7 +5,9 @@ import 'react-native-reanimated';
 import { AccessibilityProvider } from '@/contexts/AccessibilityContext';
 import ThemeProvider from '@/contexts/ThemeContext';
 import AuthProvider from '@/contexts/AuthContext';
-import ToastManager from 'toastify-react-native'
+import ToastManager from 'toastify-react-native';
+
+import GlobalAccessibilityFAB from '@/components/common/GlobalAccessibilityFAB';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -30,6 +32,7 @@ export default function RootLayout() {
             <Stack.Screen name="(learn)" options={{ headerShown: false }} />
             <Stack.Screen name="(access)" options={{ headerShown: false }} />
           </Stack>
+          <GlobalAccessibilityFAB />
           <ToastManager />
         </AuthProvider>
       </ThemeProvider>
