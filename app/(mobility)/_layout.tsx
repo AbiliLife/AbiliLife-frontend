@@ -17,41 +17,41 @@ export default function MobilityLayout() {
           headerTitleStyle: {
             fontSize: 20,
             fontWeight: '600',
-            color: currentTheme === 'light' ? Colors.blue : Colors.white,
+            color: currentTheme === 'light' ? Colors.primary : Colors.white,
           },
           headerBackButtonDisplayMode: 'minimal',
-          headerTintColor: currentTheme === 'light' ? Colors.blue : Colors.white,
+          headerTintColor: currentTheme === 'light' ? Colors.primary : Colors.white,
           headerStyle: {
             backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer,
           },
         }} />
         <Stack.Screen name="rideBooking" options={{
-          headerTitle: 'Book a Private Ride',
+          headerTitle: 'Request/Book a Private Ride',
           headerTitleAlign: 'center',
           headerShadowVisible: false,
           headerTitleStyle: {
             fontSize: 20,
             fontWeight: '600',
-            color: currentTheme === 'light' ? Colors.blue : Colors.white,
+            color: currentTheme === 'light' ? Colors.primary : Colors.white,
           },
           headerBackButtonDisplayMode: 'minimal',
-          headerTintColor: currentTheme === 'light' ? Colors.blue : Colors.white,
+          headerTintColor: currentTheme === 'light' ? Colors.primary : Colors.white,
           headerStyle: {
             backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer,
           },
         }} />
-        <Stack.Screen name="publicTransport" options={{ 
+        <Stack.Screen name="publicTransport" options={{
           headerTitle: 'Public Transport',
           headerShadowVisible: false,
           headerTitleStyle: {
             fontSize: 16,
             fontWeight: '600',
-            color:'#18181B',
+            color: '#18181B',
           },
           headerStyle: {
             backgroundColor: '#fff',
           },
-         }} />
+        }} />
         <Stack.Screen name="rideConfirm" options={{ title: 'Ride Confirmation' }} />
         <Stack.Screen name="rideHistory" options={{ title: 'Ride History' }} />
       </Stack>
