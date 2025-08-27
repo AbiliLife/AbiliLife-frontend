@@ -4,7 +4,7 @@ export interface User {
     uid: string; // Firebase User ID
     email: string; // User email address
     phone: string; // User phone number
-    displayName: string; // User display name
+    fullName: string; // User full name
     photoURL: string; // User profile photo URL
     emailVerified: boolean; // Whether email is verified
     disabled: boolean; // Whether user account is disabled
