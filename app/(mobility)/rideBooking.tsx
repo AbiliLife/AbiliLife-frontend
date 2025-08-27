@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { StyleSheet, Platform, TouchableOpacity, Linking, Alert, Modal, Pressable, KeyboardAvoidingView, View, Text } from 'react-native';
+import { StyleSheet, Platform, TouchableOpacity, Linking, Alert, Pressable, KeyboardAvoidingView, View, Text } from 'react-native';
 import { useRouter } from 'expo-router';
 import * as Location from "expo-location";
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
@@ -8,73 +8,53 @@ import { Ionicons, MaterialCommunityIcons, FontAwesome5 } from '@expo/vector-ico
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
+// Types - Location
+import type { GeosearchResult } from '@/types/location';
+
+// Location Services
+import { getAddressFromCoordinates } from '@/services/locationService';
+
+// Assets & Constants
 import Colors from '@/constants/Colors';
+import { images } from '@/constants/Images';
 
-import { useAccessibility } from '@/contexts/AccessibilityContext';
+// Context & Store
 import { ThemeContext } from '@/contexts/ThemeContext';
+import { useOnboardingStore } from '@/store/onboardingStore';
 
+// Components
 import CustomButton from '@/components/common/CustomButton';
-import AccessibilityDrawer from '@/components/accessibility/AccessibilityDrawer';
-import AccessibilityOption from '@/components/accessibility/AccessibilityOption';
 import FormField from '@/components/common/FormField';
-
-
-
-// // Create an interface for our map components
-// interface MapComponents {
-//     MapView: any;
-//     Marker: any;
-//     PROVIDER_GOOGLE?: any; // Optional, only if using Google Maps
-// }
-
-// // Initialize map components based on platform
-// const getMapComponents = (): MapComponents => {
-//     if (Platform.OS !== 'web') {
-//         try {
-//             const Maps = require('react-native-maps');
-//             return {
-//                 MapView: Maps.default,
-//                 Marker: Maps.Marker,
-//                 PROVIDER_GOOGLE: Maps.PROVIDER_GOOGLE, // If you need Google Maps provider
-//             };
-//         } catch (error) {
-//             console.warn('Failed to load react-native-maps:', error);
-//             return {
-//                 MapView: null,
-//                 Marker: null,
-//                 PROVIDER_GOOGLE: null, // No Google Maps provider available
-//             };
-//         }
-//     }
-//     return {
-//         MapView: null,
-//         Marker: null,
-//         PROVIDER_GOOGLE: null, // No Google Maps provider on web
-//     };
-// };
-
-// // Get map components
-// const { MapView, Marker, PROVIDER_GOOGLE } = getMapComponents();
+import LocationSearchModal from '@/components/location/LocationSearchModal';
 
 const RideBooking = () => {
     const router = useRouter();
 
+    // Obtain context values
     const { currentTheme } = React.useContext(ThemeContext);
-    const { accessibilityDrawerVisible, toggleAccessibilityDrawer } = useAccessibility();
+    const { user } = useOnboardingStore();
 
     // Form state
     const [pickup, setPickup] = useState('');
     const [dropoff, setDropoff] = useState('');
-    const [rideTimeType, setRideTimeType] = useState<'ASAP' | 'SCHEDULE'>('ASAP');
+    const [rideTimeType, setRideTimeType] = useState<'immediate' | 'scheduled'>('immediate');
     const [scheduledDate, setScheduledDate] = useState(''); // Format: YYYY-MM-DD
     const [scheduledTime, setScheduledTime] = useState(''); // Format: HH:MM
     const [isDatePickerModalVisible, setDatePickerModalVisible] = useState(false);
     const [mode, setMode] = useState<'date' | 'time'>('date'); // Default to date picker
-    const [ramp, setRamp] = useState(false);
-    const [assistiveDevice, setAssistiveDevice] = useState(false);
-    const [signLanguage, setSignLanguage] = useState(false);
+
+    // Location search modals
+    const [isPickupModalVisible, setPickupModalVisible] = useState(false);
+    const [isDropoffModalVisible, setDropoffModalVisible] = useState(false);
+
+    // Accessibility preferences
+    const [ramp, setRamp] = useState(user.accessibilityPreferences.mobility.needsRamp || false);
+    const [assistiveDevice, setAssistiveDevice] = useState(user.accessibilityPreferences.mobility.needsAssistiveDevice || false);
+    const [signLanguage, setSignLanguage] = useState(user.accessibilityPreferences.hearing.needsSignLanguage || false);
+    const [writtenCommunication, setWrittenCommunication] = useState(user.accessibilityPreferences.hearing.needsWrittenCommunication || false);
+    const [transferAssist, setTransferAssist] = useState(user.accessibilityPreferences.mobility.transferAssistance || false);
+
     const [instructions, setInstructions] = useState('');
-    const [sosVisible, setSosVisible] = useState(false);
     const [loadingLocation, setLoadingLocation] = useState(false);
 
     const [userLocation, setUserLocation] = useState<Location.LocationObject | null>(null);
@@ -102,12 +82,7 @@ const RideBooking = () => {
 
             // Get current location
             let location = await Location.getCurrentPositionAsync({});
-            // console.log('Current location:', location);
-            let address = await Location.reverseGeocodeAsync(location.coords);
-            // console.log('Address:', address);
             setUserLocation(location);
-            setUserAddress(address[0]?.street || address[0]?.name || 'Unknown Location');
-            setPickup(address[0]?.street || address[0]?.name || 'Unknown Location'); // Mock pickup with address
         })();
     }, [])
 
@@ -127,17 +102,29 @@ const RideBooking = () => {
             }
 
             let location = await Location.getCurrentPositionAsync({});
-            // console.log('Current location:', location);
-            let address = await Location.reverseGeocodeAsync(location.coords);
-            // console.log('Pickup Address:', address);
             setUserLocation(location);
-            setUserAddress(address[0]?.street || `${address[0]?.city}, ${address[0].country}` || 'Unknown Location');
-            setPickup(address[0]?.street || `${address[0]?.city}, ${address[0].country}` || 'Unknown Location'); // Autofill pickup
-            Alert.alert('Location Set', `Pickup location set to: ${address[0]?.street || `${address[0]?.city}, ${address[0].country}` || 'Unknown Location'}`);
+
+            // Use our location service for better address formatting
+            const address = await getAddressFromCoordinates(
+                location.coords.latitude,
+                location.coords.longitude
+            );
+
+            setUserAddress(address);
+            setPickup(address);
             setLoadingLocation(false);
         } catch (e) {
             setLoadingLocation(false);
             Alert.alert('Error', 'Could not get current location.');
+        }
+    };
+
+    // Location selection handlers
+    const handleLocationSelect = (location: GeosearchResult, isPickup: boolean) => {
+        if (isPickup) {
+            setPickup(location.name);
+        } else {
+            setDropoff(location.name);
         }
     };
 
@@ -146,7 +133,20 @@ const RideBooking = () => {
         if (Platform.OS === 'android') {
             DateTimePickerAndroid.open({
                 value: new Date(),
-                onChange: currentMode === 'date' ? handleScheduledDateChange : handleScheduledTimeChange,
+                onChange: (event, selectedDate) => {
+                    if (event.type === 'dismissed') {
+                        // Reset State when user cancels
+                        setDatePickerModalVisible(false);
+                        if (currentMode === 'date') setScheduledDate('');
+                        if (currentMode === 'time') setScheduledTime('');
+                        return;
+                    }
+                    if (currentMode === 'date') {
+                        handleScheduledDateChange(event, selectedDate);
+                    } else {
+                        handleScheduledTimeChange(event, selectedDate);
+                    }
+                },
                 mode: currentMode,
                 is24Hour: true, // Use 24-hour format
             });
@@ -177,7 +177,7 @@ const RideBooking = () => {
 
     // WhatsApp deep link
     const handleWhatsAppRequest = () => {
-        let rideTime = rideTimeType === 'ASAP' ? 'As soon as possible' : `${scheduledDate} at ${scheduledTime}`;
+        let rideTime = rideTimeType === 'immediate' ? 'As soon as possible' : `${scheduledDate} at ${scheduledTime}`;
         let needs = [];
         if (ramp) needs.push('Ramp');
         if (assistiveDevice) needs.push('Assistive Device');
@@ -186,27 +186,32 @@ const RideBooking = () => {
         let msg = `Hello Ace Mobility, I’d like to request a ride:\n\nPickup: ${pickup}\nDrop-off: ${dropoff}\nTime: ${rideTime}\nAccessibility needs: ${needsStr}\n\n`;
         if (instructions) msg += `Instructions: ${instructions}`;
         // console.log('WhatsApp message:', msg); // Debugging line
-        const url = `https://wa.me/254742560540?text=${msg}`; // Replace with Ace Mobility's WhatsApp number
+        const url = `https://wa.me/254738218657?text=${msg}`; // Replace with Ace Mobility's WhatsApp number
         Linking.openURL(url).catch(() => Alert.alert('Error', 'Could not open WhatsApp.'));
+    };
+
+    // SMS Deep Link
+    const handleSmsRequest = () => {
+        let rideTime = rideTimeType === 'immediate' ? 'As soon as possible' : `${scheduledDate} at ${scheduledTime}`;
+        let needs = [];
+        if (ramp) needs.push('Ramp');
+        if (assistiveDevice) needs.push('Assistive Device');
+        if (signLanguage) needs.push('Sign Language');
+        let needsStr = needs.length ? needs.join(', ') : 'None';
+        let msg = `Hello Ace Mobility, I’d like to request a ride:\n\nPickup: ${pickup}\nDrop-off: ${dropoff}\nTime: ${rideTime}\nAccessibility needs: ${needsStr}\n\n`;
+        if (instructions) msg += `Instructions: ${instructions}`;
+        // console.log('SMS message:', msg); // Debugging line
+        const url = `sms:+254738218657?body=${msg}`;
+        Linking.openURL(url).catch(() => Alert.alert('Error', 'Could not open SMS.'));
     };
 
     // ACE Mobility Deep Link
     const handleAceMobilityRequest = () => {
-        // let rideTime = rideTimeType === 'ASAP' ? 'As soon as possible' : `${scheduledDate} at ${scheduledTime}`;
-        // let needs = [];
-        // if (ramp) needs.push('Ramp');
-        // if (assistiveDevice) needs.push('Assistive Device');
-        // if (signLanguage) needs.push('Sign Language');
-        // let needsStr = needs.length ? needs.join(', ') : 'None';
-        // let msg = `Hello Ace Mobility, I’d like to request a ride:\n\nPickup: ${pickup}\nDrop-off: ${dropoff}\nTime: ${rideTime}\nAccessibility needs: ${needsStr}\n\n`;
-        // if (instructions) msg += `Instructions: ${instructions}`;
-        // // console.log('ACE Mobility message:', msg); // Debugging line
-        // const url = `https://acemobility.co.ke/request?pickup=${encodeURIComponent(pickup)}&dropoff=${encodeURIComponent(dropoff)}&time=${encodeURIComponent(rideTime)}&needs=${encodeURIComponent(needsStr)}&instructions=${encodeURIComponent(instructions)}`;
-        // Linking.openURL(url).catch(() => Alert.alert('Error', 'Could not open ACE Mobility.'));
-
         // For now, just Alert the user
-        Alert.alert('Make sure you have the ACE Mobility app installed', 'This feature is under development. Please use the WhatsApp option for now.', [
-            { text: 'OK', onPress: () => handleWhatsAppRequest() },
+        Alert.alert('ACE Mobility', 'We are currently working on this integration. Please request via WhatsApp/SMS for now.', [
+            { text: 'WhatsApp', onPress: () => handleWhatsAppRequest() },
+            { text: 'SMS', onPress: () => handleSmsRequest() },
+            { text: 'Call', onPress: () => Linking.openURL('tel:+254738218657') },
             { text: 'Cancel', style: 'cancel' }
         ]);
     }
@@ -280,159 +285,209 @@ const RideBooking = () => {
                 android_keyboardInputMode="adjustResize" // Android specific
                 enableContentPanningGesture={true}
                 enableHandlePanningGesture={true} // Allow dragging the bottom sheet
-                handleIndicatorStyle={{ backgroundColor: currentTheme === 'light' ? Colors.primary : Colors.white }} // Customize handle color
+                handleIndicatorStyle={{ backgroundColor: currentTheme === 'light' ? Colors.black : Colors.white }} // Customize handle color
                 backgroundStyle={{ backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer }} // Background color of the bottom sheet
             >
                 <BottomSheetScrollView
                     contentContainerStyle={[styles.container, { backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer }]}
                     showsVerticalScrollIndicator={true}
                     keyboardDismissMode='on-drag'
-                    // Key settings for better Android scrolling:
                     keyboardShouldPersistTaps="handled"
                     bounces={false}
                     overScrollMode="never"
                 >
-                    {/* Pickup Location */}
                     <Text
                         style={[styles.label, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}
                         accessibilityRole="text"
-                        accessibilityLabel="Pickup Location Label"
+                        accessibilityLabel="Where should we pick you up?"
                     >
                         Where should we pick you up?
                     </Text>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', width: '100%' }}>
-                        <FormField
-                            type='text'
-                            title='Pickup'
-                            value={pickup}
-                            icon={true}
-                            iconName='location-outline'
-                            iconFamily='Ionicons'
-                            placeholder="Enter pickup location"
-                            onChangeText={setPickup}
-                            otherStyles={{ flex: 1 }}
-                            accessibilityLabel="Pickup Location Input Field"
-                            accessibilityHint="Enter your pickup location"
-                        />
+                    <View style={{ flexDirection: 'column', width: '100%' }}>
+                        <TouchableOpacity
+                            style={{ width: '100%' }}
+                            onPress={() => setPickupModalVisible(true)}
+                            accessible={true}
+                            accessibilityRole="button"
+                            accessibilityHint="Tap to select pickup location"
+                        >
+                            <View pointerEvents="none">
+                                <FormField
+                                    type='text'
+                                    title='Pickup'
+                                    value={pickup}
+                                    icon={true}
+                                    iconName='location-outline'
+                                    iconFamily='Ionicons'
+                                    placeholder="Select pickup location"
+                                    onChangeText={() => { }} // Disabled, handled by modal
+                                    otherStyles={{ opacity: 1 }}
+                                    accessibilityLabel="Pickup Location Input Field"
+                                    accessibilityHint="Tap to search for pickup location"
+                                />
+                            </View>
+                        </TouchableOpacity>
                         <TouchableOpacity
                             onPress={handleUseCurrentLocation}
-                            style={{ marginLeft: 8 }}
+                            style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4, gap: 6 }}
                             disabled={loadingLocation}
                             accessibilityLabel="Use Current Location Button"
                             accessibilityHint="Press to use your current location as pickup"
                             accessibilityRole="button"
                             aria-label="Use Current Location Button"
                         >
+                            <Text style={{ color: currentTheme === 'light' ? Colors.secondary : Colors.lightGray, fontSize: 14 }}>
+                                Use Current Location
+                            </Text>
                             <Ionicons name="locate" size={24} color={Colors.secondary} />
                         </TouchableOpacity>
                     </View>
 
-                    {/* Drop-off Location */}
                     <Text
                         style={[styles.label, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}
                         accessibilityRole="text"
-                        accessibilityLabel="Drop-off Location Label"
+                        accessibilityLabel="Where are you going?"
                     >
                         Where are you going?
                     </Text>
-                    <FormField
-                        type='text'
-                        title='Drop-off'
-                        value={dropoff}
-                        icon={true}
-                        iconName='flag-outline'
-                        iconFamily='Ionicons'
-                        placeholder="Enter drop-off location"
-                        onChangeText={setDropoff}
-                        otherStyles={{ marginBottom: 16 }}
-                        accessibilityLabel="Drop-off Location Input Field"
-                        accessibilityHint="Enter your drop-off location"
-                    />
+                    <TouchableOpacity
+                        style={{ width: '100%' }}
+                        onPress={() => setDropoffModalVisible(true)}
+                        accessible={true}
+                        accessibilityRole="button"
+                        accessibilityHint="Tap to select drop-off location"
+                    >
+                        <View pointerEvents="none">
+                            <FormField
+                                type='text'
+                                title='Drop-off'
+                                value={dropoff}
+                                icon={true}
+                                iconName='flag-outline'
+                                iconFamily='Ionicons'
+                                placeholder="Select drop-off location"
+                                onChangeText={() => { }} // Disabled, handled by modal
+                                otherStyles={{ marginBottom: 16, opacity: 1 }}
+                                accessibilityLabel="Drop-off Location Input Field"
+                                accessibilityHint="Tap to search for drop-off location"
+                            />
+                        </View>
+                    </TouchableOpacity>
 
-                    {/* Ride Time Selection */}
                     <Text
                         style={[styles.label, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}
                         accessibilityRole="text"
-                        accessibilityLabel="Ride Time Selection Label"
+                        accessibilityLabel="When would you like to ride?"
                     >
                         When would you like to ride?
                     </Text>
-                    <View style={styles.radioRow}>
+                    <View style={[styles.tabContainer, { backgroundColor: currentTheme === 'light' ? Colors.lightGray : Colors.mediumGray }]} accessible={true}>
                         <TouchableOpacity
-                            style={styles.radioOption}
-                            onPress={() => setRideTimeType('ASAP')}
-                            accessibilityLabel="Select ASAP Ride Time"
-                            accessibilityHint="Select to request a ride as soon as possible"
-                            accessibilityRole="radio"
-                            aria-label="Select ASAP Ride Time"
+                            style={[
+                                styles.tab,
+                                {
+                                    backgroundColor:
+                                        rideTimeType === 'immediate'
+                                            ? (currentTheme === 'light' ? Colors.white : Colors.darkGray)
+                                            : (currentTheme === 'light' ? Colors.lightGray : Colors.mediumGray),
+                                },
+                            ]}
+                            onPress={() => setRideTimeType('immediate')}
+                            accessibilityRole="tab"
+                            accessibilityState={{ selected: rideTimeType === 'immediate' }}
+                            accessibilityLabel="Immediate Tab"
+                            accessibilityHint="Select to book a ride now"
                         >
-                            <View style={[styles.radioCircle, rideTimeType === 'ASAP' && { borderColor: Colors.secondary }]} >
-                                {rideTimeType === 'ASAP' && <View style={[styles.radioDot, { backgroundColor: Colors.secondary }]} />}
-                            </View>
-                            <Text style={[styles.radioLabel, rideTimeType === 'ASAP' && { color: currentTheme === 'light' ? Colors.primary : Colors.white }, { color: currentTheme === 'light' ? Colors.black : Colors.white }]}>
-                                As soon as possible
+                            <Text
+                                style={[
+                                    styles.tabText,
+                                    rideTimeType === 'immediate'
+                                        ? (currentTheme === 'light' ? styles.activeTabText : { color: Colors.white })
+                                        : { color: currentTheme === 'light' ? Colors.primary : Colors.lightGray },
+                                ]}
+                            >
+                                Now
                             </Text>
                         </TouchableOpacity>
+
                         <TouchableOpacity
-                            style={styles.radioOption}
-                            onPress={() => setRideTimeType('SCHEDULE')}
-                            accessibilityLabel="Select Scheduled Ride Time"
-                            accessibilityHint="Select to schedule a ride for later"
-                            accessibilityRole="radio"
-                            aria-label="Select Scheduled Ride Time"
+                            style={[
+                                styles.tab,
+                                {
+                                    backgroundColor:
+                                        rideTimeType === 'scheduled'
+                                            ? (currentTheme === 'light' ? Colors.white : Colors.darkGray)
+                                            : (currentTheme === 'light' ? Colors.lightGray : Colors.mediumGray),
+                                },
+                            ]}
+                            onPress={() => setRideTimeType('scheduled')}
+                            accessibilityRole="tab"
+                            accessibilityState={{ selected: rideTimeType === 'scheduled' }}
+                            accessibilityLabel="Scheduled Tab"
+                            accessibilityHint="Switch to scheduled tab"
                         >
-                            <View style={[styles.radioCircle, rideTimeType === 'SCHEDULE' && { borderColor: Colors.secondary }]} >
-                                {rideTimeType === 'SCHEDULE' && <View style={[styles.radioDot, { backgroundColor: Colors.secondary }]} />}
-                            </View>
-                            <Text style={[styles.radioLabel, rideTimeType === 'SCHEDULE' && { color: currentTheme === 'light' ? Colors.primary : Colors.white }, { color: currentTheme === 'light' ? Colors.black : Colors.white }]}>
-                                Schedule for later
+                            <Text
+                                style={[
+                                    styles.tabText,
+                                    rideTimeType === 'scheduled'
+                                        ? (currentTheme === 'light' ? styles.activeTabText : { color: Colors.white })
+                                        : { color: currentTheme === 'light' ? Colors.primary : Colors.lightGray },
+                                ]}
+                            >
+                                Later
                             </Text>
                         </TouchableOpacity>
                     </View>
-                    {rideTimeType === 'SCHEDULE' && (
-                        <>
-                            <View style={{ flexDirection: 'row', width: '100%', gap: 8 }}>
+                    {rideTimeType === 'scheduled' && (
+                        <View style={{ marginTop: 16 }}>
+                            <View style={styles.dateTimeContainer}>
                                 <TouchableOpacity
-                                    style={{ flex: 1 }}
+                                    style={[
+                                        styles.dateTimeButton,
+                                        { borderColor: currentTheme === 'light' ? Colors.black : Colors.borderDark },
+                                        scheduledDate && { borderColor: currentTheme === 'light' ? Colors.secondary : Colors.white }
+                                    ]}
                                     onPress={openDatePicker}
+                                    accessible={true}
+                                    accessibilityRole='button'
+                                    accessibilityState={{ selected: !!scheduledDate }}
                                     accessibilityLabel="Open Date Picker"
                                     accessibilityHint="Press to select a date for your scheduled ride"
-                                    accessibilityRole="button"
-                                    aria-label="Open Date Picker"
                                 >
-                                    <FormField
-                                        type='text'
-                                        title='Scheduled Date'
-                                        value={scheduledDate}
-                                        icon={true}
-                                        iconName='calendar-outline'
-                                        iconFamily='Ionicons'
-                                        placeholder="Select date"
-                                        onChangeText={() => { }}
-                                        otherStyles={{ flex: 1 }}
-                                        editable={false}
-                                    />
+                                    <Ionicons name="calendar-outline" size={24} color={
+                                        scheduledDate ? (currentTheme === 'light' ? Colors.secondary : Colors.white) : (currentTheme === 'light' ? Colors.black : Colors.borderDark)
+                                    } />
+                                    <Text style={[
+                                        styles.dateTimeText,
+                                        { color: currentTheme === 'light' ? Colors.mediumGray : Colors.lightGray },
+                                        scheduledDate && { color: currentTheme === 'light' ? Colors.secondary : Colors.white }
+                                    ]}>
+                                        {scheduledDate || "Select date"}
+                                    </Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
-                                    style={{ flex: 1 }}
+                                    style={[
+                                        styles.dateTimeButton,
+                                        { borderColor: currentTheme === 'light' ? Colors.black : Colors.borderDark },
+                                        scheduledTime && { borderColor: currentTheme === 'light' ? Colors.secondary : Colors.white }
+                                    ]}
                                     onPress={openTimePicker}
+                                    accessible={true}
+                                    accessibilityRole='button'
+                                    accessibilityState={{ selected: !!scheduledTime }}
                                     accessibilityLabel="Open Time Picker"
                                     accessibilityHint="Press to select a time for your scheduled ride"
-                                    accessibilityRole="button"
-                                    aria-label="Open Time Picker"
                                 >
-                                    <FormField
-                                        type='text'
-                                        title='Scheduled Time'
-                                        value={scheduledTime}
-                                        icon={true}
-                                        iconName='time-outline'
-                                        iconFamily='Ionicons'
-                                        placeholder="Select time"
-                                        onChangeText={() => { }}
-                                        otherStyles={{ flex: 1 }}
-                                        editable={false}
-                                    />
+                                    <Ionicons name="time-outline" size={24} color={
+                                        scheduledTime ? (currentTheme === 'light' ? Colors.secondary : Colors.white) : (currentTheme === 'light' ? Colors.black : Colors.borderDark)
+                                    } />
+                                    <Text style={[
+                                        styles.dateTimeText,
+                                        { color: currentTheme === 'light' ? Colors.mediumGray : Colors.lightGray },
+                                        scheduledTime && { color: currentTheme === 'light' ? Colors.secondary : Colors.white }
+                                    ]}>
+                                        {scheduledTime || "Select time"}
+                                    </Text>
                                 </TouchableOpacity>
                             </View>
                             {/* DateTimePickerModal for iOS */}
@@ -445,58 +500,122 @@ const RideBooking = () => {
                                     date={new Date()} // Default to current date/time
                                 />
                             )}
-                        </>
+                        </View>
                     )}
+                    <Text style={{ color: Colors.info, fontSize: 14, marginTop: 8, fontWeight: '500' }}>
+                        NOTE: Driver dispatch times may vary based on traffic and availability.
+                    </Text>
 
                     {/* Accessibility Preferences */}
                     <Text
                         style={[styles.label, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}
                         accessibilityRole="text"
-                        accessibilityLabel="Accessibility Preferences Label"
+                        accessibilityLabel="Accessibility Preferences"
                     >
                         Accessibility Preferences
                     </Text>
+
                     <View style={styles.toggleRow}>
                         <TouchableOpacity
-                            style={[styles.toggleOption, ramp && { borderColor: currentTheme === 'light' ? Colors.secondary : Colors.white }, { backgroundColor: currentTheme === 'light' ? Colors.lightGray : Colors.darkGray }]}
+                            style={[
+                                styles.toggleOption,
+                                { backgroundColor: currentTheme === 'light' ? Colors.lightGray : Colors.darkGray, borderWidth: 1 },
+                                ramp && { borderColor: currentTheme === 'light' ? Colors.secondary : Colors.white, backgroundColor: currentTheme === 'light' ? Colors.lightPurple : Colors.mediumGray, borderWidth: 2 }
+                            ]}
                             onPress={() => setRamp(v => !v)}
+                            accessible={true}
+                            accessibilityRole="button"
                             accessibilityLabel="Toggle Ramp/Lift Accessibility"
                             accessibilityHint="Press to indicate if you need a ramp or lift for wheelchair access"
-                            accessibilityRole="button"
-                            aria-label="Toggle Ramp/Lift Accessibility"
+                            accessibilityState={{ checked: ramp }}
                         >
-                            <MaterialCommunityIcons name="wheelchair-accessibility" size={22} color={ramp ? currentTheme === 'light' ? Colors.black : Colors.white : Colors.accent} />
-                            <Text style={[styles.toggleLabel, ramp && { color: currentTheme === 'light' ? Colors.black : Colors.white }]}>
+                            <MaterialCommunityIcons name="wheelchair-accessibility" size={22} color={currentTheme === 'light' ? Colors.black : Colors.white} />
+                            <Text style={[styles.toggleLabel, { color: currentTheme === 'light' ? Colors.black : Colors.white }]}>
                                 Ramp/Lift
                             </Text>
                         </TouchableOpacity>
+
                         <TouchableOpacity
-                            style={[styles.toggleOption, assistiveDevice && { borderColor: currentTheme === 'light' ? Colors.secondary : Colors.white }, { backgroundColor: currentTheme === 'light' ? Colors.lightGray : Colors.darkGray }]}
+                            style={[
+                                styles.toggleOption,
+                                { backgroundColor: currentTheme === 'light' ? Colors.lightGray : Colors.darkGray, borderWidth: 1 },
+                                transferAssist && { borderColor: currentTheme === 'light' ? Colors.secondary : Colors.white, backgroundColor: currentTheme === 'light' ? Colors.lightPurple : Colors.mediumGray, borderWidth: 2 }
+                            ]}
+                            onPress={() => setTransferAssist(v => !v)}
+                            accessible={true}
+                            accessibilityRole="button"
+                            accessibilityLabel="Toggle Transfer Assistance"
+                            accessibilityHint="Press to indicate if you need assistance transferring into the vehicle"
+                            accessibilityState={{ checked: transferAssist }}
+                        >
+                            <MaterialCommunityIcons name="wheelchair-accessibility" size={22} color={currentTheme === 'light' ? Colors.black : Colors.white} />
+                            <Text style={[styles.toggleLabel, { color: currentTheme === 'light' ? Colors.black : Colors.white }]}>
+                                Transfer Assistance
+                            </Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            style={[
+                                styles.toggleOption,
+                                { backgroundColor: currentTheme === 'light' ? Colors.lightGray : Colors.darkGray, borderWidth: 1 },
+                                assistiveDevice && { borderColor: currentTheme === 'light' ? Colors.secondary : Colors.white, backgroundColor: currentTheme === 'light' ? Colors.lightPurple : Colors.mediumGray, borderWidth: 2 }
+                            ]}
                             onPress={() => setAssistiveDevice(v => !v)}
+                            accessible={true}
+                            accessibilityRole="button"
                             accessibilityLabel="Toggle Assistive Device Accessibility"
                             accessibilityHint="Press to indicate if you need assistance with an assistive device"
-                            accessibilityRole="button"
-                            aria-label="Toggle Assistive Device Accessibility"
+                            accessibilityState={{ checked: assistiveDevice }}
                         >
-                            <FontAwesome5 name="walking" size={20} color={assistiveDevice ? currentTheme === 'light' ? Colors.black : Colors.white : Colors.accent} />
-                            <Text style={[styles.toggleLabel, assistiveDevice && { color: currentTheme === 'light' ? Colors.black : Colors.white }]}>
+                            <FontAwesome5 name="walking" size={20} color={currentTheme === 'light' ? Colors.black : Colors.white} />
+                            <Text style={[styles.toggleLabel, { color: currentTheme === 'light' ? Colors.black : Colors.white }]}>
                                 Assistive Device
                             </Text>
                         </TouchableOpacity>
+
                         <TouchableOpacity
-                            style={[styles.toggleOption, signLanguage && { borderColor: currentTheme === 'light' ? Colors.secondary : Colors.white }, { backgroundColor: currentTheme === 'light' ? Colors.lightGray : Colors.darkGray }]}
+                            style={[
+                                styles.toggleOption,
+                                { backgroundColor: currentTheme === 'light' ? Colors.lightGray : Colors.darkGray, borderWidth: 1 },
+                                signLanguage && { borderColor: currentTheme === 'light' ? Colors.secondary : Colors.white, backgroundColor: currentTheme === 'light' ? Colors.lightPurple : Colors.mediumGray, borderWidth: 2 }
+                            ]}
                             onPress={() => setSignLanguage(v => !v)}
+                            accessible={true}
+                            accessibilityRole="button"
                             accessibilityLabel="Toggle Sign Language Accessibility"
                             accessibilityHint="Press to indicate if you need a driver who knows sign language"
-                            accessibilityRole="button"
-                            aria-label="Toggle Sign Language Accessibility"
+                            accessibilityState={{ checked: signLanguage }}
                         >
-                            <MaterialCommunityIcons name="hand-peace" size={22} color={signLanguage ? currentTheme === 'light' ? Colors.black : Colors.white : Colors.accent} />
-                            <Text style={[styles.toggleLabel, signLanguage && { color: currentTheme === 'light' ? Colors.black : Colors.white }]}>
+                            <MaterialCommunityIcons name="hand-peace" size={22} color={currentTheme === 'light' ? Colors.black : Colors.white} />
+                            <Text style={[styles.toggleLabel, { color: currentTheme === 'light' ? Colors.black : Colors.white }]}>
                                 Sign Language
                             </Text>
                         </TouchableOpacity>
+
+                        <TouchableOpacity
+                            style={[
+                                styles.toggleOption,
+                                { backgroundColor: currentTheme === 'light' ? Colors.lightGray : Colors.darkGray, borderWidth: 1 },
+                                writtenCommunication && { borderColor: currentTheme === 'light' ? Colors.secondary : Colors.white, backgroundColor: currentTheme === 'light' ? Colors.lightPurple : Colors.mediumGray, borderWidth: 2 }
+                            ]}
+                            onPress={() => setWrittenCommunication(v => !v)}
+                            accessible={true}
+                            accessibilityRole="button"
+                            accessibilityLabel="Toggle Written Communication Accessibility"
+                            accessibilityHint="Press to indicate if you prefer written communication with the driver"
+                            accessibilityState={{ checked: writtenCommunication }}
+                        >
+                            <Ionicons name="chatbox-ellipses" size={22} color={currentTheme === 'light' ? Colors.black : Colors.white} />
+                            <Text style={[styles.toggleLabel, { color: currentTheme === 'light' ? Colors.black : Colors.white }]}>
+                                Written Communication
+                            </Text>
+                        </TouchableOpacity>
                     </View>
+                    <Text style={{ color: Colors.info, fontSize: 14, marginTop: 4, fontWeight: '500' }}>
+                        NOTE: Make sure you have configured your accessibility preferences on your profile. These preferences will be shared with the driver for a better experience.
+                    </Text>
+
+
                     <View style={{ width: '100%' }}>
                         <Text
                             style={[styles.label, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}
@@ -511,7 +630,7 @@ const RideBooking = () => {
                             accessibilityLabel="Additional Instructions Hint"
                             accessibilityHint="Enter any special instructions for the driver"
                         >
-                            Optional notes for the driver (e.g. pickup notes)
+                            Optional notes for the driver (e.g. "Call upon arrival", "Meet at the main entrance", etc.)
                         </Text>
                         <FormField
                             type='text'
@@ -538,44 +657,51 @@ const RideBooking = () => {
                         </Text>
 
                         <View style={styles.summaryRow}>
-                            <Ionicons name="location" size={24} color={Colors.secondary} />
+                            <Ionicons name="location" size={24} color={Colors.blue} />
                             <Text style={[styles.summaryText, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole='text' accessibilityLabel={` Pickup Location: ${pickup}`}>
                                 From: {pickup}
                             </Text>
                         </View>
 
                         <View style={styles.summaryRow}>
-                            <Ionicons name="flag" size={24} color={Colors.secondary} />
+                            <Ionicons name="flag" size={24} color={Colors.blue} />
                             <Text style={[styles.summaryText, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole='text' accessibilityLabel={` Drop-off Location: ${dropoff}`}>
                                 To: {dropoff}
                             </Text>
                         </View>
 
                         <View style={styles.summaryRow}>
-                            <Ionicons name="time" size={24} color={Colors.secondary} />
-                            <Text style={[styles.summaryText, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole='text' accessibilityLabel={` Ride Time: ${rideTimeType === 'ASAP' ? 'ASAP' : `${scheduledDate} at ${scheduledTime}`}`}>
-                                Ride time: {rideTimeType === 'ASAP' ? 'ASAP' : `${scheduledDate} at ${scheduledTime}`}
+                            <Ionicons name="time" size={24} color={Colors.blue} />
+                            <Text style={[styles.summaryText, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole='text' accessibilityLabel={` Ride Time: ${rideTimeType === 'immediate' ? 'As soon as possible' : `${scheduledDate} at ${scheduledTime}`}`}>
+                                Ride time: {rideTimeType === 'immediate' ? 'As soon as possible' : `${scheduledDate} at ${scheduledTime}`}
                             </Text>
                         </View>
 
                         <View style={styles.summaryRow}>
-                            <MaterialCommunityIcons name="wheelchair-accessibility" size={24} color={ramp ? Colors.secondary : Colors.accent} />
+                            <MaterialCommunityIcons name="wheelchair-accessibility" size={24} color={ramp ? Colors.blue : Colors.accent} />
                             <Text style={[styles.summaryText, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole='text' accessibilityLabel={` Ramp/Lift Accessibility: ${ramp ? 'Yes' : 'No'}`}>
                                 Ramp: {ramp ? '✅' : '❌'}
                             </Text>
                         </View>
 
                         <View style={styles.summaryRow}>
-                            <FontAwesome5 name="walking" size={24} color={assistiveDevice ? Colors.secondary : Colors.accent} />
+                            <FontAwesome5 name="walking" size={24} color={assistiveDevice ? Colors.blue : Colors.accent} />
                             <Text style={[styles.summaryText, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole='text' accessibilityLabel={` Assistive Device Accessibility: ${assistiveDevice ? 'Yes' : 'No'}`}>
                                 Assistive Device: {assistiveDevice ? '✅' : '❌'}
                             </Text>
                         </View>
 
                         <View style={styles.summaryRow}>
-                            <MaterialCommunityIcons name="hand-peace" size={24} color={signLanguage ? Colors.secondary : Colors.accent} />
+                            <MaterialCommunityIcons name="hand-peace" size={24} color={signLanguage ? Colors.blue : Colors.accent} />
                             <Text style={[styles.summaryText, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole='text' accessibilityLabel={` Sign Language Accessibility: ${signLanguage ? 'Yes' : 'No'}`}>
                                 Sign Language: {signLanguage ? '✅' : '❌'}
+                            </Text>
+                        </View>
+
+                        <View style={styles.summaryRow}>
+                            <Ionicons name="chatbox-ellipses" size={24} color={writtenCommunication ? Colors.blue : Colors.accent} />
+                            <Text style={[styles.summaryText, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole='text' accessibilityLabel={` Written Communication Accessibility: ${writtenCommunication ? 'Yes' : 'No'}`}>
+                                Written Communication: {writtenCommunication ? '✅' : '❌'}
                             </Text>
                         </View>
 
@@ -595,24 +721,56 @@ const RideBooking = () => {
 
                     {/* Primary Action Button */}
                     <CustomButton
-                        title="Request with ACE Mobility"
+                        title="Request with "
                         handlePress={handleAceMobilityRequest}
-                        containerStyle={{ marginTop: 18, backgroundColor: Colors.primary, width: '100%' }}
-                        textStyle={{ color: '#fff', fontWeight: 'bold' }}
+                        containerStyle={{ marginTop: 18, backgroundColor: Colors.orange, width: '100%' }}
+                        textStyle={{ color: Colors.white, fontWeight: 'bold' }}
                         disabled={!pickup || !dropoff}
+                        trailing={true}
+                        trailingImage={images.aceLogo}
                     />
 
                     {/* Secondary Action Button */}
                     <CustomButton
                         title="📲 Request via WhatsApp"
                         handlePress={handleWhatsAppRequest}
-                        containerStyle={{ marginTop: 12, backgroundColor: '#25D366', width: '100%' }}
-                        textStyle={{ color: '#fff', fontWeight: 'bold' }}
+                        containerStyle={{ marginTop: 12, backgroundColor: Colors.green, width: '100%' }}
+                        textStyle={{ color: Colors.white, fontWeight: 'bold' }}
+                        disabled={!pickup || !dropoff}
+                    />
+
+                    <CustomButton
+                        title="📲 Request via SMS"
+                        handlePress={handleSmsRequest}
+                        containerStyle={{ marginTop: 12, backgroundColor: Colors.blue, width: '100%' }}
+                        textStyle={{ color: Colors.white, fontWeight: 'bold' }}
                         disabled={!pickup || !dropoff}
                     />
 
                     {/* Emergency Contact Option */}
-                    <TouchableOpacity style={styles.sosRow} onPress={() => setSosVisible(true)} accessibilityRole='button' accessibilityLabel='Emergency Ride Assistance' accessibilityHint='Press to request emergency ride assistance'>
+                    <TouchableOpacity
+                        style={styles.sosRow}
+                        onPress={() =>
+                            Alert.alert(
+                                'Emergency Ride Assistance',
+                                'If you need immediate assistance, please call our emergency hotline. Our team is here to help you with urgent ride requests.',
+                                [
+                                    {
+                                        text: 'Call Now',
+                                        onPress: () => Linking.openURL('tel:+254738218657'),
+                                        style: 'default',
+                                    },
+                                    {
+                                        text: 'Cancel',
+                                        style: 'cancel',
+                                    },
+                                ]
+                            )
+                        }
+                        accessibilityRole='button'
+                        accessibilityLabel='Emergency Ride Assistance'
+                        accessibilityHint='Press to request emergency ride assistance'
+                    >
                         <Text
                             style={[styles.sosText, { color: currentTheme === 'light' ? Colors.black : Colors.white }]}
                             accessibilityRole="text"
@@ -628,68 +786,27 @@ const RideBooking = () => {
                             🚨 Emergency Ride Hotline
                         </Text>
                     </TouchableOpacity>
-                    <Modal
-                        visible={sosVisible}
-                        transparent
-                        animationType="slide"
-                        onRequestClose={() => setSosVisible(false)}
-                        accessibilityLabel="Emergency Ride Assistance Modal"
-                        accessibilityHint="Modal for emergency ride assistance"
-                        aria-label="Emergency Ride Assistance Modal"
-                    >
-                        <View style={styles.sosModalBg}>
-                            <View style={[styles.sosModalCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}>
-                                <Text style={{ fontWeight: 'bold', fontSize: 18, marginBottom: 10, color: currentTheme === 'light' ? Colors.primary : Colors.white }}>
-                                    🚨
-                                    Emergency Ride Assistance
-                                </Text>
-                                <Text style={{ marginBottom: 16, color: currentTheme === 'light' ? Colors.black : Colors.white }}>
-                                    If you need immediate assistance, please call our emergency ride hotline. Our team is available 24/7 to help you with urgent ride requests.
-                                </Text>
-                                <CustomButton
-                                    title="Call Now"
-                                    handlePress={() => {
-                                        setSosVisible(false);
-                                        Linking.openURL('tel:+254742560540').catch(() => {
-                                            Alert.alert('Error', 'Could not open dialer.');
-                                        });
-                                    }}
-                                    containerStyle={{ backgroundColor: '#D7263D' }}
-                                    textStyle={{ color: '#fff', fontWeight: 'bold' }}
-                                    accessibilityRole="button"
-                                    accessibilityState={{ selected: true }}
-                                    accessibilityLabel="Call Emergency Ride Hotline"
-                                    accessibilityHint="Press to call the emergency ride hotline"
-                                />
-                                <Pressable
-                                    onPress={() => setSosVisible(false)} style={{ marginTop: 12 }}
-                                    accessibilityRole="button"
-                                    accessibilityState={{ selected: true }}
-                                    accessibilityLabel="Cancel Emergency Assistance"
-                                    accessibilityHint="Press to close the emergency assistance modal"
-                                >
-                                    <Text style={{ color: currentTheme === 'light' ? Colors.primary : Colors.accent, fontWeight: 'bold', textAlign: 'center' }}>
-                                        Cancel
-                                    </Text>
-                                </Pressable>
-                            </View>
-                        </View>
-                    </Modal>
+
+                    {/* Location Search Modals */}
+                    <LocationSearchModal
+                        visible={isPickupModalVisible}
+                        onClose={() => setPickupModalVisible(false)}
+                        onSelect={(location) => handleLocationSelect(location, true)}
+                        placeholder="Search for pickup location"
+                        initialQuery={pickup}
+                        title="Select Pickup Location"
+                    />
+
+                    <LocationSearchModal
+                        visible={isDropoffModalVisible}
+                        onClose={() => setDropoffModalVisible(false)}
+                        onSelect={(location) => handleLocationSelect(location, false)}
+                        placeholder="Search for drop-off location"
+                        initialQuery={dropoff}
+                        title="Select Drop-off Location"
+                    />
                 </BottomSheetScrollView>
             </BottomSheet>
-
-            {/* Accessibility Settings Button (fixed position) */}
-            <AccessibilityOption
-                handlePress={toggleAccessibilityDrawer}
-                otherStyle={{ position: 'absolute', top: 20, right: 20 }}
-            />
-
-            {/* Accessibility Drawer */}
-            {accessibilityDrawerVisible && (
-                <AccessibilityDrawer
-                    handlePress={toggleAccessibilityDrawer}
-                />
-            )}
         </KeyboardAvoidingView>
     )
 }
@@ -712,50 +829,63 @@ const styles = StyleSheet.create({
         marginBottom: 6,
         alignSelf: 'flex-start',
     },
-    radioRow: {
+    tabContainer: {
         flexDirection: 'row',
-        gap: 16,
-        marginBottom: 8,
+        borderRadius: 12,
+        backgroundColor: Colors.lightGray,
+        padding: 4,
+    },
+    tab: {
+        flex: 1,
+        paddingVertical: 12,
+        alignItems: 'center',
+        borderRadius: 8,
+    },
+    activeTab: {
+        backgroundColor: Colors.white,
+    },
+    tabText: {
+        fontSize: 16,
+        fontWeight: '500',
+    },
+    activeTabText: {
+        color: Colors.primary,
+        fontWeight: '600',
+    },
+    dateTimeContainer: {
         width: '100%',
-        flexWrap: 'wrap',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        gap: 8,
     },
-    radioOption: {
+    dateTimeButton: {
+        flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
-        marginRight: 16,
-    },
-    radioCircle: {
-        width: 22,
-        height: 22,
-        borderRadius: 11,
+        padding: 12,
         borderWidth: 2,
-        borderColor: Colors.accent,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginRight: 8,
+        borderRadius: 8,
+        gap: 4,
     },
-    radioDot: {
-        width: 10,
-        height: 10,
-        borderRadius: 5,
-    },
-    radioLabel: {
-        fontSize: 15,
+    dateTimeText: {
+        fontSize: 14,
     },
     toggleRow: {
         flexDirection: 'row',
-        gap: 12,
         marginVertical: 8,
+        gap: 8,
         width: '100%',
         justifyContent: 'space-between',
+        flexWrap: 'wrap',
     },
     toggleOption: {
+        width: '48%',
         flexDirection: 'column',
         alignItems: 'center',
-        flex: 1,
         padding: 8,
         borderRadius: 8,
-        borderWidth: 1,
+        borderWidth: 2,
     },
     toggleLabel: {
         fontSize: 13,
@@ -811,18 +941,5 @@ const styles = StyleSheet.create({
         color: Colors.emergency,
         fontWeight: 'bold',
         marginTop: 2,
-    },
-    sosModalBg: {
-        flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    sosModalCard: {
-        borderRadius: 16,
-        padding: 24,
-        width: 320,
-        alignItems: 'center',
-        backgroundColor: '#fff',
     },
 })
