@@ -12,6 +12,8 @@ const aceLogo = require("@/assets/images/ace-logo.png");
 const bammToursLogo = require("@/assets/images/bamm-tours-logo.png");
 const accessibleTravelLogo = require("@/assets/images/accessible-travel-logo.png");
 const nbAirportLogo = require("@/assets/images/nb-airport-logo.png");
+const inspireWellnessLogo = require("@/assets/images/inspire-wellness-logo.png");
+const kenyaAirwaysLogo = require("@/assets/images/kenya-airways-logo.png");
 
 export const images = {
     marketplace,
@@ -28,4 +30,6 @@ export const images = {
     bammToursLogo,
     accessibleTravelLogo,
     nbAirportLogo,
+    inspireWellnessLogo,
+    kenyaAirwaysLogo
 }
