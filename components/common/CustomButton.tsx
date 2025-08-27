@@ -1,4 +1,4 @@
-import { ActivityIndicator, StyleSheet, TouchableOpacity, Text, View } from "react-native";
+import { ActivityIndicator, StyleSheet, TouchableOpacity, Text, View, Image } from "react-native";
 import { Ionicons, FontAwesome, MaterialIcons, Entypo, Feather } from '@expo/vector-icons';
 import { StyleProp, TextStyle, ViewStyle } from "react-native";
 
@@ -13,6 +13,7 @@ interface CustomButtonProps {
     trailing?: boolean;
     leadingIconName?: string;
     trailingIconName?: string;
+    trailingImage?: any;
     iconFamily?: 'Ionicons' | 'FontAwesome' | 'MaterialIcons' | 'Entypo' | 'Feather';
     [key: string]: any; // For additional props
 }
@@ -38,6 +39,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
     trailing = false,
     leadingIconName,
     trailingIconName,
+    trailingImage,
     iconFamily = 'Ionicons',
 }) => {
     const IconComponent = getIconComponent(iconFamily);
@@ -81,6 +83,13 @@ const CustomButton: React.FC<CustomButtonProps> = ({
                         size={20}
                         color={disabled ? "#ccc" : "#fff"}
                         style={{ marginLeft: 8 }}
+                    />
+                )}
+                {trailing && trailingImage && (
+                    <Image
+                        source={trailingImage}
+                        style={{ width: 35, height: 35, marginLeft: 8 }}
+                        resizeMode="contain"
                     />
                 )}
             </View>
