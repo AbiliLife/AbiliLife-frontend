@@ -10,13 +10,11 @@ import {
 import { Ionicons, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Stack, useRouter } from 'expo-router';
 
+// Assets & Constants
 import Colors from '@/constants/Colors';
 
-import { useAccessibility } from '@/contexts/AccessibilityContext';
+// Context & Store
 import { ThemeContext } from '@/contexts/ThemeContext';
-
-import AccessibilityOption from '@/components/accessibility/AccessibilityOption';
-import AccessibilityDrawer from '@/components/accessibility/AccessibilityDrawer';
 
 // Interface for service categories
 interface ServiceCategory {
@@ -33,19 +31,19 @@ const allServices: ServiceCategory[] = [
     {
         id: 'healthcare',
         title: 'AbiliLife Care',
-        description: 'Accessible healthcare services (currently in beta)',
+        description: 'Accessible healthcare services (upcoming beta)',
         icon: 'heart-outline',
         iconType: 'ionicons',
-        iconColor: Colors.iconRed, // Red color
+        iconColor: Colors.red, // Red color
         path: '/healthcare',
     },
     {
         id: 'assistiveTech',
         title: "AbiliLife Access",
-        description: 'Assistive Tech Marketplace (currently in beta)',
+        description: 'Assistive Tech Marketplace (upcoming beta)',
         icon: 'shopping-cart',
         iconType: 'fontawesome',
-        iconColor: Colors.iconOrange, // Orange color
+        iconColor: Colors.orange, // Orange color
     },
     {
         id: 'jobs',
@@ -79,11 +77,20 @@ const allServices: ServiceCategory[] = [
     },
 ]
 
+// Beta Badge - for pilot mode
+const BetaBadge = () => {
+    return (
+        <View style={styles.betaBadgeContainer}>
+            <Text style={styles.betaBadgeText}>Pilot Mode - Early Access</Text>
+        </View>
+    );
+};
+
 export default function ServicesScreen() {
     const router = useRouter();
 
+    // Obtain Context values
     const { currentTheme } = useContext(ThemeContext);
-    const { accessibilityDrawerVisible, toggleAccessibilityDrawer } = useAccessibility();
 
 
     // Function to render the appropriate icon for service categories
@@ -103,7 +110,7 @@ export default function ServicesScreen() {
     };
 
     return (
-        <>
+        <View style={{ flex: 1, backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer }}>
             <Stack.Screen
                 options={{
                     headerTitle: 'AbiliLife Services',
@@ -123,11 +130,17 @@ export default function ServicesScreen() {
                     }
                 }}
             />
-
-            <ScrollView style={[styles.container, { backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer }]}>
-                <Text style={{ fontSize: 14, color: currentTheme === 'light' ? Colors.accent : Colors.white, marginBottom: 16 }} accessibilityRole='text' accessibilityLabel='AbiliLife is dedicated to enhancing the lives of individuals with disabilities through innovative and inclusive services. Our services are designed to be accessible, affordable, and tailored to meet the unique needs of our community.'>
-                    AbiliLife is dedicated to enhancing the lives of individuals with disabilities through innovative and inclusive services.{'\n'}{'\n'}
-                    Our services are designed to be accessible, affordable, and tailored to meet the unique needs of our community.
+            <BetaBadge />
+            <ScrollView
+                style={[styles.container, { backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer }]}
+                showsVerticalScrollIndicator={false}
+                accessible={true}
+                accessibilityHint="Scroll through to explore all services"
+            >
+                <Text style={{ fontSize: 14, marginVertical: 16 }}>
+                    We are dedicated to providing accessible services for all. Abililife has 5 main service categories, each designed to enhance the quality of life for individuals with disabilities.
+                    {`\n`}{`\n`}
+                    Explore our offerings below:
                 </Text>
 
                 <View style={styles.sectionHeader}>
@@ -145,7 +158,7 @@ export default function ServicesScreen() {
                     accessibilityHint='Touch to open the AbiliLife Mobility service module'
                 >
                     <View style={styles.newIconContainer}>
-                        <FontAwesome5 name="wheelchair" size={30} color={Colors.iconBlue} />
+                        <FontAwesome5 name="wheelchair" size={30} color={Colors.blue} />
                     </View>
                     <View style={styles.newCardContent}>
                         <Text style={[styles.sectionTitle, { color: currentTheme === 'light' ? Colors.black : Colors.white }]}>
@@ -175,7 +188,7 @@ export default function ServicesScreen() {
                             style={[styles.serviceCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}
                             onPress={() => item.path && router.push(item.path)}
                             activeOpacity={0.5}
-                            disabled={item.path !== '/healthcare'}
+                            disabled
                         >
                             <View style={{ marginBottom: 8 }}>
                                 {renderServiceIcon(item)}
@@ -199,19 +212,7 @@ export default function ServicesScreen() {
                     scrollEnabled={false} // Disable scrolling to keep the layout fixed
                 />
             </ScrollView>
-            
-            {/* Accessibility Settings Button (fixed position) */}
-            <AccessibilityOption
-                handlePress={toggleAccessibilityDrawer}
-            />
-
-            {/* Accessibility Drawer */}
-            {accessibilityDrawerVisible && (
-                <AccessibilityDrawer
-                    handlePress={toggleAccessibilityDrawer}
-                />
-            )}
-        </>
+        </View>
     );
 }
 
@@ -274,5 +275,18 @@ const styles = StyleSheet.create({
     newCardContent: {
         flex: 1,
         backgroundColor: Colors.transparent,
+    },
+
+    betaBadgeContainer: {
+        alignSelf: 'center',
+        backgroundColor: Colors.orange,
+        borderRadius: 12,
+        paddingVertical: 4,
+        paddingHorizontal: 8,
+        marginVertical: 10,
+    },
+    betaBadgeText: {
+        color: Colors.white,
+        fontWeight: 'bold',
     },
 });

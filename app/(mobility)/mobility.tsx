@@ -5,17 +5,16 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 
+// Assets & Constants
+import { images } from '@/constants/Images'
 import Colors from '@/constants/Colors';
 
-import { useAccessibility } from '@/contexts/AccessibilityContext';
+// Context & Store
 import { ThemeContext } from '@/contexts/ThemeContext';
 
+// Components
 import CustomButton from '@/components/common/CustomButton';
 import ModuleHeader from '@/components/common/ModuleHeader';
-import AccessibilityDrawer from '@/components/accessibility/AccessibilityDrawer';
-import AccessibilityOption from '@/components/accessibility/AccessibilityOption';
-
-import { images } from '@/constants/Images'
 
 interface ServiceCategory {
   id: string;
@@ -28,7 +27,8 @@ interface ServiceCategory {
   link?: string; // URL or internal route
 }
 
-const otherServices: ServiceCategory[] = [
+// MINI-SERVICES partners
+const miniServices: ServiceCategory[] = [
   {
     id: "bamm-tours",
     title: "Bamm Tours & Safaris",
@@ -50,14 +50,38 @@ const otherServices: ServiceCategory[] = [
     description: "Wheelchair accessible airport transfers in Nairobi",
     link: "https://www.nairobiairporttransfers.com/jkia-wheelchair-accessible-airport-transfer/",
   },
+  {
+    id: "inspire-wellness",
+    title: "Inspire Wellness",
+    image: images.inspireWellnessLogo,
+    description: "Wheelchair-Accessible Van Services in Kenya",
+    link: "https://www.inspirewellness.co.ke/our-services/van/",
+  },
+  {
+    id: "kenya-airways",
+    title: "Kenya Airways",
+    image: images.kenyaAirwaysLogo,
+    description: "Passengers with Reduced Mobility",
+    link: "https://www.kenya-airways.com/en/plan/special-care/reduced-mobility/",
+  }
 ]
+
+// Beta Badge - for pilot mode
+const BetaBadge = () => {
+  return (
+    <View style={styles.betaBadgeContainer}>
+      <Text style={styles.betaBadgeText}>Pilot Mode - Early Access</Text>
+    </View>
+  );
+};
 
 const MobilityHomeScreen = () => {
   const router = useRouter();
 
+  // Obtain Context values
   const { currentTheme } = React.useContext(ThemeContext);
-  const { accessibilityDrawerVisible, toggleAccessibilityDrawer } = useAccessibility();
 
+  // Handle external link press - WebBrowser
   const handleExternalLinkPress = async (url: string, title: string) => {
     try {
       await WebBrowser.openBrowserAsync(url, {
@@ -87,7 +111,7 @@ const MobilityHomeScreen = () => {
         iconName="wheelchair"
         iconFamily="FontAwesome"
       />
-
+      <BetaBadge />
       <ScrollView
         contentContainerStyle={styles.container}
         showsVerticalScrollIndicator={false}
@@ -161,7 +185,7 @@ const MobilityHomeScreen = () => {
 
         {/* Public Transport Card */}
         <TouchableOpacity
-          style={[styles.card, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}
+          style={[styles.card, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray, height: 150 }]}
           onPress={() => router.push('/(mobility)/publicTransport')}
           accessible={true}
           accessibilityLabel="Public Transport"
@@ -176,6 +200,9 @@ const MobilityHomeScreen = () => {
               </Text>
               <Text style={[styles.cardDescription, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel="Get information about accessible public transportation options">
                 Get information about accessible public transportation options
+              </Text>
+              <Text style={{ color: Colors.info, fontWeight: '500' }} accessibilityRole="text" accessibilityLabel="">
+                We are working on integrating public transport options. Stay tuned!
               </Text>
             </View>
           </View>
@@ -213,13 +240,13 @@ const MobilityHomeScreen = () => {
         <Text
           style={[styles.title, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}
           accessibilityRole="header"
-          accessibilityLabel="Other Services"
+          accessibilityLabel="Accessible Mini-Services"
         >
-          Other Services
+          Accessible Mini-Services
         </Text>
 
         <View style={styles.otherServiceGrid}>
-          {otherServices.map((service) => (
+          {miniServices.map((service) => (
             <TouchableOpacity
               key={service.id}
               style={[styles.serviceCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}
@@ -229,9 +256,10 @@ const MobilityHomeScreen = () => {
                 }
               }}
               accessible={true}
-              accessibilityLabel={service.title}
+              accessibilityLabel={`${service.title}, ${service.description}`}
               accessibilityHint={`Learn more about ${service.title}`}
               accessibilityRole="button"
+              accessibilityState={{ disabled: !service.link }}
             >
               <Image
                 source={service.image}
@@ -251,19 +279,6 @@ const MobilityHomeScreen = () => {
           ))}
         </View>
       </ScrollView>
-
-      {/* Accessibility Settings Button (fixed position) */}
-      <AccessibilityOption
-        handlePress={toggleAccessibilityDrawer}
-        otherStyle={{ position: 'absolute', bottom: 40, right: 20, backgroundColor: Colors.blue }}
-      />
-
-      {/* Accessibility Drawer */}
-      {accessibilityDrawerVisible && (
-        <AccessibilityDrawer
-          handlePress={toggleAccessibilityDrawer}
-        />
-      )}
     </SafeAreaView>
   )
 }
@@ -369,5 +384,18 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'center',
     color: Colors.accent,
+  },
+
+  betaBadgeContainer: {
+    alignSelf: 'center',
+    backgroundColor: Colors.orange,
+    borderRadius: 12,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    marginBottom: 10,
+  },
+  betaBadgeText: {
+    color: Colors.white,
+    fontWeight: 'bold',
   },
 })

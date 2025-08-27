@@ -24,6 +24,15 @@ import { formatPhoneNumber } from '@/utils/formatPhone';
 
 type AuthTab = 'login' | 'signup';
 
+// Beta Badge - for pilot mode
+const BetaBadge = () => {
+    return (
+        <View style={styles.betaBadgeContainer}>
+            <Text style={styles.betaBadgeText}>Pilot Mode - Early Access</Text>
+        </View>
+    );
+};
+
 export default function AuthScreen() {
     const router = useRouter();
     const { fromOnboarding } = useLocalSearchParams(); // get the forwarded route param
@@ -32,15 +41,15 @@ export default function AuthScreen() {
     const [activeTab, setActiveTab] = useState<AuthTab>(fromOnboarding === 'yes' ? 'signup' : 'login');
 
     // Login Form State
-    const [loginEmail, setLoginEmail] = useState('muthokaelikeli@gmail.com'); // TEMPORARY TEST EMAIL
-    const [loginPassword, setLoginPassword] = useState('qwerty123'); // TEMPORARY TEST PASSWORD
+    const [loginEmail, setLoginEmail] = useState('');
+    const [loginPassword, setLoginPassword] = useState('');
 
     // Signup Form State
-    const [email, setEmail] = useState('muthokaelikeli@gmail.com'); // TEMPORARY TEST EMAIL
-    const [newPassword, setNewPassword] = useState('qwerty123'); // TEMPORARY TEST PASSWORD
-    const [confirmPassword, setConfirmPassword] = useState('qwerty123'); // TEMPORARY TEST PASSWORD
-    const [phone, setPhone] = useState('+254742560540'); // TEMPORARY TEST PHONE
-    const [fullName, setFullName] = useState('Eli Keli Muthoka'); // TEMPORARY TEST NAME
+    const [email, setEmail] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [phone, setPhone] = useState('');
+    const [fullName, setFullName] = useState('');
 
     const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -139,18 +148,18 @@ export default function AuthScreen() {
     ]);
 
     // Apply validation on every field change
-    useEffect(() => {
-        if (activeTab === 'login') {
-            validateField('loginEmail', loginEmail);
-            validateField('loginPassword', loginPassword);
-        } else {
-            validateField('fullName', fullName);
-            validateField('email', email);
-            validateField('phone', phone);
-            validateField('newPassword', newPassword);
-            validateField('confirmPassword', confirmPassword);
-        }
-    }, [activeTab, loginEmail, loginPassword, fullName, email, phone, newPassword, confirmPassword]);
+    // useEffect(() => {
+    //     if (activeTab === 'login') {
+    //         validateField('loginEmail', loginEmail);
+    //         validateField('loginPassword', loginPassword);
+    //     } else {
+    //         validateField('fullName', fullName);
+    //         validateField('email', email);
+    //         validateField('phone', phone);
+    //         validateField('newPassword', newPassword);
+    //         validateField('confirmPassword', confirmPassword);
+    //     }
+    // }, [activeTab, loginEmail, loginPassword, fullName, email, phone, newPassword, confirmPassword]);
 
     const handleLogin = async () => {
         // 1. Validate all fields
@@ -184,10 +193,9 @@ export default function AuthScreen() {
                     }
 
                     updateUser({
-                        fullName: loginResponse.user.displayName,
-                        email: loginEmail,
+                        fullName: loginResponse.user.fullName,
+                        email: loginResponse.user.email,
                         phone: loginResponse.user.phone,
-                        isEmailVerified: loginResponse.user.emailVerified,
                     })
 
                     setLoginEmail('');
@@ -247,10 +255,9 @@ export default function AuthScreen() {
                 onHide: () => {
                     // Update user data in onboarding store
                     updateUser({
-                        fullName: signupResponse.user.displayName,
+                        fullName: signupResponse.user.fullName,
                         email: signupResponse.user.email,
                         phone: signupResponse.user.phone,
-                        isEmailVerified: signupResponse.user.emailVerified,
                     });
 
                     if (Platform.OS !== 'web') {
@@ -285,6 +292,8 @@ export default function AuthScreen() {
             style={{ flex: 1, backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer }}
             edges={['top', 'left', 'right']}
         >
+            <BetaBadge />
+
             <View style={[styles.tabContainer, { backgroundColor: currentTheme === 'light' ? Colors.lightGray : Colors.mediumGray }]} accessible={true}>
                 <TouchableOpacity
                     style={[
@@ -361,6 +370,7 @@ export default function AuthScreen() {
                 <ScrollView
                     contentContainerStyle={styles.scrollContent}
                     keyboardShouldPersistTaps="handled"
+                    accessible={true}
                 >
 
                     <View style={styles.formContainer}>
@@ -380,6 +390,7 @@ export default function AuthScreen() {
                                         value={fullName}
                                         onChangeText={setFullName}
                                         autoCapitalize="words"
+                                        editable={!isAuthLoading}
                                         accessibilityLabel="Full name input"
                                         accessibilityHint="Enter your full name"
                                     />
@@ -499,6 +510,7 @@ export default function AuthScreen() {
                                         placeholder='Enter your email address'
                                         value={loginEmail}
                                         onChangeText={setLoginEmail}
+                                        editable={!isAuthLoading}
                                         accessibilityLabel="Email input"
                                         accessibilityHint="Enter your email address"
                                     />
@@ -522,6 +534,7 @@ export default function AuthScreen() {
                                         placeholder='Enter your password'
                                         value={loginPassword}
                                         onChangeText={setLoginPassword}
+                                        editable={!isAuthLoading}
                                         accessibilityLabel="Password input"
                                         accessibilityHint="Enter your password'"
                                     />
@@ -699,4 +712,16 @@ const styles = StyleSheet.create({
         width: '100%',
     },
 
+    betaBadgeContainer: {
+        alignSelf: 'center',
+        backgroundColor: Colors.orange,
+        borderRadius: 12,
+        paddingVertical: 4,
+        paddingHorizontal: 8,
+        marginTop: 10,
+    },
+    betaBadgeText: {
+        color: Colors.white,
+        fontWeight: 'bold',
+    },
 });

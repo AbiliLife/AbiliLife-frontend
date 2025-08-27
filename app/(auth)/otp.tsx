@@ -22,6 +22,15 @@ import { useOnboardingStore } from '@/store/onboardingStore';
 import { formatHiddenPhoneNumber, formatPhoneNumber } from '@/utils/formatPhone';
 import { formatTime } from '@/utils/formatTimer';
 
+// Beta Badge - for pilot mode
+const BetaBadge = () => {
+    return (
+        <View style={styles.betaBadgeContainer}>
+            <Text style={styles.betaBadgeText}>Pilot Mode - Early Access</Text>
+        </View>
+    );
+};
+
 export default function OTPVerificationScreen() {
 
     // Local state variables
@@ -128,6 +137,8 @@ export default function OTPVerificationScreen() {
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             style={[styles.container, { backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer }]}
         >
+            <BetaBadge />
+
             <ScrollView
                 contentContainerStyle={styles.scrollContent}
                 keyboardShouldPersistTaps="handled"
@@ -255,5 +266,19 @@ const styles = StyleSheet.create({
     },
     button: {
         width: '100%',
+    },
+
+
+    betaBadgeContainer: {
+        alignSelf: 'center',
+        backgroundColor: Colors.orange,
+        borderRadius: 12,
+        paddingVertical: 4,
+        paddingHorizontal: 8,
+        marginTop: 10,
+    },
+    betaBadgeText: {
+        color: Colors.white,
+        fontWeight: 'bold',
     },
 });

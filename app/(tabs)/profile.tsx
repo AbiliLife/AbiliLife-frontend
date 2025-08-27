@@ -6,24 +6,37 @@ import Slider from '@react-native-community/slider';
 import { Toast } from 'toastify-react-native';
 import { CareRelationship, EmergencyContact, AccessibilityPreferences, DisabilityType, ContactMethod, UserRole } from '@/types/onboard';
 
+// Assets & Constants
 import Colors from '@/constants/Colors';
 
+// Context & Store
 import { useOnboardingStore } from '@/store/onboardingStore';
 import { ThemeContext } from '@/contexts/ThemeContext';
 import { useAuth } from '@/contexts/AuthContext';
 
+// Helper Functions
 import { formatHiddenPhoneNumber } from '@/utils/formatPhone';
 
-// Import onboarding components for editing
+// Components
 import CareRelationshipForm from '@/components/onboard/CareRelationshipForm';
 import EmergencyContactForm from '@/components/onboard/EmergencyContactForm';
 import AccessibilityPreferencesForm from '@/components/onboard/AccessibilityPreferencesForm';
 import SelectableChip from '@/components/onboard/SelectableChip';
 import CustomButton from '@/components/common/CustomButton';
 
+// Beta Badge - for pilot mode
+const BetaBadge = () => {
+  return (
+    <View style={styles.betaBadgeContainer}>
+      <Text style={styles.betaBadgeText}>Pilot Mode - Early Access</Text>
+    </View>
+  );
+};
+
 export default function ProfileScreen() {
   const router = useRouter();
 
+  // Obtain context values
   const { currentTheme } = useContext(ThemeContext);
   const { user: userProfile, updateUser } = useOnboardingStore();
   const { logout } = useAuth();
@@ -39,7 +52,7 @@ export default function ProfileScreen() {
     role: userProfile.role,
     disabilityTypes: userProfile.disabilityTypes,
     preferredContactMethod: userProfile.preferredContactMethod,
-    preferredLanguage: userProfile.preferredLanguage,
+    preferredLanguage: userProfile.communicationPreferences.preferredLanguage,
   });
 
   // Care relationships state
@@ -70,7 +83,10 @@ export default function ProfileScreen() {
       role: basicInfo.role,
       disabilityTypes: basicInfo.disabilityTypes,
       preferredContactMethod: basicInfo.preferredContactMethod,
-      preferredLanguage: basicInfo.preferredLanguage,
+      communicationPreferences: {
+        ...userProfile.communicationPreferences,
+        preferredLanguage: basicInfo.preferredLanguage,
+      },
     });
     setEditingSection(null);
     Alert.alert('Success', 'Basic information updated successfully');
@@ -105,7 +121,7 @@ export default function ProfileScreen() {
 
     // Ensure communicationPreferences exists with default values
     const currentCommPrefs = userProfile.communicationPreferences || {
-      preferredLanguage: userProfile.preferredLanguage || 'English',
+      preferredLanguage: 'English',
       fontSize: 'MEDIUM',
       highContrast: false,
       voiceInstructions: false,
@@ -182,7 +198,7 @@ export default function ProfileScreen() {
   const userRoles: UserRole[] = ['PWD', 'caregiver', 'family_member', 'guardian'];
 
   return (
-    <>
+    <View style={{ flex: 1, backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer }}>
       <Stack.Screen
         options={{
           headerTitle: 'Your Profile',
@@ -199,7 +215,7 @@ export default function ProfileScreen() {
           }
         }}
       />
-
+      <BetaBadge />
       <ScrollView
         style={[styles.container, { backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer }]}
         showsVerticalScrollIndicator={false}
@@ -237,117 +253,6 @@ export default function ProfileScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Quick Settings Section */}
-        {renderSectionHeader('Quick Settings', 'settings-outline', 'quickSettings', false)}
-        <View style={[styles.settingsCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray, borderColor: currentTheme === 'light' ? Colors.borderLight : Colors.borderDark }]}>
-          {/* Text Size */}
-          <View style={styles.settingRow}>
-            <View style={styles.settingLabelContainer}>
-              <Ionicons name="text" size={24} color={Colors.secondary} />
-              <Text style={[styles.settingLabel, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}>
-                Text Size {'\n'}
-                <Text style={{ fontSize: 12, color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }}>
-                  {quickSettings.textSize <= 25 ? 'Small' :
-                    quickSettings.textSize <= 50 ? 'Medium' :
-                      quickSettings.textSize <= 75 ? 'Large' : 'Extra Large'}
-                </Text>
-              </Text>
-            </View>
-            <Slider
-              style={styles.slider}
-              minimumValue={0}
-              maximumValue={100}
-              step={25}
-              value={quickSettings.textSize}
-              onValueChange={(value) => handleQuickSettingChange('textSize', value)}
-              maximumTrackTintColor={currentTheme === 'light' ? Colors.lightGray : Colors.mediumGray}
-              minimumTrackTintColor={Colors.primary}
-              thumbTintColor={currentTheme === 'light' ? Colors.black : Colors.white}
-            />
-          </View>
-
-          {/* Voice Commands */}
-          <View style={styles.settingRow}>
-            <View style={styles.settingLabelContainer}>
-              <MaterialIcons name="keyboard-voice" size={24} color={Colors.secondary} />
-              <Text style={[styles.settingLabel, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}>
-                Voice Commands
-              </Text>
-            </View>
-            <Switch
-              value={quickSettings.voiceCommands}
-              onValueChange={(value) => handleQuickSettingChange('voiceCommands', value)}
-              trackColor={{ false: Colors.lightGray, true: Colors.secondary }}
-              thumbColor={Colors.white}
-            />
-          </View>
-
-          {/* High Contrast */}
-          <View style={styles.settingRow}>
-            <View style={styles.settingLabelContainer}>
-              <Ionicons name="sunny" size={24} color={Colors.secondary} />
-              <Text style={[styles.settingLabel, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}>
-                High Contrast
-              </Text>
-            </View>
-            <Switch
-              value={quickSettings.highContrast}
-              onValueChange={(value) => handleQuickSettingChange('highContrast', value)}
-              trackColor={{ false: Colors.lightGray, true: Colors.secondary }}
-              thumbColor={Colors.white}
-            />
-          </View>
-
-          {/* Text to Speech */}
-          <View style={styles.settingRow}>
-            <View style={styles.settingLabelContainer}>
-              <MaterialCommunityIcons name="text-to-speech" size={24} color={Colors.secondary} />
-              <Text style={[styles.settingLabel, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}>
-                Text to Speech
-              </Text>
-            </View>
-            <Switch
-              value={quickSettings.textToSpeech}
-              onValueChange={(value) => handleQuickSettingChange('textToSpeech', value)}
-              trackColor={{ false: Colors.lightGray, true: Colors.secondary }}
-              thumbColor={Colors.white}
-            />
-          </View>
-        </View>
-
-        {/* App Settings Section */}
-        {renderSectionHeader('App Settings', 'options-outline', 'appSettings', false)}
-        <View style={[styles.settingsCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray, borderColor: currentTheme === 'light' ? Colors.borderLight : Colors.borderDark }]}>
-          <TouchableOpacity
-            style={styles.settingRow}
-            onPress={() => router.push('/settings')}
-          >
-            <View style={styles.settingLabelContainer}>
-              <Ionicons name="color-palette-outline" size={24} color={Colors.secondary} />
-              <Text style={[styles.settingLabel, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}>
-                Theme Settings {'\n'}
-                <Text style={{ fontSize: 12, color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }}>
-                  {currentTheme.charAt(0).toUpperCase() + currentTheme.slice(1)}
-                </Text>
-              </Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color={Colors.accent} />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.settingRow}
-            onPress={() => router.push('/notifications')}
-          >
-            <View style={styles.settingLabelContainer}>
-              <Ionicons name="notifications-outline" size={24} color={Colors.secondary} />
-              <Text style={[styles.settingLabel, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}>
-                Notifications
-              </Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color={Colors.accent} />
-          </TouchableOpacity>
-        </View>
-
         {/* Basic Information Section */}
         {renderSectionHeader('Basic Information', 'person-outline', 'basicInfo')}
         <View style={[styles.settingsCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray, borderColor: currentTheme === 'light' ? Colors.borderLight : Colors.borderDark }]}>
@@ -363,7 +268,7 @@ export default function ProfileScreen() {
                 {userRoles.map((role) => (
                   <SelectableChip
                     key={role}
-                    label={role === 'PWD' ? 'Person with Disability' : role.replace('_', ' ').toUpperCase()}
+                    label={role === 'PWD' ? 'Person with Disability' : (role ?? '').replace('_', ' ').toUpperCase()}
                     selected={basicInfo.role === role}
                     onPress={() => setBasicInfo(prev => ({ ...prev, role }))}
                   />
@@ -430,7 +335,7 @@ export default function ProfileScreen() {
                       role: userProfile.role,
                       disabilityTypes: userProfile.disabilityTypes,
                       preferredContactMethod: userProfile.preferredContactMethod,
-                      preferredLanguage: userProfile.preferredLanguage,
+                      preferredLanguage: userProfile.communicationPreferences.preferredLanguage,
                     });
                     setEditingSection(null);
                   }}
@@ -450,10 +355,19 @@ export default function ProfileScreen() {
               <InfoRow label="Full Name" value={userProfile.fullName} />
               <InfoRow label="Email" value={userProfile.email.slice(0, 3) + '****@' + userProfile.email.split('@')[1]} />
               <InfoRow label="Phone" value={formatHiddenPhoneNumber(userProfile.phone)} />
-              <InfoRow label="Role" value={userProfile.role === 'PWD' ? 'Person with Disability' : userProfile.role.replace('_', ' ')} />
+              <InfoRow
+                label="Role"
+                value={
+                  userProfile.role
+                    ? userProfile.role === 'PWD'
+                      ? 'Person with Disability'
+                      : userProfile.role.replace('_', ' ')
+                    : 'Not specified'
+                }
+              />
               <InfoRow label="Disability Types" value={userProfile.disabilityTypes.join(', ') || 'None specified'} />
-              <InfoRow label="Preferred Contact" value={userProfile.preferredContactMethod} />
-              <InfoRow label="Language" value={userProfile.preferredLanguage} />
+              <InfoRow label="Preferred Contact" value={userProfile.preferredContactMethod ?? 'Not specified'} />
+              <InfoRow label="Language" value={userProfile.communicationPreferences.preferredLanguage ?? 'Not specified'} />
             </View>
           )}
         </View>
@@ -655,6 +569,116 @@ export default function ProfileScreen() {
           )}
         </View>
 
+        {/* Quick Settings Section */}
+        {renderSectionHeader('Quick Settings', 'settings-outline', 'quickSettings', false)}
+        <View style={[styles.settingsCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray, borderColor: currentTheme === 'light' ? Colors.borderLight : Colors.borderDark }]}>
+          {/* Text Size */}
+          <View style={styles.settingRow}>
+            <View style={styles.settingLabelContainer}>
+              <Ionicons name="text" size={24} color={Colors.secondary} />
+              <Text style={[styles.settingLabel, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}>
+                Text Size {'\n'}
+                <Text style={{ fontSize: 12, color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }}>
+                  {quickSettings.textSize <= 25 ? 'Small' :
+                    quickSettings.textSize <= 50 ? 'Medium' :
+                      quickSettings.textSize <= 75 ? 'Large' : 'Extra Large'}
+                </Text>
+              </Text>
+            </View>
+            <Slider
+              style={styles.slider}
+              minimumValue={0}
+              maximumValue={100}
+              step={25}
+              value={quickSettings.textSize}
+              onValueChange={(value) => handleQuickSettingChange('textSize', value)}
+              maximumTrackTintColor={currentTheme === 'light' ? Colors.lightGray : Colors.mediumGray}
+              minimumTrackTintColor={Colors.primary}
+              thumbTintColor={currentTheme === 'light' ? Colors.black : Colors.white}
+            />
+          </View>
+
+          {/* Voice Commands */}
+          <View style={styles.settingRow}>
+            <View style={styles.settingLabelContainer}>
+              <MaterialIcons name="keyboard-voice" size={24} color={Colors.secondary} />
+              <Text style={[styles.settingLabel, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}>
+                Voice Commands
+              </Text>
+            </View>
+            <Switch
+              value={quickSettings.voiceCommands}
+              onValueChange={(value) => handleQuickSettingChange('voiceCommands', value)}
+              trackColor={{ false: Colors.lightGray, true: Colors.secondary }}
+              thumbColor={Colors.white}
+            />
+          </View>
+
+          {/* High Contrast */}
+          <View style={styles.settingRow}>
+            <View style={styles.settingLabelContainer}>
+              <Ionicons name="sunny" size={24} color={Colors.secondary} />
+              <Text style={[styles.settingLabel, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}>
+                High Contrast
+              </Text>
+            </View>
+            <Switch
+              value={quickSettings.highContrast}
+              onValueChange={(value) => handleQuickSettingChange('highContrast', value)}
+              trackColor={{ false: Colors.lightGray, true: Colors.secondary }}
+              thumbColor={Colors.white}
+            />
+          </View>
+
+          {/* Text to Speech */}
+          <View style={styles.settingRow}>
+            <View style={styles.settingLabelContainer}>
+              <MaterialCommunityIcons name="text-to-speech" size={24} color={Colors.secondary} />
+              <Text style={[styles.settingLabel, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}>
+                Text to Speech
+              </Text>
+            </View>
+            <Switch
+              value={quickSettings.textToSpeech}
+              onValueChange={(value) => handleQuickSettingChange('textToSpeech', value)}
+              trackColor={{ false: Colors.lightGray, true: Colors.secondary }}
+              thumbColor={Colors.white}
+            />
+          </View>
+        </View>
+
+        {/* App Settings Section */}
+        {renderSectionHeader('App Settings', 'options-outline', 'appSettings', false)}
+        <View style={[styles.settingsCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray, borderColor: currentTheme === 'light' ? Colors.borderLight : Colors.borderDark }]}>
+          <TouchableOpacity
+            style={styles.settingRow}
+            onPress={() => router.push('/settings')}
+          >
+            <View style={styles.settingLabelContainer}>
+              <Ionicons name="color-palette-outline" size={24} color={Colors.secondary} />
+              <Text style={[styles.settingLabel, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}>
+                Theme Settings {'\n'}
+                <Text style={{ fontSize: 12, color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }}>
+                  {currentTheme.charAt(0).toUpperCase() + currentTheme.slice(1)}
+                </Text>
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color={Colors.accent} />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.settingRow}
+            onPress={() => router.push('/notifications')}
+          >
+            <View style={styles.settingLabelContainer}>
+              <Ionicons name="notifications-outline" size={24} color={Colors.secondary} />
+              <Text style={[styles.settingLabel, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}>
+                Notifications
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color={Colors.accent} />
+          </TouchableOpacity>
+        </View>
 
         <View style={{ height: 50 }} />
 
@@ -668,7 +692,7 @@ export default function ProfileScreen() {
           textStyle={styles.logoutButtonText}
         />
       </ScrollView>
-    </>
+    </View>
   );
 }
 
@@ -909,5 +933,18 @@ const styles = StyleSheet.create({
     color: Colors.white,
     fontSize: 16,
     fontWeight: '500',
+  },
+
+  betaBadgeContainer: {
+    alignSelf: 'center',
+    backgroundColor: Colors.orange,
+    borderRadius: 12,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    marginVertical: 10,
+  },
+  betaBadgeText: {
+    color: Colors.white,
+    fontWeight: 'bold',
   },
 });

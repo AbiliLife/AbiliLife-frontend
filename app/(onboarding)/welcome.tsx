@@ -14,6 +14,16 @@ import Button from '@/components/onboard/Button';
 import { ThemeContext } from '@/contexts/ThemeContext';
 import { useOnboardingStore } from '@/store/onboardingStore';
 
+
+// Beta Badge - for pilot mode
+const BetaBadge = () => {
+    return (
+        <View style={styles.betaBadgeContainer}>
+            <Text style={styles.betaBadgeText}>Pilot Mode - Early Access</Text>
+        </View>
+    );
+};
+
 const Welcome = () => {
     const router = useRouter();
 
@@ -35,6 +45,9 @@ const Welcome = () => {
                 accessibilityLabel="Welcome illustration"
                 accessibilityHint="Illustration welcoming users to AbiliLife"
             />
+
+            <BetaBadge />
+
             <View style={styles.textContainer} accessible={true}>
                 <Text style={[styles.title, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole="header" accessibilityLabel="Welcome to AbiliLife">
                     Welcome to AbiliLife
@@ -76,8 +89,8 @@ const Welcome = () => {
                     style={{ marginTop: 10 }}
                 />
 
-                {/* Uncomment for Developer Mode
-                <Button
+                {/* Uncomment for Developer Mode */}
+                {/* <Button
                     title="Guest/Developer Mode"
                     onPress={() => router.push('/(tabs)')}
                     variant="secondary"
@@ -113,6 +126,19 @@ const styles = StyleSheet.create({
     buttonContainer: {
         marginTop: 30,
         paddingHorizontal: 20,
+    },
+
+    betaBadgeContainer: {
+        alignSelf: 'center',
+        backgroundColor: Colors.orange,
+        borderRadius: 12,
+        paddingVertical: 4,
+        paddingHorizontal: 8,
+        marginTop: 10,
+    },
+    betaBadgeText: {
+        color: Colors.white,
+        fontWeight: 'bold',
     },
 })
 

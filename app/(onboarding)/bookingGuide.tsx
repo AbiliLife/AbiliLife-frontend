@@ -3,25 +3,24 @@ import { View, Text, StyleSheet, Image, Dimensions, Platform, TouchableOpacity }
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
+
+// Assets & Constants
 import { Ionicons } from '@expo/vector-icons';
-
-import { useAccessibility } from '@/contexts/AccessibilityContext';
-import { ThemeContext } from '@/contexts/ThemeContext';
-
 import Colors from '@/constants/Colors';
 import { guideSteps } from '@/constants/Onboard';
 
-import Button from '@/components/onboard/Button';
+// Context
+import { ThemeContext } from '@/contexts/ThemeContext';
+
+// Components
 import Carousel from '@/components/onboard/Carousel';
-import AccessibilityDrawer from '@/components/accessibility/AccessibilityDrawer';
-import AccessibilityOption from '@/components/accessibility/AccessibilityOption';
-import { opacity } from 'react-native-reanimated/lib/typescript/Colors';
 
 const { width } = Dimensions.get('window');
 
 export default function BookingGuide() {
+
+    // Obtain context values
     const { currentTheme } = React.useContext(ThemeContext);
-    const { accessibilityDrawerVisible, toggleAccessibilityDrawer } = useAccessibility();
 
     const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -30,7 +29,7 @@ export default function BookingGuide() {
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         }
 
-        router.back();
+        router.back(); // Back to previous screen
     };
     const goToNextSlide = () => {
         if (currentSlide < guideSteps.length - 1) {
@@ -162,19 +161,6 @@ export default function BookingGuide() {
                     )}
                 </TouchableOpacity>
             </View>
-
-            {/* Accessibility Settings Button (fixed position) */}
-            <AccessibilityOption
-                handlePress={toggleAccessibilityDrawer}
-                otherStyle={{ position: 'absolute', top: 0, left: 20, backgroundColor: Colors.blue, opacity: 0.8 }}
-            />
-
-            {/* Accessibility Drawer */}
-            {accessibilityDrawerVisible && (
-                <AccessibilityDrawer
-                    handlePress={toggleAccessibilityDrawer}
-                />
-            )}
         </SafeAreaView>
     );
 }

@@ -9,7 +9,6 @@ import notificationsData from '@/assets/data/notifications.json';
 
 import { ThemeContext } from '@/contexts/ThemeContext';
 
-import AccessibilityOption from '@/components/accessibility/AccessibilityOption';
 import AccessibilityDrawer from '@/components/accessibility/AccessibilityDrawer';
 
 
@@ -38,77 +37,77 @@ export default function AlertsScreen() {
       style={{ width: '100%' }}
     >
       <View
-      style={[
-        styles.notificationContainer,
-        {
-        backgroundColor: item.isNew
-          ? (currentTheme === 'light' ? Colors.lightPurple : Colors.darkPurple)
-          : (currentTheme === 'light' ? Colors.white : Colors.darkGray),
-        borderColor: item.isNew
-          ? (currentTheme === 'light' ? Colors.secondary : '#B983FF')
-          : (currentTheme === 'light' ? Colors.borderLight : Colors.borderDark),
-        },
-      ]}
+        style={[
+          styles.notificationContainer,
+          {
+            backgroundColor: item.isNew
+              ? (currentTheme === 'light' ? Colors.lightPurple : Colors.darkPurple)
+              : (currentTheme === 'light' ? Colors.white : Colors.darkGray),
+            borderColor: item.isNew
+              ? (currentTheme === 'light' ? Colors.secondary : '#B983FF')
+              : (currentTheme === 'light' ? Colors.borderLight : Colors.borderDark),
+          },
+        ]}
       >
-      <View style={styles.iconContainer}>
-        <Ionicons
-        name={item.isNew ? "notifications" : "notifications-outline"}
-        size={24}
-        color={
-          item.isNew
-          ? (currentTheme === 'light' ? Colors.secondary : '#B983FF')
-          : (currentTheme === 'light' ? Colors.mediumGray : Colors.white)
-        }
-        />
-      </View>
-      <View style={styles.textContainer}>
-        <Text
-        style={[
-          styles.title,
-          {
-          color: item.isNew
-            ? (currentTheme === 'light' ? Colors.secondary : '#B983FF')
-            : (currentTheme === 'light' ? Colors.primary : Colors.white),
-          },
-        ]}
-        >
-        {item.title}
-        </Text>
-        <Text
-        style={[
-          styles.message,
-          {
-          color: currentTheme === 'light'
-            ? (item.isNew ? '#7135B1' : '#4B3B6B')
-            : (item.isNew ? '#E0C3FC' : Colors.white),
-          },
-        ]}
-        >
-        {item.message}
-        </Text>
-        <Text
-        style={[
-          styles.date,
-          {
-          color: currentTheme === 'light'
-            ? (item.isNew ? '#B983FF' : '#A29EB6')
-            : (item.isNew ? '#E0C3FC' : Colors.white),
-          },
-        ]}
-        >
-        {item.date}
-        </Text>
-      </View>
-      {item.isNew && (
-        <View
-        style={[
-          styles.dot,
-          {
-          backgroundColor: currentTheme === 'light' ? Colors.secondary : '#B983FF',
-          },
-        ]}
-        />
-      )}
+        <View style={styles.iconContainer}>
+          <Ionicons
+            name={item.isNew ? "notifications" : "notifications-outline"}
+            size={24}
+            color={
+              item.isNew
+                ? (currentTheme === 'light' ? Colors.secondary : '#B983FF')
+                : (currentTheme === 'light' ? Colors.mediumGray : Colors.white)
+            }
+          />
+        </View>
+        <View style={styles.textContainer}>
+          <Text
+            style={[
+              styles.title,
+              {
+                color: item.isNew
+                  ? (currentTheme === 'light' ? Colors.secondary : '#B983FF')
+                  : (currentTheme === 'light' ? Colors.primary : Colors.white),
+              },
+            ]}
+          >
+            {item.title}
+          </Text>
+          <Text
+            style={[
+              styles.message,
+              {
+                color: currentTheme === 'light'
+                  ? (item.isNew ? '#7135B1' : '#4B3B6B')
+                  : (item.isNew ? '#E0C3FC' : Colors.white),
+              },
+            ]}
+          >
+            {item.message}
+          </Text>
+          <Text
+            style={[
+              styles.date,
+              {
+                color: currentTheme === 'light'
+                  ? (item.isNew ? '#B983FF' : '#A29EB6')
+                  : (item.isNew ? '#E0C3FC' : Colors.white),
+              },
+            ]}
+          >
+            {item.date}
+          </Text>
+        </View>
+        {item.isNew && (
+          <View
+            style={[
+              styles.dot,
+              {
+                backgroundColor: currentTheme === 'light' ? Colors.secondary : '#B983FF',
+              },
+            ]}
+          />
+        )}
       </View>
     </TouchableOpacity>
   );
@@ -131,16 +130,9 @@ export default function AlertsScreen() {
         }}
       />
 
-      {/* Accessibility Settings Button (fixed position) */}
-      <AccessibilityOption
-        handlePress={toggleAccessibilityDrawer}
-      />
-
       {/* Accessibility Drawer */}
       {accessibilityDrawerVisible && (
-        <AccessibilityDrawer
-          handlePress={toggleAccessibilityDrawer}
-        />
+        <AccessibilityDrawer />
       )}
 
       <View style={[styles.container, { backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer }]}>

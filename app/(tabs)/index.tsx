@@ -1,22 +1,29 @@
-import { Ionicons, MaterialCommunityIcons, FontAwesome5 } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons, FontAwesome5, MaterialIcons } from '@expo/vector-icons';
 import React, { useContext, useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView, Image, Alert, Platform, Linking } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 
+// Assets & Constants
 import Colors from '@/constants/Colors';
+
+// Context & Store
+import { ThemeContext } from '@/contexts/ThemeContext';
 import { useOnboardingStore } from '@/store/onboardingStore';
 
-import { useAccessibility } from '@/contexts/AccessibilityContext';
-import { ThemeContext } from '@/contexts/ThemeContext';
-
-import AccessibilityOption from '@/components/accessibility/AccessibilityOption';
-import AccessibilityDrawer from '@/components/accessibility/AccessibilityDrawer';
-import CustomButton from '@/components/common/CustomButton';
+// Beta Badge - for pilot mode
+const BetaBadge = () => {
+    return (
+        <View style={styles.betaBadgeContainer}>
+            <Text style={styles.betaBadgeText}>Pilot Mode - Early Access</Text>
+        </View>
+    );
+};
 
 export default function HomeScreen() {
     const router = useRouter();
+
+    // Obtain Conttext values
     const { currentTheme } = useContext(ThemeContext);
-    const { accessibilityDrawerVisible, toggleAccessibilityDrawer } = useAccessibility();
     const { user: userProfile } = useOnboardingStore();
 
     // Calendar state with simple date handling
@@ -130,11 +137,10 @@ export default function HomeScreen() {
         },
         {
             id: 'accessibility',
-            title: 'Quick Settings',
+            title: 'Accessibility Settings',
             icon: 'settings',
             iconType: 'ionicons' as const,
             color: Colors.accent,
-            action: () => toggleAccessibilityDrawer(),
         },
     ];
 
@@ -155,8 +161,8 @@ export default function HomeScreen() {
             description: 'Accessible Healthcare Services',
             icon: 'heart',
             iconType: 'ionicons' as const,
-            color: Colors.error,
-            route: '/(care)/healthcare',
+            color: Colors.lightGray,
+            route: '/healthcare',
         },
         {
             id: 'marketplace',
@@ -164,8 +170,8 @@ export default function HomeScreen() {
             description: 'Assistive Tech',
             icon: 'shopping-cart',
             iconType: 'fontawesome' as const,
-            color: Colors.orange,
-            route: '/(access)/marketplace',
+            color: Colors.lightGray,
+            route: '/marketplace',
         },
     ];
 
@@ -232,7 +238,7 @@ export default function HomeScreen() {
     };
 
     return (
-        <>
+        <View style={{ flex: 1, backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer }}>
             <Stack.Screen
                 options={{
                     headerTitle: 'AbiliLife',
@@ -251,15 +257,17 @@ export default function HomeScreen() {
                         <TouchableOpacity
                             onPress={() => router.push('/notifications')}
                             style={styles.headerButton}
-                            accessibilityLabel='Notifications'
+                            accessible={true}
                             accessibilityRole='button'
+                            accessibilityLabel='Notifications'
+                            accessibilityHint='View your notifications'
                         >
                             <Ionicons name="notifications-outline" size={24} color={currentTheme === 'light' ? Colors.primary : Colors.white} />
                         </TouchableOpacity>
                     ),
                 }}
             />
-
+            <BetaBadge />
             <ScrollView
                 style={[styles.container, { backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer }]}
                 showsVerticalScrollIndicator={false}
@@ -267,14 +275,20 @@ export default function HomeScreen() {
                 accessibilityHint='Scroll through the home screen to explore features and services'
             >
                 {/* Welcome Header */}
-                <View style={[styles.welcomeHeader, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]} accessibilityLabel='Welcome Card Header'>
+                <View style={[styles.welcomeHeader, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]} accessible={true} accessibilityLabel='Welcome Card Header'>
                     <View style={styles.welcomeContent}>
                         <View style={styles.profileSection}>
                             {userProfile.profilePicture ? (
-                                <Image source={{ uri: userProfile.profilePicture }} style={styles.profileImage} />
+                                <Image
+                                    source={{ uri: userProfile.profilePicture }}
+                                    style={styles.profileImage}
+                                    accessible={true}
+                                    accessibilityRole='image'
+                                    accessibilityLabel={`Profile picture of ${userProfile.fullName || 'User'}`}
+                                />
                             ) : (
                                 <View style={styles.profilePlaceholder}>
-                                    <Text style={styles.profilePlaceholderText}>
+                                    <Text style={styles.profilePlaceholderText} accessibilityRole='text' accessibilityLabel={userProfile.fullName ? userProfile.fullName.charAt(0).toUpperCase() : 'U'}>
                                         {userProfile.fullName ? userProfile.fullName.charAt(0).toUpperCase() : 'U'}
                                     </Text>
                                 </View>
@@ -315,6 +329,88 @@ export default function HomeScreen() {
                             </Text>
                         </View>
                     </View>
+                </View>
+
+                {/* Setup & Tips */}
+                <View style={styles.section}>
+                    <Text style={[styles.sectionTitle, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole='header' accessibilityLabel='Setup & Tips'>
+                        Setup & Tips
+                    </Text>
+
+                    <TouchableOpacity
+                        style={[styles.taskCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}
+                        onPress={() => router.push('/profileSetup')}
+                        activeOpacity={0.7}
+                    >
+                        <View style={styles.taskIconContainer}>
+                            <Ionicons name="person-add" size={32} color={Colors.blue} />
+                        </View>
+                        <View style={styles.taskTextContainer}>
+                            <Text style={[styles.taskTitle, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole='text' accessibilityLabel='Profile Setup'>
+                                Profile Setup
+                            </Text>
+                            <Text style={[styles.taskDescription, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole='text' accessibilityLabel='Complete your profile setup to enhance your experience'>
+                                Complete your profile setup to enhance your experience.
+                            </Text>
+                        </View>
+                        <Ionicons name="chevron-forward" size={24} color={Colors.primary} />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        style={[styles.taskCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}
+                        disabled={true}
+                    >
+                        <View style={styles.taskIconContainer}>
+                            <Ionicons name="bulb-outline" size={32} color={Colors.blue} />
+                        </View>
+                        <View style={styles.taskTextContainer}>
+                            <Text style={[styles.taskTitle, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole='text' accessibilityLabel='Accessibility Features'>
+                                Accessibility Features
+                            </Text>
+                            <Text style={[styles.taskDescription, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole='text' accessibilityLabel='Use the floating accessibility button to quickly adjust your display and interaction preferences from any screen'>
+                                Use the floating accessibility button to quickly adjust your display
+                                and interaction preferences from any screen. {`\n`}
+                                Hold and drag to reposition the button as needed.
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        style={[styles.taskCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}
+                        onPress={() => router.push('/bookingGuide')}
+                        activeOpacity={0.7}
+                    >
+                        <View style={styles.taskIconContainer}>
+                            <Ionicons name="help-circle" size={32} color={Colors.blue} />
+                        </View>
+                        <View style={styles.taskTextContainer}>
+                            <Text style={[styles.taskTitle, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole='text' accessibilityLabel='How to Request a Ride'>
+                                How to Request a Ride
+                            </Text>
+                            <Text style={[styles.taskDescription, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole='text' accessibilityLabel='Learn how to easily request a ride using our app'>
+                                Learn how to easily request a ride using our app.
+                            </Text>
+                        </View>
+                        <Ionicons name="chevron-forward" size={24} color={Colors.primary} />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        style={[styles.taskCard, styles.supportCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}
+                        onPress={() => Linking.openURL('tel:+254742560540')}
+                        activeOpacity={0.7}
+                    >
+                        <View style={styles.taskIconContainer}>
+                            <MaterialIcons name="support-agent" size={32} color={Colors.green} />
+                        </View>
+                        <View style={styles.taskTextContainer}>
+                            <Text style={[styles.taskTitle, styles.supportTitle]}>Need Help?</Text>
+                            <Text style={[styles.taskDescription, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole='text' accessibilityLabel='Get assistance with your account or app usage'>
+                                Contact our support team to get assistance with your account or app usage.
+                            </Text>
+                        </View>
+                        <Ionicons name="chevron-forward" size={24} color={Colors.green} />
+                    </TouchableOpacity>
+
                 </View>
 
                 {/* Quick Actions */}
@@ -360,16 +456,18 @@ export default function HomeScreen() {
                                 key={service.id}
                                 style={[styles.serviceCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}
                                 onPress={() => router.push(service.route as any)}
-                                accessibilityLabel={service.title}
+                                accessible={true}
                                 accessibilityRole="button"
+                                accessibilityHint={`Go to ${service.title}`}
+                                disabled={service.id === 'healthcare' || service.id === 'marketplace'} // Disable unavailable services
                             >
                                 <View style={[styles.serviceIcon, { backgroundColor: `${service.color}20` }]}>
                                     {renderIcon(service.iconType, service.icon, 24, service.color)}
                                 </View>
-                                <Text style={[styles.serviceTitle, { color: currentTheme === 'light' ? Colors.black : Colors.white }]}>
+                                <Text style={[styles.serviceTitle, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole='text' accessibilityLabel={service.title}>
                                     {service.title}
                                 </Text>
-                                <Text style={[styles.serviceDescription, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]}>
+                                <Text style={[styles.serviceDescription, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole='text' accessibilityLabel={service.description}>
                                     {service.description}
                                 </Text>
                             </TouchableOpacity>
@@ -467,6 +565,9 @@ export default function HomeScreen() {
                         </View>
                     </View>
                 )}
+
+
+
                 {/* Calendar & Appointments */}
                 <View style={styles.section}>
                     <View style={styles.sectionHeader}>
@@ -486,7 +587,7 @@ export default function HomeScreen() {
                     <View style={[styles.calendarContainer, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}>
                         <View style={styles.calendarHeader}>
                             <Text style={[styles.calendarTitle, { color: currentTheme === 'light' ? Colors.black : Colors.white }]}>
-                                {formatMonthYear(selectedDate)}
+                                {formatMonthYear(new Date())}
                             </Text>
                         </View>
 
@@ -501,7 +602,7 @@ export default function HomeScreen() {
                     </View>
 
                     {/* Upcoming Appointments List */}
-                    <View style={styles.appointmentsList}>
+                    {/* <View style={styles.appointmentsList}>
                         {upcomingAppointments.length > 0 ? (
                             upcomingAppointments.map((appointment) => (
                                 <View
@@ -542,22 +643,10 @@ export default function HomeScreen() {
                             leadingIconName="add"
                             leading
                         />
-                    </View>
+                    </View> */}
                 </View>
             </ScrollView>
-
-            {/* Accessibility Settings Button (fixed position) */}
-            <AccessibilityOption
-                handlePress={toggleAccessibilityDrawer}
-            />
-
-            {/* Accessibility Drawer */}
-            {accessibilityDrawerVisible && (
-                <AccessibilityDrawer
-                    handlePress={toggleAccessibilityDrawer}
-                />
-            )}
-        </>
+        </View>
     );
 }
 
@@ -631,7 +720,6 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     welcomeHeader: {
-        backgroundColor: Colors.white,
         borderRadius: 16,
         padding: 20,
         marginBottom: 24,
@@ -772,7 +860,6 @@ const styles = StyleSheet.create({
         color: Colors.primary,
     },
     calendarContainer: {
-        backgroundColor: Colors.white,
         borderRadius: 12,
         padding: 16,
         marginBottom: 16,
@@ -969,4 +1056,81 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         color: Colors.primary,
     },
+
+    betaBadgeContainer: {
+        alignSelf: 'center',
+        backgroundColor: Colors.orange,
+        borderRadius: 12,
+        paddingVertical: 4,
+        paddingHorizontal: 8,
+        marginVertical: 10,
+    },
+    betaBadgeText: {
+        color: Colors.white,
+        fontWeight: 'bold',
+    },
+
+    tasksHeader: {
+        fontSize: 18,
+        fontWeight: '600',
+        marginBottom: 10,
+    },
+    supportCard: {
+        borderWidth: 1,
+        borderColor: Colors.green,
+        backgroundColor: 'rgba(46, 204, 113, 0.1)',
+        marginTop: 10,
+    },
+
+    supportIconContainer: {
+        backgroundColor: Colors.green,
+    },
+    supportTitle: {
+        color: Colors.green,
+        fontWeight: '700',
+    },
+    supportDescription: {
+        fontSize: 14,
+    },
+    taskCard: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: Colors.white,
+        borderRadius: 12,
+        padding: 16,
+        marginVertical: 10,
+        ...Platform.select({
+            ios: {
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.1,
+                shadowRadius: 8,
+            },
+            android: {
+                elevation: 3,
+            },
+        }),
+    },
+    taskTextContainer: {
+        flex: 1,
+        marginLeft: 16,
+        backgroundColor: 'transparent',
+    },
+    taskIconContainer: {
+        width: 42,
+        height: 42,
+        borderRadius: 21,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    taskTitle: {
+        fontSize: 16,
+        fontWeight: '600',
+        marginBottom: 4,
+    },
+    taskDescription: {
+        fontSize: 13,
+        opacity: 0.7,
+    },
+
 })
