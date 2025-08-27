@@ -45,7 +45,7 @@ export default function Splash() {
       );
       // Repeat animation if still loading
       if (isAuthLoading) {
-        setTimeout(animate, 1300);
+        setTimeout(animate, 2300);
       }
     };
     animate();
@@ -62,7 +62,7 @@ export default function Splash() {
         } else {
           router.replace('/welcome');
         }
-      }, 1000); // Short delay for smooth transition
+      }, 2000); // Short delay for smooth transition
     }
   }, [isAuthLoading, isAuthenticated]);
 
@@ -72,7 +72,7 @@ export default function Splash() {
         AbiliLife
       </Animated.Text>
       <Animated.Text style={[styles.version, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }, animatedStyle]}>
-        Version 1.0.0
+        Early Access Version 1.0.0
       </Animated.Text>
     </View>
   );
