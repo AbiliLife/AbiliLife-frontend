@@ -6,14 +6,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import Colors from '@/constants/Colors';
 
-// Context
-import { useAccessibility } from '@/contexts/AccessibilityContext';
-
 // Components
 import SearchBar from '@/components/common/SearchBar';
 import { DoctorCard } from '@/components/doctors/DoctorCard';
-import AccessibilityDrawer from '@/components/accessibility/AccessibilityDrawer';
-import AccessibilityOption from '@/components/accessibility/AccessibilityOption';
 import ModuleHeader from '@/components/common/ModuleHeader';
 
 // Types
@@ -85,8 +80,6 @@ const HealthcareModule = () => {
     const [loading, setLoading] = React.useState(true);
     const [error, setError] = React.useState<string | null>(null);
 
-const { accessibilityDrawerVisible, toggleAccessibilityDrawer } = useAccessibility();
-
     // Fetch available doctors on component mount
     React.useEffect(() => {
         const fetchDoctorsData = async () => {
@@ -126,7 +119,7 @@ const { accessibilityDrawerVisible, toggleAccessibilityDrawer } = useAccessibili
                 title="AbiliLife Care"
                 subtitle="Find and access healthcare services easily"
                 onBackPress={() => router.back()}
-                color={Colors.headerRed}
+                color={Colors.red}
                 iconName='heart-outline'
             />
 
@@ -211,18 +204,6 @@ const { accessibilityDrawerVisible, toggleAccessibilityDrawer } = useAccessibili
                 </View>
 
             </ScrollView>
-
-      {/* Accessibility Settings Button (fixed position) */}
-      <AccessibilityOption
-        handlePress={toggleAccessibilityDrawer}
-      />
-
-      {/* Accessibility Drawer */}
-      {accessibilityDrawerVisible && (
-        <AccessibilityDrawer
-          handlePress={toggleAccessibilityDrawer}
-        />
-      )}
         </SafeAreaView>
     )
 }
