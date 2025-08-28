@@ -240,8 +240,8 @@ const RideBooking = () => {
                         showsIndoors={true} // Show indoor maps if available
                         showsBuildings={true} // Show 3D buildings if available
                         showsIndoorLevelPicker={true} // Show indoor level picker ( Google Maps only )
-                        loadingEnabled={true} // Show loading indicator while map is loading
-                        loadingIndicatorColor={Colors.primary} // Customize loading indicator color
+                        // loadingEnabled={true} // Show loading indicator while map is loading
+                        // loadingIndicatorColor={Colors.primary} // Customize loading indicator color
                         zoomEnabled={true} // Allow zooming
                         // maxZoomLevel={20} // Set maximum zoom level
                         // cameraZoomRange={{ min: 5, max: 20 }} // Set zoom range
@@ -279,7 +279,7 @@ const RideBooking = () => {
 
             <BottomSheet
                 ref={bottomSheetRef}
-                index={1} // Start with more space (60% height)
+                index={2} // Start with more space (90% height)
                 snapPoints={snapPoints}
                 keyboardBehavior="extend" // Handle keyboard better
                 android_keyboardInputMode="adjustResize" // Android specific
@@ -296,6 +296,12 @@ const RideBooking = () => {
                     bounces={false}
                     overScrollMode="never"
                 >
+                    <View style={styles.infoCard}>
+                        <Ionicons name="information-circle" size={32} color={Colors.emergency} />
+                        <Text style={styles.infoText}>
+                            WE ARE WORKING ON OUR GOOGLE MAPS PLATFORM INTEGRATION. IN THE MEANTIME, PLEASE REQUEST YOUR RIDE VIA WHATSAPP OR SMS.
+                        </Text>
+                    </View>
                     <Text
                         style={[styles.label, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}
                         accessibilityRole="text"
@@ -821,6 +827,20 @@ const styles = StyleSheet.create({
     },
     map: {
         ...StyleSheet.absoluteFillObject, // Full screen map
+    },
+    infoCard: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: Colors.yellow,
+        padding: 16,
+        borderRadius: 8,
+        marginBottom: 12,
+        width: '100%',
+    },
+    infoText: {
+        marginLeft: 8,
+        fontSize: 14,
+        color: Colors.black,
     },
     label: {
         fontWeight: 'bold',
