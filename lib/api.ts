@@ -10,7 +10,7 @@ import { getToken, deleteToken } from './storage';
 
 // 1. Determine the base URL based on environment
 const isDevelopment = process.env.NODE_ENV === 'development';
-const BASE_URL = isDevelopment ? DEV_BACKEND_URL : PROD_BACKEND_URL;
+const BASE_URL = PROD_BACKEND_URL; // -> Make production the default for safety (for build process only)
 
 // 2. Create an Axios instance with the base URL
 export const BaseAPI = axios.create({
