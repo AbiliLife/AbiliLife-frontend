@@ -9,17 +9,34 @@ import { DEV_BACKEND_URL, PROD_BACKEND_URL } from '@/constants/staticURLs';
 import { getToken, deleteToken } from './storage';
 
 // 1. Determine the base URL based on environment
-const isDevelopment = process.env.NODE_ENV === 'development';
-const BASE_URL = PROD_BACKEND_URL; // -> Make production the default for safety (for build process only)
+// const isDevelopment = process.env.NODE_ENV === 'development';
+
+// Determine environment - robust approach
+const isDevelopment = __DEV__; // More reliable than process.env.NODE_ENV
+// const BASE_URL = PROD_BACKEND_URL; // -> Make production the default for safety (for build process only)
+const BASE_URL = isDevelopment ? DEV_BACKEND_URL : PROD_BACKEND_URL;
+console.log(`[API] Using ${isDevelopment ? 'DEVELOPMENT' : 'PRODUCTION'} backend: ${BASE_URL}`);
 
 // 2. Create an Axios instance with the base URL
 export const BaseAPI = axios.create({
   baseURL: BASE_URL,
-  timeout: 10000, // Set a timeout for requests
+  timeout: 20000, // Set a timeout for requests <- increased to 20 seconds
   headers: {
     'Content-Type': 'application/json',
   },
 });
+
+// NEW: Add request interceptor for debugging
+BaseAPI.interceptors.request.use(
+  config => {
+    console.log(`[API Request] ${config.method?.toUpperCase()} ${config.url}`);
+    return config;
+  },
+  error => {
+    console.error('[API Request Error]', error);
+    return Promise.reject(error);
+  }
+);
 
 // 3. Add request interceptor to include auth token if available
 /**
@@ -50,9 +67,7 @@ BaseAPI.interceptors.request.use(
  * @returns {Promise<AxiosResponse>} - A promise that resolves to the modified response.
  */
 BaseAPI.interceptors.response.use(
-  (response: AxiosResponse) => {
-    return response; // If the response is successful, just return it to the calling code
-  },
+  (response: AxiosResponse) => response, // If the response is successful, just return it to the calling code,
   async (error: AxiosError) => {
     const { response } = error;
     if (response) {
@@ -110,15 +125,35 @@ BaseAPI.interceptors.response.use(
  * @param {AxiosResponse} response - The Axios response.
  * @returns {Promise<AxiosResponse>} - A promise that resolves to the modified response.
  */
-const MAX_RETRIES = 3;
+const MAX_RETRIES = 3; // Maximum number of retries for a request
 BaseAPI.interceptors.response.use(
-  (response: AxiosResponse) => {
-    return response; // If the response is successful, just return it to the calling code
-  },
+  (response: AxiosResponse) => response, // If the response is successful, just return it to the calling code
   async (error: AxiosError) => {
     // Only retry on network errors or 5xx server errors
     const isNetworkError = !error.response; // No response means it was a network error
     const isServerError = error.response && error.response.status >= 500; // 5xx status codes indicate server errors
+
+    if (isNetworkError) {
+      // Show more helpful error message for production
+      Toast.show({
+        type: 'error',
+        text1: 'Connection Failed',
+        text2: `Could not reach server: ${error.message}`,
+        visibilityTime: 4000,
+        position: 'top',
+      });
+    }
+
+    if (isServerError) {
+      // Show more helpful error message for production
+      Toast.show({
+        type: 'error',
+        text1: 'Server Error',
+        text2: `An unexpected error occurred on the server: ${error.message}`,
+        visibilityTime: 4000,
+        position: 'top',
+      });
+    }
 
     if ((isNetworkError || isServerError) && error.config) {
       const config = error.config as InternalAxiosRequestConfig & { __retryCount?: number };
@@ -147,4 +182,4 @@ BaseAPI.interceptors.response.use(
 
 // 6. Export the BaseAPI instance for use in other parts of the application
 export default BaseAPI;
-export { BASE_URL, isDevelopment }; // (optional) export base URL and environment status for use in other modules
+export { BASE_URL }; // (optional) export base URL and environment status for use in other modules
