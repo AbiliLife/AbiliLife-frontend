@@ -60,7 +60,7 @@ export default function Splash() {
         if (isAuthenticated) {
           router.replace('/(tabs)');
         } else {
-          router.replace('/welcome');
+          router.replace('/simple-test'); // Go to test screen first
         }
       }, 2000); // Short delay for smooth transition
     }

@@ -20,25 +20,33 @@ export default function DiagnosticsScreen() {
             activeBackendUrl: __DEV__ ? DEV_BACKEND_URL : PROD_BACKEND_URL,
         };
 
-        // Test health endpoint
+        // Test health endpoint with better error handling
         try {
             const url = `${__DEV__ ? DEV_BACKEND_URL : PROD_BACKEND_URL}/health`;
             console.log(`Testing health endpoint: ${url}`);
-            const response = await axios.get(url, { timeout: 10000 });
+
+            const response = await Promise.race([
+                axios.get(url),
+                new Promise((_, reject) =>
+                    setTimeout(() => reject(new Error('Request timeout after 10 seconds')), 10000)
+                )
+            ]) as any;
+
             diagnosticResults.healthCheck = {
                 success: true,
                 status: response.status,
                 data: response.data,
             };
         } catch (error: any) {
+            console.error('Health check error:', error);
             diagnosticResults.healthCheck = {
                 success: false,
-                error: error.message,
-                code: error.code,
+                error: error.message || 'Unknown error',
+                code: error.code || 'NO_CODE',
                 response: error.response ? {
                     status: error.response.status,
                     data: error.response.data,
-                } : 'No response',
+                } : 'No response received',
             };
         }
 
@@ -46,9 +54,21 @@ export default function DiagnosticsScreen() {
         setLoading(false);
     };
 
-    // Auto-run diagnostics on mount
+    // Auto-run diagnostics on mount with error handling
     useEffect(() => {
-        runDiagnostics();
+        const safeDiagnostics = async () => {
+            try {
+                await runDiagnostics();
+            } catch (error) {
+                console.error('Diagnostics failed to run:', error);
+                setResults({
+                    error: 'Failed to run diagnostics',
+                    details: error instanceof Error ? error.message : 'Unknown error'
+                });
+                setLoading(false);
+            }
+        };
+        safeDiagnostics();
     }, []);
 
     return (
