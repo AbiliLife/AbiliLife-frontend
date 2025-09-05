@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Platform } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Stack, useRouter } from 'expo-router';
 import Colors from '@/constants/Colors';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function SimpleTestScreen() {
     const [status, setStatus] = useState('Ready to test...');
@@ -108,7 +110,7 @@ export default function SimpleTestScreen() {
     }, []);
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <Stack.Screen options={{
                 title: 'Network Test',
                 headerRight: () => (
@@ -144,6 +146,13 @@ export default function SimpleTestScreen() {
                 ))}
             </ScrollView>
 
+            <View style={styles.infoContainer}>
+                <Ionicons name="information-circle-outline" size={24} color={Colors.mediumGray} />
+                <Text style={styles.infoText}>
+                    We have added this simple network diagnostics tool to help identify connectivity issues with our backend services. This can be useful if you encounter problems logging in or accessing certain features. The tests include checking connectivity to a public API (httpbin.org) and our own backend health and login endpoints. If any tests fail, please check your internet connection or contact support for further assistance.
+                </Text>
+            </View>
+
             <View style={styles.footer}>
                 <TouchableOpacity
                     style={[styles.button, styles.retryButton]}
@@ -160,7 +169,7 @@ export default function SimpleTestScreen() {
                     <Text style={styles.buttonText}>Continue to App</Text>
                 </TouchableOpacity>
             </View>
-        </View>
+        </SafeAreaView>
     );
 }
 
@@ -228,6 +237,17 @@ const styles = StyleSheet.create({
         fontSize: 13,
         color: Colors.mediumGray,
         lineHeight: 18,
+    },
+    infoContainer: {
+        marginBottom: 20,
+        padding: 12,
+        borderRadius: 8,
+        backgroundColor: Colors.lightGray,
+    },
+    infoText: {
+        fontSize: 14,
+        color: Colors.mediumGray,
+        lineHeight: 20,
     },
     footer: {
         flexDirection: 'row',
