@@ -96,14 +96,6 @@ const Welcome = () => {
                     variant="secondary"
                     style={{ marginTop: 10 }}
                 /> */}
-
-                {/* Uncomment for Diagnostics */}
-                <Button
-                    title="Run Diagnostics"
-                    onPress={() => router.push('/diagnostics')}
-                    variant="secondary"
-                    style={{ marginTop: 10 }}
-                />
             </View>
         </SafeAreaView>
     )
