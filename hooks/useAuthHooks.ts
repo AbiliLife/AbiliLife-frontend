@@ -18,7 +18,10 @@ export const useLogin = async (credentials: LoginRequest) => {
 // POST: user signup
 export const useSignup = async (data: SignUpRequest) => {
     try {
-        const response = await BaseAPI.post<AuthResponse>('/api/v1/auth/signup', data);
+        // const response = await BaseAPI.post<AuthResponse>('/api/v1/auth/signup', data);
+        // FOR NOW, HARDCODE THE LOGIN ENDPOINT TO BYPASS THE AUTH MIDDLEWARE (FOR TESTING PURPOSES) - WILL BE REMOVED LATER
+        const signupUrl = 'https://abililife-backend-api.onrender.com/api/v1/auth/signup';
+        const response = await axios.post<AuthResponse>(signupUrl, data);
         return response.data; // will return the axios response data which includes user info and token (AuthResponse)
     } catch (error) {
         throw error;
@@ -28,7 +31,10 @@ export const useSignup = async (data: SignUpRequest) => {
 // POST: send OTP for phone verification
 export const useSendOTP = async (data: OTPRequest) => {
     try {
-        const response = await BaseAPI.post<OTPSuccessResponse>('/api/v1/auth/send-otp', data);
+        // const response = await BaseAPI.post<OTPSuccessResponse>('/api/v1/auth/send-otp', data);
+        // FOR NOW, HARDCODE THE LOGIN ENDPOINT TO BYPASS THE AUTH MIDDLEWARE (FOR TESTING PURPOSES) - WILL BE REMOVED LATER
+        const sendOtpUrl = 'https://abililife-backend-api.onrender.com/api/v1/auth/send-otp';
+        const response = await axios.post<OTPSuccessResponse>(sendOtpUrl, data);
         return response.data; // will return the axios response data which includes success status and verification ID (OTPSuccessResponse)
     } catch (error) {
         throw error;
@@ -38,7 +44,10 @@ export const useSendOTP = async (data: OTPRequest) => {
 // POST: verify OTP for phone verification
 export const useVerifyOTP = async (data: OTPVerification) => {
     try {
-        const response = await BaseAPI.post<AuthResponse>('/api/v1/auth/verify-otp', data);
+        // const response = await BaseAPI.post<AuthResponse>('/api/v1/auth/verify-otp', data);
+        // FOR NOW, HARDCODE THE LOGIN ENDPOINT TO BYPASS THE AUTH MIDDLEWARE (FOR TESTING PURPOSES) - WILL BE REMOVED LATER
+        const verifyOtpUrl = 'https://abililife-backend-api.onrender.com/api/v1/auth/verify-otp';
+        const response = await axios.post<AuthResponse>(verifyOtpUrl, data);
         return response.data; // will return the axios response data which includes user info and token (AuthResponse)
     } catch (error) {
         throw error;
