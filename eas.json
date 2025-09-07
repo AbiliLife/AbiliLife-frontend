@@ -26,12 +26,14 @@
     },
     "production": {
       "android": {
-        "buildType": "app-bundle",
-        "gradleCommand": ":app:bundleRelease",
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleRelease",
         "env": {
           "EXPO_PUBLIC_ENVIRONMENT": "production"
         }
       },
+      "autoIncrement": true,
+      "distribution": "internal",
       "env": {
         "EXPO_PUBLIC_ENVIRONMENT": "production"
       }
