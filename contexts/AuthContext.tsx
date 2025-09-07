@@ -99,9 +99,18 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 
             // we return a structured AuthResponse with success false and error message
             // this will be caught in the calling code (in the auth screen)
+
+            // More detailed error handling for auth-specific errors
+            let errorMessage = 'Login failed';
+
+            if (error?.response?.status === 401) {
+                errorMessage = 'Invalid email or password';
+            } else if (error?.message || error?.response?.data?.message) {
+                errorMessage = error.message || error?.response?.data?.message;
+            }
             return {
                 success: false,
-                message: error?.response?.data?.message || error?.message || 'Login error',
+                message: errorMessage,
                 user: emptyUser,
                 token: ''
             };
