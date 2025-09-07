@@ -1,10 +1,14 @@
 import BaseAPI from "@/lib/api";
 import { AuthResponse, LoginRequest, OTPRequest, OTPSuccessResponse, OTPVerification, SignUpRequest } from "@/types/auth";
+import axios from "axios";
 
 // POST: user login
 export const useLogin = async (credentials: LoginRequest) => {
     try {
-        const response = await BaseAPI.post<AuthResponse>('/api/v1/auth/login', credentials);
+        // const response = await BaseAPI.post<AuthResponse>('/api/v1/auth/login', credentials);
+        // FOR NOW, HARDCODE THE LOGIN ENDPOINT TO BYPASS THE AUTH MIDDLEWARE (FOR TESTING PURPOSES) - WILL BE REMOVED LATER
+        const loginUrl = 'https://abililife-backend-api.onrender.com/api/v1/auth/login';
+        const response = await axios.post<AuthResponse>(loginUrl, credentials);
         return response.data; // will return the axios response data which includes user info and token (AuthResponse)
     } catch (error) {
         throw error; // This will be an AxiosError or any other error thrown by the API (will be caught in the calling code)
