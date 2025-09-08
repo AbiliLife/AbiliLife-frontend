@@ -1,0 +1,61 @@
+# Dependencies (EAS will install these)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build artifacts
+android/build/
+android/app/build/
+android/.gradle/
+ios/build/
+ios/Pods/
+*.ipa
+*.apk
+*.aab
+
+# Development files
+.expo/
+.expo-shared/
+.vscode/
+.idea/
+*.log
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Environment files (use EAS secrets instead)
+.env.local
+.env.development
+.env.staging
+
+# Large media files (if any)
+assets/videos/
+assets/large-images/
+docs/
+screenshots/
+
+# Git
+.git/
+.gitignore
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.swp
+*.swo
+
+# Cache directories
+.cache/
+.npm/
+.yarn/
+
+# Debugging
+flipper-rn-addons.podspec.json
