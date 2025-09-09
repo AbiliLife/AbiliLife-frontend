@@ -90,7 +90,7 @@
  * {
  *   "success": true,
  *   "message": "OTP sent successfully",
- *   "verificationId": "string"
+ *   "otp": "string"
  * }
  *
  * 400	Bad request - invalid phone number
@@ -290,6 +290,26 @@ interface OTPRequest {
    * @example "+1234567890"
    */
   phone: string;
+}
+
+/**
+ * Response body for sending an OTP.
+ */
+interface OTPResponse {
+  /**
+   * Indicates if the operation was successful.
+   */
+  success: boolean;
+
+  /**
+   * Response message.
+   */
+  message: string;
+
+  /**
+   * OTP code sent to the user's phone.
+   */
+  otp?: string; // For testing purposes only; remove in production
 }
 
 /**

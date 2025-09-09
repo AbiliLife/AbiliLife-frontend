@@ -28,15 +28,16 @@ export interface OTPRequest {
     phone: string; // Phone number in international format
 }
 
+// NEW FOR TEMPORARY TESTING PURPOSES
+export interface OTPResponse {
+  success: boolean;
+  message: string;
+  otp?: string; // For testing purposes only; remove in production
+}
+
 export interface OTPVerification {
     phone: string; // Phone number in international format
     otp: string; // OTP code received via SMS
-}
-
-export interface OTPSuccessResponse {
-  success: boolean;
-  message: string;
-  verificationId: string; // Verification ID for OTP verification
 }
 
 export interface SignUpRequest {
@@ -63,6 +64,6 @@ export interface AuthContextType {
     login: (credentials: LoginRequest) => Promise<AuthResponse>; // Login function
     signup: (data: SignUpRequest) => Promise<AuthResponse>; // Signup function
     logout: () => Promise<void>; // Logout function
-    requestOTP: (data: OTPRequest) => Promise<OTPSuccessResponse>; // Request OTP function
+    requestOTP: (data: OTPRequest) => Promise<OTPResponse>; // Request OTP function
     verifyOTP: (data: OTPVerification) => Promise<AuthResponse>; // Verify OTP function
 }

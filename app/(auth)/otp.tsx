@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, KeyboardAvoidingView, ScrollView, Platform, TouchableOpacity, Image } from 'react-native';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { Toast } from 'toastify-react-native';
 
@@ -32,6 +32,21 @@ const BetaBadge = () => {
 };
 
 export default function OTPVerificationScreen() {
+    const { otp: sentOtp } = useLocalSearchParams<{ otp?: string }>();
+
+    // TEMPORARY: TOAST TO SHOW OTP FOR TESTING PURPOSES - REMOVE IN PRODUCTION
+    useEffect(() => {
+        if (sentOtp) {
+            Toast.show({
+                type: 'info',
+                text1: `YOUR OTP IS: ${sentOtp}`,
+                text2: '(THIS IS TEMPORARILY SHOWN FOR TESTING PURPOSES)',
+                visibilityTime: 20000, // 20 seconds (Make it longer for testing)
+                position: 'top',
+                theme: currentTheme === 'light' ? 'light' : 'dark',
+            });
+        }
+    }, []);
 
     // Local state variables
     const [otp, setOtp] = useState('');

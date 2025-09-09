@@ -1,5 +1,5 @@
 import BaseAPI from "@/lib/api";
-import { AuthResponse, LoginRequest, OTPRequest, OTPSuccessResponse, OTPVerification, SignUpRequest } from "@/types/auth";
+import { AuthResponse, LoginRequest, OTPRequest, OTPResponse, OTPVerification, SignUpRequest } from "@/types/auth";
 import axios from "axios";
 
 // POST: user login
@@ -34,7 +34,7 @@ export const useSendOTP = async (data: OTPRequest) => {
         // const response = await BaseAPI.post<OTPSuccessResponse>('/api/v1/auth/send-otp', data);
         // FOR NOW, HARDCODE THE LOGIN ENDPOINT TO BYPASS THE AUTH MIDDLEWARE (FOR TESTING PURPOSES) - WILL BE REMOVED LATER
         const sendOtpUrl = 'https://abililife-backend-api.onrender.com/api/v1/auth/send-otp';
-        const response = await axios.post<OTPSuccessResponse>(sendOtpUrl, data);
+        const response = await axios.post<OTPResponse>(sendOtpUrl, data);
         return response.data; // will return the axios response data which includes success status and verification ID (OTPSuccessResponse)
     } catch (error) {
         throw error;

@@ -595,7 +595,10 @@ export default function AuthScreen() {
                                 setNewPassword('');
                                 setConfirmPassword('');
 
-                                router.replace('/otp');
+                                // Add otp to the route params
+                                // only for testing purposes - remove in production
+
+                                router.replace({ pathname: '/otp', params: { otp: otpResponse.otp } }); // navigate to otp screen with otp in params
                             }
                         });
                     } else {
