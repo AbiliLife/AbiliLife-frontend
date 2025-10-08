@@ -1,6 +1,6 @@
 import { geocode } from 'opencage-api-client';
 import type { GeocodingRequest, GeocodingResponse } from 'opencage-api-client';
-import { OPEN_CAGE_API_KEY } from "@/constants/staticURLs";
+import { OPEN_CAGE_API_KEY } from "@/constants/Static";
 import type { LocationResult, GeosearchResult, LocationSearchParams } from "@/types/location";
 
 /* 

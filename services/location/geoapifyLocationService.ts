@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { GEOAPIFY_API_URL,GEOAPIFY_API_KEY } from '@/constants/staticURLs';
+import { GEOAPIFY_API_URL,GEOAPIFY_API_KEY } from '@/constants/Static';
 import type { 
   LocationResult, 
   GeosearchResult, 

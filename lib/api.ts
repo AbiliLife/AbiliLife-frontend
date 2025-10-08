@@ -3,7 +3,7 @@ import { router } from 'expo-router';
 import { Toast } from 'toastify-react-native';
 
 // Constants URLs
-import { DEV_BACKEND_URL, PROD_BACKEND_URL } from '@/constants/staticURLs';
+import { DEV_BACKEND_URL, PROD_BACKEND_URL } from '@/constants/Static';
 
 // Secure Store
 import { getToken, deleteToken } from './storage';
