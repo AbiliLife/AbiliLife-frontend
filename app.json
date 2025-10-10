@@ -82,6 +82,12 @@
           }
         }
       ],
+      [
+        "expo-sensors",
+        {
+          "motionPermission": "Allow AbiliLife to access your device motion."
+        }
+      ],
       "expo-secure-store"
     ],
     "experiments": {
