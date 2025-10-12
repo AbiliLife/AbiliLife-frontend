@@ -90,16 +90,13 @@
       ],
       [
         "expo-notifications",
-        // THESE COMMENTS WILL BE REMOVED ONCE ALL NOTIFICATION ICONS AND SOUNDS ARE ADDED
         {
-          "icon": "./local/assets/notification_icon.png", // Tint color for the push notification image when it appears in the notification tray.
-          "color": "#ffffff", // Tint color for the push notification image when it appears in the notification tray.
-          "defaultChannel": "default", // Default channel for FCMv1 notifications.
+          "icon": "./assets/icons/notification_icon.png",
+          "color": "#ffffff",
+          "defaultChannel": "default",
           "sounds": [
-            "./local/assets/notification_sound.wav",
-            "./local/assets/notification_sound_other.wav"
-          ], // Array of local paths to sound files (.wav recommended) that can be used as custom notification sounds. Sound will not be played when focus mode does not permit it or silent mode is on.
-          "enableBackgroundRemoteNotifications": false // For iOS only
+            "./assets/sounds/notification_sound.wav"
+          ]
         }
       ],
       "expo-secure-store"
