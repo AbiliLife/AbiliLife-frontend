@@ -40,3 +40,7 @@ yarn-error.*
 firebase-service-account.json
 # Google Services
 google-services.json
+
+# generated native folders
+/ios
+/android
