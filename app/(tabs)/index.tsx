@@ -10,6 +10,9 @@ import Colors from '@/constants/Colors';
 import { ThemeContext } from '@/contexts/ThemeContext';
 import { useOnboardingStore } from '@/store/onboardingStore';
 
+// Utils - Helper functions
+import { formatMonthYear } from '@/utils/formatDateTime';
+
 // Beta Badge - for pilot mode
 const BetaBadge = () => {
     return (
@@ -27,28 +30,7 @@ export default function HomeScreen() {
     const { user: userProfile } = useOnboardingStore();
 
     // Calendar state with simple date handling
-    const [selectedDate, setSelectedDate] = useState(() => new Date(2025, 6, 15)); // July 15, 2025
     const [calendarViewMode, setCalendarViewMode] = useState<'week' | 'month'>('week');
-
-    // Mock appointments data with simple dates
-    const [upcomingAppointments] = useState([
-        {
-            id: '1',
-            title: 'Doctor Appointment',
-            date: new Date(2025, 6, 16), // July 16, 2025
-            time: '10:00 AM',
-            type: 'healthcare',
-            location: 'City Hospital'
-        },
-        {
-            id: '2',
-            title: 'Mobility Service',
-            date: new Date(2025, 6, 18), // July 18, 2025
-            time: '2:30 PM',
-            type: 'mobility',
-            location: 'Shopping Mall'
-        }
-    ]);
 
     // Helper function to get safe time-based greeting
     const getGreeting = () => {
@@ -62,38 +44,7 @@ export default function HomeScreen() {
         }
     };
 
-    // Helper function to safely format calendar month ID
-    const getCalendarMonthId = () => {
-        try {
-            const year = selectedDate.getFullYear();
-            const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
-            return `${year}-${month}`;
-        } catch (error) {
-            return '2025-07'; // Fallback to July 2025
-        }
-    };
 
-    // Helper function to format date as "Month Year"
-    const formatMonthYear = (date: Date) => {
-        try {
-            const months = ['January', 'February', 'March', 'April', 'May', 'June',
-                'July', 'August', 'September', 'October', 'November', 'December'];
-            return `${months[date.getMonth()]} ${date.getFullYear()}`;
-        } catch (error) {
-            return 'July 2025';
-        }
-    };
-
-    // Helper function to format date as "Mon DD"
-    const formatMonthDay = (date: Date) => {
-        try {
-            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            return `${months[date.getMonth()]} ${date.getDate()}`;
-        } catch (error) {
-            return 'Jul 15';
-        }
-    };
     const getProfileCompleteness = () => {
         let completeness = 0;
         const totalFields = 7;
@@ -116,7 +67,7 @@ export default function HomeScreen() {
             title: 'Request a Ride',
             icon: 'car',
             iconType: 'ionicons' as const,
-            color: Colors.primary,
+            color: Colors.blue,
             route: '/mobility',
         },
         {
@@ -124,7 +75,7 @@ export default function HomeScreen() {
             title: 'Contact Caregiver',
             icon: 'people',
             iconType: 'ionicons' as const,
-            color: Colors.secondary,
+            color: Colors.blue,
             action: () => handleContactCaregiver(),
         },
         {
@@ -132,7 +83,7 @@ export default function HomeScreen() {
             title: 'Emergency',
             icon: 'warning',
             iconType: 'ionicons' as const,
-            color: Colors.error,
+            color: Colors.red,
             action: () => handleEmergencyContact(),
         },
         {
@@ -140,7 +91,7 @@ export default function HomeScreen() {
             title: 'Accessibility Settings',
             icon: 'settings',
             iconType: 'ionicons' as const,
-            color: Colors.accent,
+            color: Colors.blue,
         },
     ];
 
@@ -161,16 +112,16 @@ export default function HomeScreen() {
             description: 'Accessible Healthcare Services',
             icon: 'heart',
             iconType: 'ionicons' as const,
-            color: Colors.lightGray,
+            color: Colors.red,
             route: '/healthcare',
         },
         {
             id: 'marketplace',
             title: 'AbiliLife Access',
-            description: 'Assistive Tech',
+            description: 'Assistive Tech Marketplace',
             icon: 'shopping-cart',
             iconType: 'fontawesome' as const,
-            color: Colors.lightGray,
+            color: Colors.orange,
             route: '/marketplace',
         },
     ];
@@ -275,7 +226,7 @@ export default function HomeScreen() {
                 accessibilityHint='Scroll through the home screen to explore features and services'
             >
                 {/* Welcome Header */}
-                <View style={[styles.welcomeHeader, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]} accessible={true} accessibilityLabel='Welcome Card Header'>
+                <View style={[styles.welcomeHeader, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.gray800 }]} accessible={true} accessibilityLabel='Welcome Card Header'>
                     <View style={styles.welcomeContent}>
                         <View style={styles.profileSection}>
                             {userProfile.profilePicture ? (
@@ -294,7 +245,7 @@ export default function HomeScreen() {
                                 </View>
                             )}
                             <View style={styles.welcomeText}>
-                                <Text style={[styles.greeting, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole='text' accessibilityLabel={`Good ${getGreeting()}`}>
+                                <Text style={[styles.greeting, { color: currentTheme === 'light' ? Colors.gray700 : Colors.gray300 }]} accessibilityRole='text' accessibilityLabel={`Good ${getGreeting()}`}>
                                     Good {getGreeting()}
                                 </Text>
                                 <Text style={[styles.userName, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole='text' accessibilityLabel={`Welcome ${userProfile.fullName || 'User'}`}>
@@ -309,13 +260,13 @@ export default function HomeScreen() {
                             accessibilityRole='button'
                             accessibilityLabel='View Profile'
                         >
-                            <Ionicons name="person-circle-outline" size={32} color={Colors.primary} />
+                            <Ionicons name="person-circle-outline" size={32} color={Colors.blue} />
                         </TouchableOpacity>
                     </View>
 
                     {/* Profile Completeness */}
                     <View style={styles.completenessSection}>
-                        <Text style={[styles.completenessLabel, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole='text' accessibilityLabel='Profile Completeness'>
+                        <Text style={[styles.completenessLabel, { color: currentTheme === 'light' ? Colors.gray700 : Colors.gray300 }]} accessibilityRole='text' accessibilityLabel='Profile Completeness'>
                             Profile Completeness
                         </Text>
                         <View style={styles.completenessContainer}>
@@ -324,7 +275,7 @@ export default function HomeScreen() {
                                     style={[styles.progressFill, { width: `${getProfileCompleteness()}%` }]}
                                 />
                             </View>
-                            <Text style={[styles.completenessPercentage, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole='text' accessibilityLabel={`Profile completeness is ${getProfileCompleteness()} percent`}>
+                            <Text style={[styles.completenessPercentage, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole='text' accessibilityLabel={`Profile completeness is ${getProfileCompleteness()} percent`}>
                                 {getProfileCompleteness()}%
                             </Text>
                         </View>
@@ -338,7 +289,7 @@ export default function HomeScreen() {
                     </Text>
 
                     <TouchableOpacity
-                        style={[styles.taskCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}
+                        style={[styles.taskCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.gray800 }]}
                         onPress={() => router.push('/profileSetup')}
                         activeOpacity={0.7}
                     >
@@ -349,15 +300,15 @@ export default function HomeScreen() {
                             <Text style={[styles.taskTitle, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole='text' accessibilityLabel='Profile Setup'>
                                 Profile Setup
                             </Text>
-                            <Text style={[styles.taskDescription, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole='text' accessibilityLabel='Complete your profile setup to enhance your experience'>
+                            <Text style={[styles.taskDescription, { color: currentTheme === 'light' ? Colors.gray700 : Colors.gray300 }]} accessibilityRole='text' accessibilityLabel='Complete your profile setup to enhance your experience'>
                                 Complete your profile setup to enhance your experience.
                             </Text>
                         </View>
-                        <Ionicons name="chevron-forward" size={24} color={Colors.primary} />
+                        <Ionicons name="chevron-forward" size={24} color={currentTheme === 'light' ? Colors.black : Colors.white} />
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        style={[styles.taskCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}
+                        style={[styles.taskCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.gray800 }]}
                         disabled={true}
                     >
                         <View style={styles.taskIconContainer}>
@@ -367,7 +318,7 @@ export default function HomeScreen() {
                             <Text style={[styles.taskTitle, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole='text' accessibilityLabel='Accessibility Features'>
                                 Accessibility Features
                             </Text>
-                            <Text style={[styles.taskDescription, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole='text' accessibilityLabel='Use the floating accessibility button to quickly adjust your display and interaction preferences from any screen'>
+                            <Text style={[styles.taskDescription, { color: currentTheme === 'light' ? Colors.gray700 : Colors.gray300 }]} accessibilityRole='text' accessibilityLabel='Use the floating accessibility button to quickly adjust your display and interaction preferences from any screen'>
                                 Use the floating accessibility button to quickly adjust your display
                                 and interaction preferences from any screen. {`\n`}
                                 Hold and drag to reposition the button as needed.
@@ -376,7 +327,7 @@ export default function HomeScreen() {
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        style={[styles.taskCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}
+                        style={[styles.taskCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.gray800 }]}
                         onPress={() => router.push('/bookingGuide')}
                         activeOpacity={0.7}
                     >
@@ -387,15 +338,15 @@ export default function HomeScreen() {
                             <Text style={[styles.taskTitle, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole='text' accessibilityLabel='How to Request a Ride'>
                                 How to Request a Ride
                             </Text>
-                            <Text style={[styles.taskDescription, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole='text' accessibilityLabel='Learn how to easily request a ride using our app'>
+                            <Text style={[styles.taskDescription, { color: currentTheme === 'light' ? Colors.gray700 : Colors.gray300 }]} accessibilityRole='text' accessibilityLabel='Learn how to easily request a ride using our app'>
                                 Learn how to easily request a ride using our app.
                             </Text>
                         </View>
-                        <Ionicons name="chevron-forward" size={24} color={Colors.primary} />
+                        <Ionicons name="chevron-forward" size={24} color={currentTheme === 'light' ? Colors.black : Colors.white} />
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        style={[styles.taskCard, styles.supportCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}
+                        style={[styles.taskCard, styles.supportCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.gray800 }]}
                         onPress={() => Linking.openURL('tel:+254742560540')}
                         activeOpacity={0.7}
                     >
@@ -404,7 +355,7 @@ export default function HomeScreen() {
                         </View>
                         <View style={styles.taskTextContainer}>
                             <Text style={[styles.taskTitle, styles.supportTitle]}>Need Help?</Text>
-                            <Text style={[styles.taskDescription, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole='text' accessibilityLabel='Get assistance with your account or app usage'>
+                            <Text style={[styles.taskDescription, { color: currentTheme === 'light' ? Colors.gray700 : Colors.gray300 }]} accessibilityRole='text' accessibilityLabel='Get assistance with your account or app usage'>
                                 Contact our support team to get assistance with your account or app usage.
                             </Text>
                         </View>
@@ -422,7 +373,7 @@ export default function HomeScreen() {
                         {quickActions.map((action) => (
                             <TouchableOpacity
                                 key={action.id}
-                                style={[styles.quickActionCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}
+                                style={[styles.quickActionCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.gray800 }]}
                                 onPress={() => action.route ? router.push(action.route as any) : action.action?.()}
                                 accessible={true}
                                 accessibilityLabel={action.title}
@@ -454,7 +405,7 @@ export default function HomeScreen() {
                         {serviceCategories.map((service) => (
                             <TouchableOpacity
                                 key={service.id}
-                                style={[styles.serviceCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}
+                                style={[styles.serviceCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.gray800 }]}
                                 onPress={() => router.push(service.route as any)}
                                 accessible={true}
                                 accessibilityRole="button"
@@ -467,7 +418,7 @@ export default function HomeScreen() {
                                 <Text style={[styles.serviceTitle, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole='text' accessibilityLabel={service.title}>
                                     {service.title}
                                 </Text>
-                                <Text style={[styles.serviceDescription, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole='text' accessibilityLabel={service.description}>
+                                <Text style={[styles.serviceDescription, { color: currentTheme === 'light' ? Colors.gray700 : Colors.gray300 }]} accessibilityRole='text' accessibilityLabel={service.description}>
                                     {service.description}
                                 </Text>
                             </TouchableOpacity>
@@ -481,7 +432,7 @@ export default function HomeScreen() {
                         <Text style={[styles.sectionTitle, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole='header' accessibilityLabel='Care Network'>
                             Care Network
                         </Text>
-                        <View style={[styles.careNetworkCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}>
+                        <View style={[styles.careNetworkCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.gray800 }]} accessible={true} accessibilityLabel='Care Network Card'>
                             {userProfile.careRelationships.length > 0 && userProfile.careRelationships.map((rel, idx) => (
                                 <View
                                     key={rel.id || rel.name || idx}
@@ -494,12 +445,13 @@ export default function HomeScreen() {
                                                     ? 1
                                                     : 0,
                                         },
+                                        { borderBottomColor: currentTheme === 'light' ? Colors.borderLight : Colors.borderDark },
                                     ]}
                                     accessible={true}
                                     accessibilityLabel={`Caregiver Card: ${rel.name}`}
                                 >
                                     <View style={styles.careContactInfo}>
-                                        <Ionicons name="people" size={20} color={Colors.secondary} />
+                                        <Ionicons name="people" size={20} color={Colors.blue} />
                                         <View style={styles.careContactText}>
                                             <Text
                                                 style={[
@@ -514,7 +466,7 @@ export default function HomeScreen() {
                                             <Text
                                                 style={[
                                                     styles.careContactRole,
-                                                    { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray },
+                                                    { color: currentTheme === 'light' ? Colors.gray700 : Colors.gray300 },
                                                 ]}
                                                 accessibilityRole="text"
                                                 accessibilityLabel={rel.isPrimary ? 'Primary Caregiver' : 'Caregiver'}
@@ -530,7 +482,7 @@ export default function HomeScreen() {
                                             accessibilityRole="button"
                                             accessibilityLabel={`Call ${rel.name}`}
                                         >
-                                            <Ionicons name="call" size={18} color={Colors.primary} />
+                                            <Ionicons name="call" size={18} color={Colors.blue} />
                                         </TouchableOpacity>
                                         <TouchableOpacity
                                             style={styles.careContactButton}
@@ -538,7 +490,7 @@ export default function HomeScreen() {
                                             accessibilityRole="button"
                                             accessibilityLabel={`Message ${rel.name}`}
                                         >
-                                            <Ionicons name="chatbubble" size={18} color={Colors.secondary} />
+                                            <Ionicons name="chatbubble" size={18} color={Colors.blue} />
                                         </TouchableOpacity>
                                     </View>
                                 </View>
@@ -547,12 +499,12 @@ export default function HomeScreen() {
                             {userProfile.emergencyContacts.find(contact => contact.isPrimary) && (
                                 <View style={[styles.careContact, { borderBottomWidth: userProfile.careRelationships.length > 1 ? 1 : 0 }]} accessible={true} accessibilityLabel='Emergency Contact Card'>
                                     <View style={styles.careContactInfo}>
-                                        <Ionicons name="warning" size={24} color={Colors.error} />
+                                        <Ionicons name="warning" size={24} color={Colors.red} />
                                         <View style={styles.careContactText}>
                                             <Text style={[styles.careContactName, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole='text' accessibilityLabel={`Emergency Contact: ${userProfile.emergencyContacts.find(contact => contact.isPrimary)?.name}`}>
                                                 {userProfile.emergencyContacts.find(contact => contact.isPrimary)?.name}
                                             </Text>
-                                            <Text style={[styles.careContactRole, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole='text' accessibilityLabel='Emergency Contact'>
+                                            <Text style={[styles.careContactRole, { color: currentTheme === 'light' ? Colors.gray700 : Colors.gray300 }]} accessibilityRole='text' accessibilityLabel='Emergency Contact'>
                                                 Emergency Contact
                                             </Text>
                                         </View>
@@ -578,13 +530,13 @@ export default function HomeScreen() {
                             onPress={() => setCalendarViewMode(calendarViewMode === 'week' ? 'month' : 'week')}
                             style={styles.viewToggle}
                         >
-                            <Text style={[styles.viewToggleText, { color: Colors.primary }]}>
+                            <Text style={[styles.viewToggleText, { color: Colors.blue }]}>
                                 {calendarViewMode === 'week' ? 'Month' : 'Week'}
                             </Text>
                         </TouchableOpacity>
                     </View>
 
-                    <View style={[styles.calendarContainer, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}>
+                    <View style={[styles.calendarContainer, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.gray800 }]}>
                         <View style={styles.calendarHeader}>
                             <Text style={[styles.calendarTitle, { color: currentTheme === 'light' ? Colors.black : Colors.white }]}>
                                 {formatMonthYear(new Date())}
@@ -592,10 +544,10 @@ export default function HomeScreen() {
                         </View>
 
                         <View style={styles.simplifiedCalendar}>
-                            <Text style={[styles.calendarPlaceholder, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]}>
+                            <Text style={[styles.calendarPlaceholder, { color: currentTheme === 'light' ? Colors.gray700 : Colors.gray300 }]}>
                                 📅 Calendar View
                             </Text>
-                            <Text style={[styles.calendarNote, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]}>
+                            <Text style={[styles.calendarNote, { color: currentTheme === 'light' ? Colors.gray700 : Colors.gray300 }]}>
                                 Interactive calendar coming soon
                             </Text>
                         </View>
@@ -771,7 +723,6 @@ const styles = StyleSheet.create({
     },
     greeting: {
         fontSize: 14,
-        color: Colors.accent,
         marginBottom: 4,
     },
     userName: {
@@ -787,7 +738,6 @@ const styles = StyleSheet.create({
     },
     completenessLabel: {
         fontSize: 14,
-        color: Colors.accent,
         marginBottom: 8,
     },
     completenessContainer: {
@@ -797,13 +747,12 @@ const styles = StyleSheet.create({
     progressBar: {
         flex: 1,
         height: 8,
-        backgroundColor: Colors.lightGray,
         borderRadius: 4,
         marginRight: 12,
     },
     progressFill: {
         height: '100%',
-        backgroundColor: Colors.primary,
+        backgroundColor: Colors.blue,
         borderRadius: 4,
     },
     completenessPercentage: {
@@ -852,12 +801,12 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         paddingVertical: 6,
         borderRadius: 6,
-        backgroundColor: `${Colors.primary}20`,
+        backgroundColor: `${Colors.blue}20`,
     },
     viewToggleText: {
         fontSize: 14,
         fontWeight: '600',
-        color: Colors.primary,
+        color: Colors.blue,
     },
     calendarContainer: {
         borderRadius: 12,
@@ -894,7 +843,6 @@ const styles = StyleSheet.create({
     },
     calendarNote: {
         fontSize: 14,
-        color: Colors.accent,
     },
     appointmentsList: {
         gap: 12,
@@ -929,12 +877,10 @@ const styles = StyleSheet.create({
     },
     appointmentDetails: {
         fontSize: 14,
-        color: Colors.accent,
         marginBottom: 2,
     },
     appointmentLocation: {
         fontSize: 12,
-        color: Colors.accent,
     },
     emptyAppointments: {
         alignItems: 'center',
@@ -942,7 +888,6 @@ const styles = StyleSheet.create({
     },
     emptyAppointmentsText: {
         fontSize: 16,
-        color: Colors.accent,
         marginTop: 8,
     },
     addAppointmentButton: {
@@ -971,7 +916,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingVertical: 12,
         borderBottomWidth: 1,
-        borderBottomColor: Colors.lightGray,
+        // borderBottomColor: Colors.borderDark,
     },
     careContactInfo: {
         flexDirection: 'row',
@@ -990,7 +935,6 @@ const styles = StyleSheet.create({
     },
     careContactRole: {
         fontSize: 14,
-        color: Colors.accent,
     },
     careContactActions: {
         flexDirection: 'row',
@@ -1004,7 +948,7 @@ const styles = StyleSheet.create({
     emergencyButton: {
         padding: 8,
         borderRadius: 6,
-        backgroundColor: Colors.error,
+        backgroundColor: Colors.red,
     },
     servicesGrid: {
         flexDirection: 'row',
@@ -1048,7 +992,6 @@ const styles = StyleSheet.create({
     },
     serviceDescription: {
         fontSize: 12,
-        color: Colors.accent,
         textAlign: 'center',
     },
     seeAllText: {
