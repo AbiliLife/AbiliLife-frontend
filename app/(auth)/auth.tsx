@@ -67,6 +67,17 @@ export default function AuthScreen() {
         }
         setActiveTab(tab);
         setErrors({});
+        // Todo: Clear form fields when switching tabs if needed
+        if (tab === 'login') {
+            setLoginEmail('');
+            setLoginPassword('');
+        } else {
+            setEmail('');
+            setNewPassword('');
+            setConfirmPassword('');
+            setPhone('');
+            setFullName('');
+        }
     };
 
     // Validate a single field
@@ -82,6 +93,12 @@ export default function AuthScreen() {
                 if (!value.trim()) error = 'Full name is required';
                 break;
             case 'email':
+                if (!value.trim()) {
+                    error = 'Email is required';
+                } else if (!emailRegex.test(value)) {
+                    error = 'Invalid email address';
+                }
+                break;
             case 'loginEmail':
                 if (!value.trim()) {
                     error = 'Email is required';
@@ -147,19 +164,6 @@ export default function AuthScreen() {
         validateField,
     ]);
 
-    // Apply validation on every field change
-    // useEffect(() => {
-    //     if (activeTab === 'login') {
-    //         validateField('loginEmail', loginEmail);
-    //         validateField('loginPassword', loginPassword);
-    //     } else {
-    //         validateField('fullName', fullName);
-    //         validateField('email', email);
-    //         validateField('phone', phone);
-    //         validateField('newPassword', newPassword);
-    //         validateField('confirmPassword', confirmPassword);
-    //     }
-    // }, [activeTab, loginEmail, loginPassword, fullName, email, phone, newPassword, confirmPassword]);
 
     const handleLogin = async () => {
         // 1. Validate all fields
@@ -294,15 +298,15 @@ export default function AuthScreen() {
         >
             <BetaBadge />
 
-            <View style={[styles.tabContainer, { backgroundColor: currentTheme === 'light' ? Colors.lightGray : Colors.mediumGray }]} accessible={true}>
+            <View style={[styles.tabContainer, { backgroundColor: currentTheme === 'light' ? Colors.gray200 : Colors.gray600 }]} accessible={true}>
                 <TouchableOpacity
                     style={[
                         styles.tab,
                         {
                             backgroundColor:
                                 activeTab === 'login'
-                                    ? (currentTheme === 'light' ? Colors.white : Colors.darkGray)
-                                    : (currentTheme === 'light' ? Colors.lightGray : Colors.mediumGray),
+                                    ? (currentTheme === 'light' ? Colors.white : Colors.gray800)
+                                    : (currentTheme === 'light' ? Colors.gray200 : Colors.gray600),
                         },
                     ]}
                     onPress={() => handleTabChange('login')}
@@ -316,7 +320,7 @@ export default function AuthScreen() {
                             styles.tabText,
                             activeTab === 'login'
                                 ? (currentTheme === 'light' ? styles.activeTabText : { color: Colors.white })
-                                : { color: currentTheme === 'light' ? Colors.primary : Colors.lightGray },
+                                : { color: currentTheme === 'light' ? Colors.primary : Colors.gray300 },
                         ]}
                     >
                         Log In
@@ -328,8 +332,8 @@ export default function AuthScreen() {
                         {
                             backgroundColor:
                                 activeTab === 'signup'
-                                    ? (currentTheme === 'light' ? Colors.white : Colors.darkGray)
-                                    : (currentTheme === 'light' ? Colors.lightGray : Colors.mediumGray),
+                                    ? (currentTheme === 'light' ? Colors.white : Colors.gray800)
+                                    : (currentTheme === 'light' ? Colors.gray200 : Colors.gray600),
                         },
                     ]}
                     onPress={() => handleTabChange('signup')}
@@ -343,7 +347,7 @@ export default function AuthScreen() {
                             styles.tabText,
                             activeTab === 'signup'
                                 ? (currentTheme === 'light' ? styles.activeTabText : { color: Colors.white })
-                                : { color: currentTheme === 'light' ? Colors.primary : Colors.lightGray },
+                                : { color: currentTheme === 'light' ? Colors.primary : Colors.gray300 },
                         ]}
                     >
                         Sign Up
@@ -355,7 +359,7 @@ export default function AuthScreen() {
                 <Text style={[styles.title, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole="header" accessibilityLabel={activeTab === 'login' ? "Welcome Back!" : "Create an Account"}>
                     {activeTab === 'login' ? "Welcome Back!" : "Create an Account"}
                 </Text>
-                <Text style={[styles.subtitle, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel={activeTab === 'login' ? "Enter your credentials to access your account." : "Fill in the details to create a new account."}>
+                <Text style={[styles.subtitle, { color: currentTheme === 'light' ? Colors.gray700 : Colors.gray300 }]} accessibilityRole="text" accessibilityLabel={activeTab === 'login' ? "Enter your credentials to access your account." : "Fill in the details to create a new account."}>
                     {activeTab === 'login'
                         ? "Enter your credentials to access your account."
                         : "Fill in the details to create a new account."}
@@ -559,7 +563,7 @@ export default function AuthScreen() {
 
                 </ScrollView>
 
-                <View style={[styles.footer, { borderTopColor: currentTheme === 'light' ? Colors.lightGray : Colors.darkGray }]}>
+                <View style={[styles.footer, { borderTopColor: currentTheme === 'light' ? Colors.borderLight : Colors.borderDark }]}>
                     <Button
                         title={activeTab === 'login' ? "Log In" : "Sign Up"}
                         onPress={activeTab === 'login' ? handleLogin : handleSignup}
@@ -666,12 +670,10 @@ const styles = StyleSheet.create({
     },
     subtitle: {
         fontSize: 16,
-        color: Colors.accent,
     },
     tabContainer: {
         flexDirection: 'row',
         borderRadius: 12,
-        backgroundColor: Colors.lightGray,
         padding: 4,
         marginVertical: 32,
         marginHorizontal: 16,
