@@ -7,7 +7,7 @@ import { jwtDecode } from "jwt-decode";
 import { getToken, saveToken, deleteToken } from '@/lib/storage';
 
 // Types
-import { AuthContextType, AuthResponse, LoginRequest, OTPRequest, OTPSuccessResponse, OTPVerification, SignUpRequest, User } from '@/types/auth';
+import { AuthContextType, AuthResponse, LoginRequest, OTPRequest, OTPResponse, OTPVerification, SignUpRequest, User } from '@/types/auth';
 
 // Auth Hooks
 import { useLogin, useSignup, useSendOTP, useVerifyOTP } from '@/hooks/useAuthHooks';
@@ -169,9 +169,10 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
         setUserData(null);
         setAuthToken(null);
         await deleteToken('idToken');
+        // TODO: FUTURE - Invalidate token on server side if applicable
     };
 
-    const requestOTP = async (data: OTPRequest): Promise<OTPSuccessResponse> => {
+    const requestOTP = async (data: OTPRequest): Promise<OTPResponse> => {
         try {
             setIsAuthLoading(true);
             const responseData = await useSendOTP(data);
@@ -181,14 +182,14 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
                 return {
                     success: false,
                     message: responseData.message || 'Request OTP failed',
-                    verificationId: ''
+                    // verificationId: ''
                 };
             }
         } catch (error: any) {
             return {
                 success: false,
                 message: error?.message || 'Request OTP error',
-                verificationId: ''
+                // verificationId: ''
             };
         } finally {
             setIsAuthLoading(false);
