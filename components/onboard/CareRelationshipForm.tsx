@@ -91,7 +91,7 @@ const CareRelationshipForm: React.FC<Props> = ({
             <Text style={[styles.sectionTitle, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole="header" accessibilityLabel="Caregiver Network">
                 Caregiver Network
             </Text>
-            <Text style={[styles.sectionSubtitle, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel="Add people who can help you book rides and make decisions on your behalf">
+            <Text style={[styles.sectionSubtitle, { color: currentTheme === 'light' ? Colors.gray700 : Colors.gray300 }]} accessibilityRole="text" accessibilityLabel="Add people who can help you book rides and make decisions on your behalf">
                 Add people who can help you book rides and make decisions on your behalf {`\n`}
                 <Text style={{ color: Colors.info, fontWeight: 'bold' }} accessibilityRole="text" accessibilityLabel="Note: It is recommended to have at least one primary contact who can book rides for you">
                     Note: It is recommended to have at least one primary contact who can book rides for you.
@@ -101,8 +101,8 @@ const CareRelationshipForm: React.FC<Props> = ({
             {/* Existing Relationships */}
             {relationships.map((relationship) => (
                 <View key={relationship.id} style={[styles.relationshipCard, {
-                    backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray,
-                    borderColor: relationship.isPrimary ? Colors.primary : Colors.lightGray
+                    backgroundColor: currentTheme === 'light' ? Colors.white : Colors.gray800,
+                    borderColor: relationship.isPrimary ? Colors.secondary : Colors.borderDark,
                 }]} accessible={true}>
                     <View style={styles.relationshipHeader}>
                         <View style={styles.relationshipInfo}>
@@ -110,12 +110,12 @@ const CareRelationshipForm: React.FC<Props> = ({
                                 {relationship.name}
                             </Text>
 
-                            <Text style={[styles.relationshipDetails, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel={`Relationship type: ${relationship.relationship}, Phone: ${relationship.phone}`}>
+                            <Text style={[styles.relationshipDetails, { color: currentTheme === 'light' ? Colors.gray700 : Colors.gray500 }]} accessibilityRole="text" accessibilityLabel={`Relationship type: ${relationship.relationship}, Phone: ${relationship.phone}`}>
                                 {relationship.relationship} • {relationship.phone}
                             </Text>
 
                             {relationship.email && (
-                                <Text style={[styles.relationshipDetails, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel={`Email: ${relationship.email}`}>
+                                <Text style={[styles.relationshipDetails, { color: currentTheme === 'light' ? Colors.gray700 : Colors.gray500 }]} accessibilityRole="text" accessibilityLabel={`Email: ${relationship.email}`}>
                                     {relationship.email}
                                 </Text>
                             )}
@@ -127,7 +127,7 @@ const CareRelationshipForm: React.FC<Props> = ({
                             accessibilityLabel={`Remove ${relationship.name} from care network`}
                             accessibilityHint='This will delete the contact from your care network.'
                         >
-                            <Ionicons name="trash-outline" size={20} color={Colors.error} />
+                            <Ionicons name="trash-outline" size={20} color={Colors.red} />
                         </TouchableOpacity>
                     </View>
 
@@ -151,8 +151,8 @@ const CareRelationshipForm: React.FC<Props> = ({
                             <Switch
                                 value={relationship.canBookForMe}
                                 onValueChange={(value) => toggleBookingPermission(relationship.id, value)}
-                                trackColor={{ false: Colors.lightGray, true: Colors.primary }}
-                                thumbColor={relationship.canBookForMe ? Colors.white : Colors.mediumGray}
+                                trackColor={{ false: Colors.gray300, true: Colors.secondary }}
+                                thumbColor={Colors.white}
                                 accessibilityRole="switch"
                                 accessibilityLabel={`Toggle booking permission for ${relationship.name}`}
                             />
@@ -176,7 +176,7 @@ const CareRelationshipForm: React.FC<Props> = ({
                 accessibilityHint='This is a formsheet to add a new caregiver contact.'
             >
                 <View style={[styles.modalContainer, { backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer }]}>
-                    <View style={styles.modalHeader}>
+                    <View style={[styles.modalHeader, { borderBottomColor: currentTheme === 'light' ? Colors.borderLight : Colors.borderDark }]}>
                         <Text style={[styles.modalTitle, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole="header" accessibilityLabel="Add Caregiver Contact">
                             Add Caregiver Contact
                         </Text>
@@ -250,8 +250,8 @@ const CareRelationshipForm: React.FC<Props> = ({
                             <Switch
                                 value={newRelationship.canBookForMe}
                                 onValueChange={(value) => setNewRelationship(prev => ({ ...prev, canBookForMe: value }))}
-                                trackColor={{ false: Colors.lightGray, true: Colors.secondary }}
-                                thumbColor={newRelationship.canBookForMe ? Colors.white : Colors.mediumGray}
+                                trackColor={{ false: Colors.gray300, true: Colors.secondary }}
+                                thumbColor={Colors.white}
                                 accessible={true}
                                 accessibilityState={{ checked: newRelationship.canBookForMe }}
                                 accessibilityRole="switch"
@@ -335,14 +335,14 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         paddingVertical: 6,
         borderRadius: 6,
-        backgroundColor: Colors.lightGray,
+        backgroundColor: Colors.gray500,
     },
     primaryButtonActive: {
-        backgroundColor: Colors.primary,
+        backgroundColor: Colors.secondary,
     },
     primaryButtonText: {
         fontSize: 12,
-        color: Colors.accent,
+        color: Colors.gray900,
     },
     primaryButtonTextActive: {
         color: Colors.white,
@@ -383,10 +383,10 @@ const styles = StyleSheet.create({
         marginHorizontal: 8,
     },
     cancelButton: {
-        backgroundColor: Colors.lightGray,
+        backgroundColor: Colors.gray300,
     },
     cancelButtonText: {
-        color: Colors.accent,
+        color: Colors.gray900,
     },
     addButton: {
         backgroundColor: Colors.secondary,
@@ -405,7 +405,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingBottom: 20,
         borderBottomWidth: 1,
-        borderBottomColor: Colors.lightGray,
     },
     modalTitle: {
         fontSize: 20,

@@ -87,9 +87,9 @@ const StepIndicator: React.FC<Props> = ({ steps, currentStep, completedSteps, cu
                 };
             case 'current':
                 return {
-                    backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray,
-                    borderColor: Colors.primary,
-                    borderWidth: 3,
+                    backgroundColor: currentTheme === 'light' ? Colors.white : Colors.gray800,
+                    borderColor: currentTheme === 'light' ? Colors.borderLight : Colors.white,
+                    borderWidth: 2,
                     shadowColor: Colors.primary,
                     shadowOffset: { width: 0, height: 4 },
                     shadowOpacity: 0.4,
@@ -98,8 +98,8 @@ const StepIndicator: React.FC<Props> = ({ steps, currentStep, completedSteps, cu
                 };
             default:
                 return {
-                    backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray,
-                    borderColor: Colors.lightGray,
+                    backgroundColor: currentTheme === 'light' ? Colors.white : Colors.gray800,
+                    borderColor: Colors.gray400,
                     borderWidth: 2,
                 };
         }
@@ -110,9 +110,9 @@ const StepIndicator: React.FC<Props> = ({ steps, currentStep, completedSteps, cu
             case 'completed':
                 return Colors.white;
             case 'current':
-                return Colors.primary;
+                return currentTheme === 'light' ? Colors.primary : Colors.white;
             default:
-                return Colors.lightGray;
+                return Colors.gray300;
         }
     };
 
@@ -120,7 +120,7 @@ const StepIndicator: React.FC<Props> = ({ steps, currentStep, completedSteps, cu
         <View style={styles.container}>
             {/* Animated Progress Bar */}
             <View style={styles.progressBarContainer}>
-                <View style={[styles.progressBar, { backgroundColor: currentTheme === 'light' ? Colors.lightGray : Colors.mediumGray }]} accessible={true} accessibilityRole="progressbar" accessibilityLabel={`Onboarding progress: ${currentStep} of ${steps.length}`}>
+                <View style={[styles.progressBar, { backgroundColor: currentTheme === 'light' ? Colors.gray700 : Colors.gray300 }]} accessible={true} accessibilityRole="progressbar" accessibilityLabel={`Onboarding progress: ${currentStep} of ${steps.length}`}>
                     <Animated.View
                         style={[
                             styles.progressFill,
@@ -134,7 +134,7 @@ const StepIndicator: React.FC<Props> = ({ steps, currentStep, completedSteps, cu
                         ]}
                     />
                 </View>
-                <Text style={[styles.progressText, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole='text' accessibilityLabel={`Step ${currentStep} of ${steps.length}`}>
+                <Text style={[styles.progressText, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole='text' accessibilityLabel={`Step ${currentStep} of ${steps.length}`}>
                     Step {currentStep} of {steps.length}
                 </Text>
             </View>
@@ -188,10 +188,10 @@ const StepIndicator: React.FC<Props> = ({ steps, currentStep, completedSteps, cu
                                         styles.stepTitle,
                                         {
                                             color: status === 'current'
-                                                ? Colors.primary
+                                                ? Colors.white
                                                 : status === 'completed'
-                                                    ? Colors.primary
-                                                    : currentTheme === 'light' ? Colors.accent : Colors.lightGray,
+                                                    ? Colors.white
+                                                    : currentTheme === 'light' ? Colors.gray600 : Colors.gray400,
                                             fontWeight: status === 'current' ? 'bold' : '600',
                                             fontSize: status === 'current' ? 14 : 12,
                                         }
@@ -206,7 +206,7 @@ const StepIndicator: React.FC<Props> = ({ steps, currentStep, completedSteps, cu
                                         <Animated.View style={{ opacity: scaleAnimations[index] }}>
                                             <Text style={[
                                                 styles.stepDescription,
-                                                { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }
+                                                { color: currentTheme === 'light' ? Colors.gray600 : Colors.gray400 }
                                             ]}
                                                 accessibilityRole='text'
                                                 accessibilityLabel={step.description}

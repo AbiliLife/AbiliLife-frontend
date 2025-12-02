@@ -96,7 +96,7 @@ const EmergencyContactForm: React.FC<Props> = ({
             <Text style={[styles.sectionTitle, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole='header' accessibilityLabel='Emergency Contacts'>
                 Emergency Contacts
             </Text>
-            <Text style={[styles.sectionSubtitle, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole='text' accessibilityLabel='Add people who should be contacted in case of emergencies'>
+            <Text style={[styles.sectionSubtitle, { color: currentTheme === 'light' ? Colors.gray700 : Colors.gray300 }]} accessibilityRole='text' accessibilityLabel='Add people who should be contacted in case of emergencies'>
                 Add people who should be contacted in case of emergencies {`\n`}
                 <Text style={{ color: Colors.info, fontWeight: 'bold' }} accessibilityRole="text" accessibilityLabel="Note: At least one primary contact is required">
                     Note: It is important to have at least one primary contact who can be reached in case of emergencies.
@@ -106,8 +106,8 @@ const EmergencyContactForm: React.FC<Props> = ({
             {/* Existing Contacts */}
             {contacts.map((contact) => (
                 <View key={contact.id} style={[styles.contactCard, {
-                    backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray,
-                    borderColor: contact.isPrimary ? Colors.primary : Colors.lightGray
+                    backgroundColor: currentTheme === 'light' ? Colors.white : Colors.gray800,
+                    borderColor: contact.isPrimary ? Colors.secondary : Colors.borderDark
                 }]}>
                     <View style={styles.contactHeader}>
                         <View style={styles.contactInfo}>
@@ -115,12 +115,12 @@ const EmergencyContactForm: React.FC<Props> = ({
                                 {contact.name}
                             </Text>
 
-                            <Text style={[styles.contactDetails, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole='text' accessibilityLabel={`Relationship: ${contact.relationship}, Phone: ${contact.phone}`}>
+                            <Text style={[styles.contactDetails, { color: currentTheme === 'light' ? Colors.gray700 : Colors.gray500 }]} accessibilityRole='text' accessibilityLabel={`Relationship: ${contact.relationship}, Phone: ${contact.phone}`}>
                                 {contact.relationship} • {contact.phone}
                             </Text>
 
                             {contact.email && (
-                                <Text style={[styles.contactDetails, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole='text' accessibilityLabel={`Email: ${contact.email}`}>
+                                <Text style={[styles.contactDetails, { color: currentTheme === 'light' ? Colors.gray700 : Colors.gray500 }]} accessibilityRole='text' accessibilityLabel={`Email: ${contact.email}`}>
                                     {contact.email}
                                 </Text>
                             )}
@@ -132,7 +132,7 @@ const EmergencyContactForm: React.FC<Props> = ({
                             accessibilityLabel={`Remove contact ${contact.name} from emergency contacts`}
                             accessibilityHint='This will remove the contact from your emergency contacts list'
                         >
-                            <Ionicons name="trash-outline" size={20} color={Colors.error} />
+                            <Ionicons name="trash-outline" size={20} color={Colors.red} />
                         </TouchableOpacity>
                     </View>
                     <View style={styles.contactActions}>
@@ -173,8 +173,8 @@ const EmergencyContactForm: React.FC<Props> = ({
                 accessibilityLabel="Add Emergency Contact"
                 accessibilityHint='This is a formsheet for adding emergency contacts'
             >
-                <View style={[styles.modalContainer, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}>
-                    <View style={styles.modalHeader}>
+                <View style={[styles.modalContainer, { backgroundColor: currentTheme === 'light' ? Colors.lightContainer : Colors.darkContainer  }]}>
+                    <View style={[styles.modalHeader, { borderBottomColor: currentTheme === 'light' ? Colors.borderLight : Colors.borderDark }]}>
                         <Text style={[styles.modalTitle, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole="header" accessibilityLabel="Add Emergency Contact">
                             Add Emergency Contact
                         </Text>
@@ -252,8 +252,8 @@ const EmergencyContactForm: React.FC<Props> = ({
                             <Switch
                                 value={newContact.isPrimary}
                                 onValueChange={(value) => setNewContact(prev => ({ ...prev, isPrimary: value }))}
-                                trackColor={{ false: Colors.lightGray, true: Colors.secondary }}
-                                thumbColor={newContact.isPrimary ? Colors.white : Colors.mediumGray}
+                                trackColor={{ false: Colors.gray300, true: Colors.secondary }}
+                                thumbColor={Colors.white}
                                 accessible={true}
                                 accessibilityState={{ checked: newContact.isPrimary }}
                                 accessibilityRole="switch"
@@ -330,15 +330,15 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         paddingVertical: 6,
         borderRadius: 6,
-        backgroundColor: Colors.lightGray,
+        backgroundColor: Colors.gray500,
         marginBottom: 8,
     },
     primaryButtonActive: {
-        backgroundColor: Colors.primary,
+        backgroundColor: Colors.secondary,
     },
     primaryButtonText: {
         fontSize: 12,
-        color: Colors.accent,
+        color: Colors.gray900,
     },
     primaryButtonTextActive: {
         color: Colors.white,
@@ -374,10 +374,10 @@ const styles = StyleSheet.create({
         marginHorizontal: 8,
     },
     cancelButton: {
-        backgroundColor: Colors.lightGray,
+        backgroundColor: Colors.gray300,
     },
     cancelButtonText: {
-        color: Colors.accent,
+        color: Colors.gray900,
     },
     addButton: {
         backgroundColor: Colors.secondary,
@@ -396,7 +396,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingBottom: 20,
         borderBottomWidth: 1,
-        borderBottomColor: Colors.lightGray,
     },
     modalTitle: {
         fontSize: 20,

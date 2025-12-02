@@ -114,7 +114,7 @@ const Welcome = () => {
                             <Text style={[styles.title, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole='header' accessibilityLabel={slide.title}>
                                 {slide.title}
                             </Text>
-                            <Text style={[styles.subtitle, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole='text' accessibilityLabel={slide.subtitle}>
+                            <Text style={[styles.subtitle, { color: currentTheme === 'light' ? Colors.gray700 : Colors.gray300 }]} accessibilityRole='text' accessibilityLabel={slide.subtitle}>
                                 {slide.subtitle}
                             </Text>
                         </View>

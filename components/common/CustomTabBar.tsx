@@ -51,14 +51,14 @@ export default function CustomTabBar({
                             name={tab.icon as any}
                             size={tab.huge ? 40 : 28}
                             color={
-                                isFocused ? currentTheme === 'light' ? Colors.secondary : Colors.white : Colors.mediumGray
+                                isFocused ? currentTheme === 'light' ? Colors.secondary : Colors.white : Colors.gray600
                             }
                         />
                         <Text
                             style={[
                                 styles.label,
                                 tab.huge && styles.hugeLabel,
-                                { color: isFocused ? (currentTheme === 'light' ? Colors.secondary : Colors.white) : Colors.mediumGray },
+                                { color: isFocused ? (currentTheme === 'light' ? Colors.secondary : Colors.white) : Colors.gray600 },
                             ]}
                             numberOfLines={1}
                             accessibilityRole='text'
@@ -94,7 +94,6 @@ const styles = StyleSheet.create({
     label: {
         fontSize: 12,
         marginTop: 4,
-        color: Colors.mediumGray,
         fontWeight: '500',
         textAlign: 'center',
     },

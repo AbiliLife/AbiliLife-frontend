@@ -334,7 +334,7 @@ export default function ProfileSetupScreen() {
             <Text style={[styles.stepTitle, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole="header" accessibilityLabel="Basic Information">
                 Basic Information
             </Text>
-            <Text style={[styles.stepSubtitle, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel="Let's start with some basic information about you.">
+            <Text style={[styles.stepSubtitle, { color: currentTheme === 'light' ? Colors.gray700 : Colors.gray300 }]} accessibilityRole="text" accessibilityLabel="Let's start with some basic information about you.">
                 Let's start with some basic information about you
             </Text>
 
@@ -366,8 +366,10 @@ export default function ProfileSetupScreen() {
                         accessibilityLabel="Take photo"
                         accessibilityHint='Opens camera to take a new profile picture'
                     >
-                        <Ionicons name="camera" size={20} color={Colors.primary} />
-                        <Text style={styles.pictureActionText}>Camera</Text>
+                        <Ionicons name="camera" size={20} color={currentTheme === 'light' ? Colors.primary : Colors.white} />
+                        <Text style={[styles.pictureActionText, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole='text' accessibilityLabel="Camera">
+                            Camera
+                        </Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={styles.pictureActionButton}
@@ -377,8 +379,10 @@ export default function ProfileSetupScreen() {
                         accessibilityLabel="Choose from gallery"
                         accessibilityHint='Opens gallery to select a profile picture'
                     >
-                        <Ionicons name="images" size={20} color={Colors.primary} />
-                        <Text style={styles.pictureActionText}>Gallery</Text>
+                        <Ionicons name="images" size={20} color={currentTheme === 'light' ? Colors.primary : Colors.white} />
+                        <Text style={[styles.pictureActionText, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole='text' accessibilityLabel="Gallery">
+                            Gallery
+                        </Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -446,7 +450,7 @@ export default function ProfileSetupScreen() {
                         {errors.disabilities}
                     </Text>
                 )}
-                <Text style={[styles.sectionSubtitle, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel="Select all that apply to you">
+                <Text style={[styles.sectionSubtitle, { color: currentTheme === 'light' ? Colors.gray600 : Colors.gray400 }]} accessibilityRole="text" accessibilityLabel="Select all that apply to you">
                     Select all that apply to you
                 </Text>
 
@@ -560,12 +564,12 @@ export default function ProfileSetupScreen() {
             <Text style={[styles.stepTitle, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole="header" accessibilityLabel="Profile Review">
                 Profile Review
             </Text>
-            <Text style={[styles.stepSubtitle, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel="Review your profile information before completing setup">
+            <Text style={[styles.stepSubtitle, { color: currentTheme === 'light' ? Colors.gray600 : Colors.gray400 }]} accessibilityRole="text" accessibilityLabel="Review your profile information before completing setup">
                 Review your profile information before completing setup
             </Text>
 
             {/* Profile Completeness */}
-            <View style={[styles.reviewSection, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}>
+            <View style={[styles.reviewSection, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.gray800 }]}>
                 <Text style={[styles.reviewTitle, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole="header" accessibilityLabel="Profile Completeness">
                     Profile Completeness
                 </Text>
@@ -580,35 +584,35 @@ export default function ProfileSetupScreen() {
             </View>
 
             {/* Basic Info Summary */}
-            <View style={[styles.reviewSection, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}>
+            <View style={[styles.reviewSection, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.gray800 }]}>
                 <Text style={[styles.reviewTitle, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole="header" accessibilityLabel="Basic Information">
                     Basic Information
                 </Text>
-                <Text style={[styles.reviewItem, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel={`Full Name: ${fullName || 'Not provided'}`}>
+                <Text style={[styles.reviewItem, { color: currentTheme === 'light' ? Colors.gray600 : Colors.gray400 }]} accessibilityRole="text" accessibilityLabel={`Full Name: ${fullName || 'Not provided'}`}>
                     Name: {fullName || 'Not provided'}
                 </Text>
-                <Text style={[styles.reviewItem, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel={`Role: ${role}`}>
+                <Text style={[styles.reviewItem, { color: currentTheme === 'light' ? Colors.gray600 : Colors.gray400 }]} accessibilityRole="text" accessibilityLabel={`Role: ${role}`}>
                     Role: {role}
                 </Text>
-                <Text style={[styles.reviewItem, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel={`Disabilities: ${selectedDisabilities?.join(', ') || 'None selected'}`}>
+                <Text style={[styles.reviewItem, { color: currentTheme === 'light' ? Colors.gray600 : Colors.gray400 }]} accessibilityRole="text" accessibilityLabel={`Disabilities: ${selectedDisabilities?.join(', ') || 'None selected'}`}>
                     Disabilities: {selectedDisabilities?.join(', ') || 'None selected'}
                 </Text>
-                <Text style={[styles.reviewItem, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel={`Preferred contact: ${preferredContact}`}>
+                <Text style={[styles.reviewItem, { color: currentTheme === 'light' ? Colors.gray600 : Colors.gray400 }]} accessibilityRole="text" accessibilityLabel={`Preferred contact: ${preferredContact}`}>
                     Preferred contact: {preferredContact}
                 </Text>
-                <Text style={[styles.reviewItem, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel={`Preferred language: ${preferredLanguage}`}>
+                <Text style={[styles.reviewItem, { color: currentTheme === 'light' ? Colors.gray600 : Colors.gray400 }]} accessibilityRole="text" accessibilityLabel={`Preferred language: ${preferredLanguage}`}>
                     Preferred language: {preferredLanguage}
                 </Text>
             </View>
 
             {/* Care Network Summary */}
             {(careRelationships?.length || 0) > 0 && (
-                <View style={[styles.reviewSection, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}>
+                <View style={[styles.reviewSection, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.gray800 }]}>
                     <Text style={[styles.reviewTitle, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole="header" accessibilityLabel="Care Network">
                         Care Network ({careRelationships?.length || 0} contacts)
                     </Text>
                     {careRelationships?.map((relationship) => (
-                        <Text key={relationship.id} style={[styles.reviewItem, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel={`Care relationship: ${relationship.name} (${relationship.relationship})`}>
+                        <Text key={relationship.id} style={[styles.reviewItem, { color: currentTheme === 'light' ? Colors.gray600 : Colors.gray400 }]} accessibilityRole="text" accessibilityLabel={`Care relationship: ${relationship.name} (${relationship.relationship})`}>
                             {relationship.name} ({relationship.relationship}) {relationship.isPrimary && '- Primary'}
                         </Text>
                     ))}
@@ -617,12 +621,12 @@ export default function ProfileSetupScreen() {
 
             {/* Emergency Contacts Summary */}
             {(emergencyContacts?.length || 0) > 0 && (
-                <View style={[styles.reviewSection, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}>
+                <View style={[styles.reviewSection, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.gray800 }]}>
                     <Text style={[styles.reviewTitle, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole="header" accessibilityLabel="Emergency Contacts">
                         Emergency Contacts ({emergencyContacts?.length || 0} contacts)
                     </Text>
                     {emergencyContacts?.map((contact) => (
-                        <Text key={contact.id} style={[styles.reviewItem, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel={`Emergency contact: ${contact.name} (${contact.relationship})`}>
+                        <Text key={contact.id} style={[styles.reviewItem, { color: currentTheme === 'light' ? Colors.gray600 : Colors.gray400 }]} accessibilityRole="text" accessibilityLabel={`Emergency contact: ${contact.name} (${contact.relationship})`}>
                             {contact.name} ({contact.relationship}) {contact.isPrimary && '- Primary'}
                         </Text>
                     ))}
@@ -630,11 +634,11 @@ export default function ProfileSetupScreen() {
             )}
 
             {/* Accessibility Summary */}
-            <View style={[styles.reviewSection, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}>
+            <View style={[styles.reviewSection, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.gray800 }]}>
                 <Text style={[styles.reviewTitle, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole="header" accessibilityLabel="Accessibility Preferences">
                     Accessibility Preferences
                 </Text>
-                <Text style={[styles.reviewItem, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel={`Accessibility preferences: ${accessibilityPreferences ? 'Configured' : 'Not configured'}`}>
+                <Text style={[styles.reviewItem, { color: currentTheme === 'light' ? Colors.gray600 : Colors.gray400 }]} accessibilityRole="text" accessibilityLabel={`Accessibility preferences: ${accessibilityPreferences ? 'Configured' : 'Not configured'}`}>
                     {accessibilityPreferences && Object.values(accessibilityPreferences).some(category =>
                         category && Object.values(category).some(value => value === true)
                     ) ? 'Configured' : 'Not configured'}
@@ -671,7 +675,7 @@ export default function ProfileSetupScreen() {
 
 
             {/* Footer */}
-            <View style={[styles.footer, { borderTopColor: currentTheme === 'light' ? Colors.lightGray : Colors.darkGray }]} accessible={true}>
+            <View style={[styles.footer, { borderTopColor: currentTheme === 'light' ? Colors.gray400 : Colors.gray600 }]} accessible={true}>
                 {errors.general && <Text style={styles.errorText}>{errors.general}</Text>}
 
                 <View style={styles.footerButtons}>
@@ -706,7 +710,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
         paddingVertical: 12,
         borderBottomWidth: 1,
-        borderBottomColor: Colors.lightGray,
     },
     headerBackButton: {
         padding: 8,
@@ -752,7 +755,7 @@ const styles = StyleSheet.create({
         borderRadius: 60,
         marginBottom: 16,
         overflow: 'hidden',
-        backgroundColor: Colors.lightGray,
+        backgroundColor: Colors.gray400,
     },
     profileImage: {
         width: '100%',
@@ -782,7 +785,6 @@ const styles = StyleSheet.create({
     },
     pictureActionText: {
         marginLeft: 4,
-        color: Colors.primary,
         fontWeight: '500',
     },
     section: {
@@ -810,7 +812,7 @@ const styles = StyleSheet.create({
         paddingVertical: 12,
         paddingHorizontal: 8,
         borderWidth: 1,
-        borderColor: Colors.lightGray,
+        borderColor: Colors.gray400,
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -847,7 +849,7 @@ const styles = StyleSheet.create({
     completenessBar: {
         flex: 1,
         height: 8,
-        backgroundColor: Colors.lightGray,
+        backgroundColor: Colors.gray400,
         borderRadius: 4,
         marginRight: 12,
         overflow: 'hidden',
@@ -875,10 +877,10 @@ const styles = StyleSheet.create({
         marginHorizontal: 8,
     },
     backButton: {
-        backgroundColor: Colors.lightGray,
+        backgroundColor: Colors.gray400,
     },
     backButtonText: {
-        color: Colors.accent,
+        color: Colors.black,
     },
     nextButton: {
         backgroundColor: Colors.primary,

@@ -173,7 +173,7 @@ export default function ProfileScreen() {
     <View style={styles.sectionHeader}>
       <View style={styles.sectionHeaderContent}>
         <Ionicons name={icon as any} size={24} color={currentTheme === 'light' ? Colors.primary : Colors.white} />
-        <Text style={[styles.sectionTitle, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}>
+        <Text style={[styles.sectionTitle, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole='header' accessibilityLabel={`${title} section`}>
           {title}
         </Text>
       </View>
@@ -186,7 +186,7 @@ export default function ProfileScreen() {
           <Ionicons
             name={editingSection === sectionKey ? "close" : "pencil"}
             size={24}
-            color={Colors.secondary}
+            color={Colors.blue}
           />
         </TouchableOpacity>
       )}
@@ -241,7 +241,7 @@ export default function ProfileScreen() {
           <Text style={[styles.userName, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}>
             {userProfile.fullName || 'Welcome User'}
           </Text>
-          <Text style={styles.userEmail}>
+          <Text style={[styles.userEmail, { color: currentTheme === 'light' ? Colors.gray700 : Colors.gray300 }]}>
             {userProfile.email}
           </Text>
           <TouchableOpacity
@@ -255,7 +255,7 @@ export default function ProfileScreen() {
 
         {/* Basic Information Section */}
         {renderSectionHeader('Basic Information', 'person-outline', 'basicInfo')}
-        <View style={[styles.settingsCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray, borderColor: currentTheme === 'light' ? Colors.borderLight : Colors.borderDark }]}>
+        <View style={[styles.settingsCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.gray800, borderColor: currentTheme === 'light' ? Colors.borderLight : Colors.borderDark }]}>
           {editingSection === 'basicInfo' ? (
             <View>
               <Text style={{ color: Colors.info, fontSize: 16, marginBottom: 8 }}>
@@ -352,9 +352,9 @@ export default function ProfileScreen() {
             </View>
           ) : (
             <View>
-              <InfoRow label="Full Name" value={userProfile.fullName} />
-              <InfoRow label="Email" value={userProfile.email.slice(0, 3) + '****@' + userProfile.email.split('@')[1]} />
-              <InfoRow label="Phone" value={formatHiddenPhoneNumber(userProfile.phone)} />
+              <InfoRow label="Full Name" value={userProfile.fullName} theme={currentTheme} />
+              <InfoRow label="Email" value={userProfile.email.slice(0, 3) + '****@' + userProfile.email.split('@')[1]} theme={currentTheme} />
+              <InfoRow label="Phone" value={formatHiddenPhoneNumber(userProfile.phone)} theme={currentTheme} />
               <InfoRow
                 label="Role"
                 value={
@@ -364,17 +364,18 @@ export default function ProfileScreen() {
                       : userProfile.role.replace('_', ' ')
                     : 'Not specified'
                 }
+                theme={currentTheme}
               />
-              <InfoRow label="Disability Types" value={userProfile.disabilityTypes.join(', ') || 'None specified'} />
-              <InfoRow label="Preferred Contact" value={userProfile.preferredContactMethod ?? 'Not specified'} />
-              <InfoRow label="Language" value={userProfile.communicationPreferences.preferredLanguage ?? 'Not specified'} />
+              <InfoRow label="Disability Types" value={userProfile.disabilityTypes.join(', ') || 'None specified'} theme={currentTheme} />
+              <InfoRow label="Preferred Contact" value={userProfile.preferredContactMethod ?? 'Not specified'} theme={currentTheme} />
+              <InfoRow label="Language" value={userProfile.communicationPreferences.preferredLanguage ?? 'Not specified'} theme={currentTheme} />
             </View>
           )}
         </View>
 
         {/* Care Network Section */}
         {renderSectionHeader('Care Network', 'people-outline', 'careNetwork')}
-        <View style={[styles.settingsCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray, borderColor: currentTheme === 'light' ? Colors.borderLight : Colors.borderDark }]}>
+        <View style={[styles.settingsCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.gray800, borderColor: currentTheme === 'light' ? Colors.borderLight : Colors.borderDark }]}>
           {editingSection === 'careNetwork' ? (
             <View>
               <CareRelationshipForm
@@ -411,7 +412,7 @@ export default function ProfileScreen() {
                     <Text style={[styles.contactName, { color: currentTheme === 'light' ? Colors.black : Colors.white }]}>
                       {relationship.name} {relationship.isPrimary && '(Primary)'}
                     </Text>
-                    <Text style={styles.contactDetails}>
+                    <Text style={[styles.contactDetails, { color: currentTheme === 'light' ? Colors.gray700 : Colors.gray500 }]}>
                       {relationship.relationship} • {formatHiddenPhoneNumber(relationship.phone)}
                     </Text>
                     {relationship.canBookForMe && (
@@ -420,7 +421,7 @@ export default function ProfileScreen() {
                   </View>
                 ))
               ) : (
-                <Text style={[styles.emptyState, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]}>
+                <Text style={[styles.emptyState, { color: currentTheme === 'light' ? Colors.gray700 : Colors.gray300 }]}>
                   No care relationships added yet
                 </Text>
               )}
@@ -430,7 +431,7 @@ export default function ProfileScreen() {
 
         {/* Emergency Contacts Section */}
         {renderSectionHeader('Emergency Contacts', 'warning-outline', 'emergencyContacts')}
-        <View style={[styles.settingsCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray, borderColor: currentTheme === 'light' ? Colors.borderLight : Colors.borderDark }]}>
+        <View style={[styles.settingsCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.gray800, borderColor: currentTheme === 'light' ? Colors.borderLight : Colors.borderDark }]}>
           {editingSection === 'emergencyContacts' ? (
             <View>
               <EmergencyContactForm
@@ -467,13 +468,13 @@ export default function ProfileScreen() {
                     <Text style={[styles.contactName, { color: currentTheme === 'light' ? Colors.black : Colors.white }]}>
                       {contact.name} {contact.isPrimary && '(Primary)'}
                     </Text>
-                    <Text style={styles.contactDetails}>
+                    <Text style={[styles.contactDetails, { color: currentTheme === 'light' ? Colors.gray700 : Colors.gray500 }]}>
                       {contact.relationship} • {formatHiddenPhoneNumber(contact.phone)}
                     </Text>
                   </View>
                 ))
               ) : (
-                <Text style={[styles.emptyState, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]}>
+                <Text style={[styles.emptyState, { color: currentTheme === 'light' ? Colors.gray700 : Colors.gray300 }]}>
                   No emergency contacts added yet
                 </Text>
               )}
@@ -483,7 +484,7 @@ export default function ProfileScreen() {
 
         {/* Accessibility Preferences Section */}
         {renderSectionHeader('Accessibility Preferences', 'accessibility-outline', 'accessibility')}
-        <View style={[styles.settingsCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray, borderColor: currentTheme === 'light' ? Colors.borderLight : Colors.borderDark }]}>
+        <View style={[styles.settingsCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.gray800, borderColor: currentTheme === 'light' ? Colors.borderLight : Colors.borderDark }]}>
           {editingSection === 'accessibility' ? (
             <View>
               <AccessibilityPreferencesForm
@@ -516,14 +517,17 @@ export default function ProfileScreen() {
               <AccessibilityRow
                 label="Wheelchair User"
                 enabled={userProfile.accessibilityPreferences.mobility.useWheelchair}
+                theme={currentTheme}
               />
               <AccessibilityRow
                 label="Needs Ramp Access"
                 enabled={userProfile.accessibilityPreferences.mobility.needsRamp}
+                theme={currentTheme}
               />
               <AccessibilityRow
                 label="Uses Assistive Devices"
                 enabled={userProfile.accessibilityPreferences.mobility.needsAssistiveDevice}
+                theme={currentTheme}
               />
 
               <Text style={[styles.preferencesTitle, { color: currentTheme === 'light' ? Colors.black : Colors.white }]}>
@@ -532,14 +536,17 @@ export default function ProfileScreen() {
               <AccessibilityRow
                 label="Blind or Low Vision"
                 enabled={userProfile.accessibilityPreferences.visual.isBlind || userProfile.accessibilityPreferences.visual.hasLowVision}
+                theme={currentTheme}
               />
               <AccessibilityRow
                 label="Needs Large Text"
                 enabled={userProfile.accessibilityPreferences.visual.needsLargeText}
+                theme={currentTheme}
               />
               <AccessibilityRow
                 label="High Contrast Mode"
                 enabled={userProfile.accessibilityPreferences.visual.needsHighContrast}
+                theme={currentTheme}
               />
 
               <Text style={[styles.preferencesTitle, { color: currentTheme === 'light' ? Colors.black : Colors.white }]}>
@@ -548,10 +555,12 @@ export default function ProfileScreen() {
               <AccessibilityRow
                 label="Deaf or Hard of Hearing"
                 enabled={userProfile.accessibilityPreferences.hearing.isDeaf || userProfile.accessibilityPreferences.hearing.hasHearingLoss}
+                theme={currentTheme}
               />
               <AccessibilityRow
                 label="Needs Sign Language"
                 enabled={userProfile.accessibilityPreferences.hearing.needsSignLanguage}
+                theme={currentTheme}
               />
 
               <Text style={[styles.preferencesTitle, { color: currentTheme === 'light' ? Colors.black : Colors.white }]}>
@@ -560,10 +569,12 @@ export default function ProfileScreen() {
               <AccessibilityRow
                 label="Needs Simple Instructions"
                 enabled={userProfile.accessibilityPreferences.cognitive.needsSimpleInstructions}
+                theme={currentTheme}
               />
               <AccessibilityRow
                 label="Needs Extra Time"
                 enabled={userProfile.accessibilityPreferences.cognitive.needsExtraTime}
+                theme={currentTheme}
               />
             </View>
           )}
@@ -571,14 +582,14 @@ export default function ProfileScreen() {
 
         {/* Quick Settings Section */}
         {renderSectionHeader('Quick Settings', 'settings-outline', 'quickSettings', false)}
-        <View style={[styles.settingsCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray, borderColor: currentTheme === 'light' ? Colors.borderLight : Colors.borderDark }]}>
+        <View style={[styles.settingsCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.gray800, borderColor: currentTheme === 'light' ? Colors.borderLight : Colors.borderDark }]}>
           {/* Text Size */}
           <View style={styles.settingRow}>
             <View style={styles.settingLabelContainer}>
-              <Ionicons name="text" size={24} color={Colors.secondary} />
+              <Ionicons name="text" size={24} color={Colors.blue} />
               <Text style={[styles.settingLabel, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}>
                 Text Size {'\n'}
-                <Text style={{ fontSize: 12, color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }}>
+                <Text style={{ fontSize: 12, color: currentTheme === 'light' ? Colors.gray700 : Colors.gray300 }}>
                   {quickSettings.textSize <= 25 ? 'Small' :
                     quickSettings.textSize <= 50 ? 'Medium' :
                       quickSettings.textSize <= 75 ? 'Large' : 'Extra Large'}
@@ -592,16 +603,16 @@ export default function ProfileScreen() {
               step={25}
               value={quickSettings.textSize}
               onValueChange={(value) => handleQuickSettingChange('textSize', value)}
-              maximumTrackTintColor={currentTheme === 'light' ? Colors.lightGray : Colors.mediumGray}
-              minimumTrackTintColor={Colors.primary}
-              thumbTintColor={currentTheme === 'light' ? Colors.black : Colors.white}
+              maximumTrackTintColor={Colors.gray300 }
+              minimumTrackTintColor={Colors.secondary}
+              thumbTintColor={Colors.white}
             />
           </View>
 
           {/* Voice Commands */}
           <View style={styles.settingRow}>
             <View style={styles.settingLabelContainer}>
-              <MaterialIcons name="keyboard-voice" size={24} color={Colors.secondary} />
+              <MaterialIcons name="keyboard-voice" size={24} color={Colors.blue} />
               <Text style={[styles.settingLabel, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}>
                 Voice Commands
               </Text>
@@ -609,7 +620,7 @@ export default function ProfileScreen() {
             <Switch
               value={quickSettings.voiceCommands}
               onValueChange={(value) => handleQuickSettingChange('voiceCommands', value)}
-              trackColor={{ false: Colors.lightGray, true: Colors.secondary }}
+              trackColor={{ false: Colors.gray300, true: Colors.secondary }}
               thumbColor={Colors.white}
             />
           </View>
@@ -617,7 +628,7 @@ export default function ProfileScreen() {
           {/* High Contrast */}
           <View style={styles.settingRow}>
             <View style={styles.settingLabelContainer}>
-              <Ionicons name="sunny" size={24} color={Colors.secondary} />
+              <Ionicons name="sunny" size={24} color={Colors.blue} />
               <Text style={[styles.settingLabel, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}>
                 High Contrast
               </Text>
@@ -625,7 +636,7 @@ export default function ProfileScreen() {
             <Switch
               value={quickSettings.highContrast}
               onValueChange={(value) => handleQuickSettingChange('highContrast', value)}
-              trackColor={{ false: Colors.lightGray, true: Colors.secondary }}
+              trackColor={{ false: Colors.gray300, true: Colors.secondary }}
               thumbColor={Colors.white}
             />
           </View>
@@ -633,7 +644,7 @@ export default function ProfileScreen() {
           {/* Text to Speech */}
           <View style={styles.settingRow}>
             <View style={styles.settingLabelContainer}>
-              <MaterialCommunityIcons name="text-to-speech" size={24} color={Colors.secondary} />
+              <Ionicons name="volume-high-outline" size={24} color={Colors.blue} />
               <Text style={[styles.settingLabel, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}>
                 Text to Speech
               </Text>
@@ -641,7 +652,7 @@ export default function ProfileScreen() {
             <Switch
               value={quickSettings.textToSpeech}
               onValueChange={(value) => handleQuickSettingChange('textToSpeech', value)}
-              trackColor={{ false: Colors.lightGray, true: Colors.secondary }}
+              trackColor={{ false: Colors.gray300, true: Colors.secondary }}
               thumbColor={Colors.white}
             />
           </View>
@@ -649,21 +660,21 @@ export default function ProfileScreen() {
 
         {/* App Settings Section */}
         {renderSectionHeader('App Settings', 'options-outline', 'appSettings', false)}
-        <View style={[styles.settingsCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray, borderColor: currentTheme === 'light' ? Colors.borderLight : Colors.borderDark }]}>
+        <View style={[styles.settingsCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.gray800, borderColor: currentTheme === 'light' ? Colors.borderLight : Colors.borderDark }]}>
           <TouchableOpacity
             style={styles.settingRow}
             onPress={() => router.push('/settings')}
           >
             <View style={styles.settingLabelContainer}>
-              <Ionicons name="color-palette-outline" size={24} color={Colors.secondary} />
+              <Ionicons name="color-palette-outline" size={24} color={Colors.blue} />
               <Text style={[styles.settingLabel, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}>
                 Theme Settings {'\n'}
-                <Text style={{ fontSize: 12, color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }}>
+                <Text style={{ fontSize: 12, color: currentTheme === 'light' ? Colors.gray700 : Colors.gray300 }}>
                   {currentTheme.charAt(0).toUpperCase() + currentTheme.slice(1)}
                 </Text>
               </Text>
             </View>
-            <Ionicons name="chevron-forward" size={20} color={Colors.accent} />
+            <Ionicons name="chevron-forward" size={20} color={currentTheme === 'light' ? Colors.gray700 : Colors.gray300} />
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -671,12 +682,12 @@ export default function ProfileScreen() {
             onPress={() => router.push('/notifications')}
           >
             <View style={styles.settingLabelContainer}>
-              <Ionicons name="notifications-outline" size={24} color={Colors.secondary} />
+              <Ionicons name="notifications-outline" size={24} color={Colors.blue} />
               <Text style={[styles.settingLabel, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}>
                 Notifications
               </Text>
             </View>
-            <Ionicons name="chevron-forward" size={20} color={Colors.accent} />
+            <Ionicons name="chevron-forward" size={20} color={currentTheme === 'light' ? Colors.gray700 : Colors.gray300} />
           </TouchableOpacity>
         </View>
 
@@ -697,18 +708,18 @@ export default function ProfileScreen() {
 }
 
 // Helper components
-const InfoRow = ({ label, value }: { label: string; value: string }) => (
-  <View style={styles.infoRow}>
-    <Text style={styles.infoLabel}>{label}</Text>
-    <Text style={styles.infoValue}>{value}</Text>
+const InfoRow = ({ label, value, theme }: { label: string; value: string; theme: string }) => (
+  <View style={[styles.infoRow, { borderBottomColor: theme === 'light' ? Colors.borderLight : Colors.borderDark }]}>
+    <Text style={[styles.infoLabel, { color: theme === 'light' ? Colors.gray700 : Colors.gray300 }]}>{label}</Text>
+    <Text style={[styles.infoValue, { color: theme === 'light' ? Colors.gray700 : Colors.gray500 }]}>{value}</Text>
   </View>
 );
 
-const AccessibilityRow = ({ label, enabled }: { label: string; enabled: boolean }) => (
+const AccessibilityRow = ({ label, enabled, theme }: { label: string; enabled: boolean; theme: string }) => (
   <View style={styles.accessibilityRow}>
-    <Text style={styles.accessibilityLabel}>{label}</Text>
+    <Text style={[styles.accessibilityLabel, { color: theme === 'light' ? Colors.gray700 : Colors.gray300 }]}>{label}</Text>
     <View style={[styles.accessibilityIndicator, enabled && styles.accessibilityIndicatorActive]}>
-      <Text style={[styles.accessibilityStatus, enabled && styles.accessibilityStatusActive]}>
+      <Text style={[styles.accessibilityStatus, { color: theme === 'light' ? Colors.gray700 : Colors.gray300 }, enabled && styles.accessibilityStatusActive]}>
         {enabled ? 'Yes' : 'No'}
       </Text>
     </View>
@@ -751,14 +762,13 @@ const styles = StyleSheet.create({
   },
   userEmail: {
     fontSize: 16,
-    color: Colors.accent,
     marginBottom: 16,
   },
   editProfileButton: {
     padding: 8,
   },
   editProfile: {
-    color: Colors.secondary,
+    color: Colors.blue,
     fontSize: 16,
     fontWeight: '500',
   },
@@ -774,8 +784,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: 20,
+    fontWeight: 'bold',
     marginLeft: 12,
   },
   editButton: {
@@ -813,14 +823,13 @@ const styles = StyleSheet.create({
     marginHorizontal: 8,
   },
   cancelButton: {
-    backgroundColor: Colors.lightGray,
+    backgroundColor: Colors.gray300,
   },
   cancelButtonText: {
-    color: Colors.accent,
     fontWeight: '500',
   },
   saveButton: {
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.secondary,
   },
   saveButtonText: {
     color: Colors.white,
@@ -832,11 +841,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.lightGray,
   },
   infoLabel: {
     fontSize: 16,
-    color: Colors.accent,
     flex: 1,
   },
   infoValue: {
@@ -844,6 +851,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     flex: 2,
     textAlign: 'right',
+    textDecorationLine: 'underline',
   },
   contactSummary: {
     paddingVertical: 12,
@@ -855,12 +863,12 @@ const styles = StyleSheet.create({
   },
   contactDetails: {
     fontSize: 14,
-    color: Colors.accent,
     marginBottom: 2,
+    textDecorationLine: 'underline',
   },
   permissionText: {
     fontSize: 12,
-    color: Colors.primary,
+    color: Colors.blue,
     fontStyle: 'italic',
   },
   emptyState: {
@@ -883,21 +891,18 @@ const styles = StyleSheet.create({
   },
   accessibilityLabel: {
     fontSize: 14,
-    color: Colors.accent,
     flex: 1,
   },
   accessibilityIndicator: {
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
-    backgroundColor: Colors.lightGray,
   },
   accessibilityIndicatorActive: {
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.secondary,
   },
   accessibilityStatus: {
     fontSize: 12,
-    color: Colors.accent,
   },
   accessibilityStatusActive: {
     color: Colors.white,

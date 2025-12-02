@@ -63,7 +63,7 @@ const AccessibilityPreferencesForm: React.FC<Props> = ({
     icon: React.ReactNode;
     children: React.ReactNode;
   }) => (
-    <View style={[styles.section, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}>
+    <View style={[styles.section, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.gray800 }]}>
       <View style={styles.sectionHeader}>
         {icon}
         <Text style={[styles.sectionTitle, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole="header" accessibilityLabel={title}>
@@ -85,13 +85,13 @@ const AccessibilityPreferencesForm: React.FC<Props> = ({
     onValueChange: (value: boolean) => void;
     description?: string;
   }) => (
-    <View style={styles.switchContainer} accessible={true}>
+    <View style={[styles.switchContainer, { borderBottomColor: currentTheme === 'light' ? Colors.borderLight : Colors.borderDark }]} accessible={true}>
       <View style={styles.switchTextContainer}>
         <Text style={[styles.switchLabel, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole="text" accessibilityLabel={label}>
           {label}
         </Text>
         {description && (
-          <Text style={[styles.switchDescription, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel={description}>
+          <Text style={[styles.switchDescription, { color: currentTheme === 'light' ? Colors.gray700 : Colors.gray300 }]} accessibilityRole="text" accessibilityLabel={description}>
             {description}
           </Text>
         )}
@@ -99,8 +99,8 @@ const AccessibilityPreferencesForm: React.FC<Props> = ({
       <Switch
         value={value}
         onValueChange={onValueChange}
-        trackColor={{ false: Colors.lightGray, true: Colors.primary }}
-        thumbColor={value ? Colors.white : Colors.mediumGray}
+        trackColor={{ false: Colors.gray300, true: Colors.primary }}
+        thumbColor={value ? Colors.white : Colors.gray500}
         accessible={true}
         accessibilityRole="switch"
         accessibilityLabel={`${label} switch`}
@@ -115,14 +115,14 @@ const AccessibilityPreferencesForm: React.FC<Props> = ({
       <Text style={[styles.mainTitle, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole="header" accessibilityLabel="Accessibility Preferences">
         Accessibility Preferences
       </Text>
-      <Text style={[styles.mainSubtitle, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel="Help us understand your specific needs to provide better services">
+      <Text style={[styles.mainSubtitle, { color: currentTheme === 'light' ? Colors.gray700 : Colors.gray300 }]} accessibilityRole="text" accessibilityLabel="Help us understand your specific needs to provide better services">
         Help us understand your specific needs to provide better services
       </Text>
 
       {/* Mobility Section */}
       <PreferenceSection
         title="Mobility Needs"
-        icon={<MaterialCommunityIcons name="wheelchair-accessibility" size={24} color={Colors.primary} />}
+        icon={<MaterialCommunityIcons name="wheelchair-accessibility" size={24} color={Colors.blue} />}
       >
         <PreferenceSwitch
           label="I use a wheelchair"
@@ -167,7 +167,7 @@ const AccessibilityPreferencesForm: React.FC<Props> = ({
       {/* Visual Section */}
       <PreferenceSection
         title="Visual Needs"
-        icon={<Ionicons name="eye-outline" size={24} color={Colors.primary} />}
+        icon={<Ionicons name="eye-outline" size={24} color={Colors.blue} />}
       >
         <PreferenceSwitch
           label="I am blind"
@@ -208,7 +208,7 @@ const AccessibilityPreferencesForm: React.FC<Props> = ({
       {/* Hearing Section */}
       <PreferenceSection
         title="Hearing Needs"
-        icon={<MaterialCommunityIcons name="ear-hearing" size={24} color={Colors.primary} />}
+        icon={<MaterialCommunityIcons name="ear-hearing" size={24} color={Colors.blue} />}
       >
         <PreferenceSwitch
           label="I am deaf"
@@ -249,7 +249,7 @@ const AccessibilityPreferencesForm: React.FC<Props> = ({
       {/* Cognitive Section */}
       <PreferenceSection
         title="Cognitive Needs"
-        icon={<MaterialCommunityIcons name="brain" size={24} color={Colors.primary} />}
+        icon={<MaterialCommunityIcons name="brain" size={24} color={Colors.blue} />}
       >
         <PreferenceSwitch
           label="I need simple instructions"
@@ -318,7 +318,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.lightGray,
   },
   switchTextContainer: {
     flex: 1,

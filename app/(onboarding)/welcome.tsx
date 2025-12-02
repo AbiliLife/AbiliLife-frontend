@@ -52,13 +52,13 @@ const Welcome = () => {
                 <Text style={[styles.title, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]} accessibilityRole="header" accessibilityLabel="Welcome to AbiliLife">
                     Welcome to AbiliLife
                 </Text>
-                <Text style={[styles.subtitle, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel="Your journey to a more accessible life starts here.">
+                <Text style={[styles.subtitle, { color: currentTheme === 'light' ? Colors.gray700 : Colors.gray300 }]} accessibilityRole="text" accessibilityLabel="Your journey to a more accessible life starts here.">
                     Your journey to a more accessible life starts here.
                 </Text>
             </View>
 
             <View style={styles.buttonContainer} accessible={true}>
-                <Text style={{ color: currentTheme === 'light' ? Colors.accent : Colors.lightGray, textAlign: 'center', textDecorationLine: 'underline' }} accessibilityRole="text" accessibilityLabel="Are you a new user?">
+                <Text style={{ color: currentTheme === 'light' ? Colors.gray700 : Colors.gray300, textAlign: 'center', textDecorationLine: 'underline' }} accessibilityRole="text" accessibilityLabel="Are you a new user?">
                     Are you a new user?
                 </Text>
                 <Button
@@ -79,7 +79,7 @@ const Welcome = () => {
                     style={{ marginTop: 10 }}
                 />
 
-                <Text style={{ color: currentTheme === 'light' ? Colors.accent : Colors.lightGray, textAlign: 'center', marginTop: 10, textDecorationLine: 'underline' }} accessibilityRole="text" accessibilityLabel="Already have an account?">
+                <Text style={{ color: currentTheme === 'light' ? Colors.gray700 : Colors.gray300, textAlign: 'center', marginTop: 10, textDecorationLine: 'underline' }} accessibilityRole="text" accessibilityLabel="Already have an account?">
                     Already have an account?
                 </Text>
                 <Button

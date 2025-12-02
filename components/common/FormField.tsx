@@ -63,7 +63,7 @@ const FormField: React.FC<FormFieldProps> = ({
             styles.fieldContainer,
             otherStyles,
             (isFocused || !!value) && styles.fieldContainerFocused,
-            { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray, borderColor: isFocused ? currentTheme === 'light' ? Colors.primary : Colors.white : !!value ? currentTheme === 'light' ? Colors.primary : Colors.white : currentTheme === 'light' ? Colors.borderLight : Colors.borderDark }
+            { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.gray800, borderColor: isFocused ? currentTheme === 'light' ? Colors.primary : Colors.white : !!value ? currentTheme === 'light' ? Colors.primary : Colors.white : currentTheme === 'light' ? Colors.borderLight : Colors.borderDark }
         ]}>
             {icon && iconName && (
                 <View style={styles.iconWrapper}>
@@ -74,7 +74,7 @@ const FormField: React.FC<FormFieldProps> = ({
                 style={[
                     styles.input,
                     icon && styles.inputWithIcon,
-                    { color: currentTheme === 'light' ? Colors.primary : Colors.lightGray }
+                    { color: currentTheme === 'light' ? Colors.primary : Colors.gray300 }
                 ]}
                 placeholder={placeholder}
                 value={value}

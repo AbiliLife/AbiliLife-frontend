@@ -181,8 +181,8 @@ export default function EditProfileScreen() {
                         accessibilityLabel="Take photo"
                         accessibilityHint='Opens camera to take a new profile picture'
                     >
-                        <Camera size={20} color={currentTheme === 'light' ? Colors.secondary : Colors.white} />
-                        <Text style={[styles.pictureActionText, { color: currentTheme === 'light' ? Colors.secondary : Colors.white }]}>
+                        <Camera size={20} color={Colors.blue} />
+                        <Text style={[styles.pictureActionText, { color: Colors.blue }]}>
                             Camera
                         </Text>
                     </TouchableOpacity>
@@ -194,8 +194,8 @@ export default function EditProfileScreen() {
                         accessibilityLabel="Choose from gallery"
                         accessibilityHint='Opens gallery to select a profile picture'
                     >
-                        <Upload size={20} color={currentTheme === 'light' ? Colors.secondary : Colors.white} />
-                        <Text style={[styles.pictureActionText, { color: currentTheme === 'light' ? Colors.secondary : Colors.white }]}>
+                        <Upload size={20} color={Colors.blue} />
+                        <Text style={[styles.pictureActionText, { color: Colors.blue }]}>
                             Gallery
                         </Text>
                     </TouchableOpacity>
@@ -278,7 +278,7 @@ export default function EditProfileScreen() {
                 </Text>
             )}
 
-            <View style={{ height: 150 }} />
+            <View style={{ height: 50 }} />
             
             <View style={styles.footer}>
                 <CustomButton
@@ -292,8 +292,8 @@ export default function EditProfileScreen() {
                 <CustomButton
                     title='Cancel'
                     handlePress={() => router.back()}
-                    containerStyle={styles.cancelButton}
-                    textStyle={styles.cancelButtonText}
+                    containerStyle={[styles.cancelButton, { borderColor: currentTheme === 'light' ? Colors.gray700 : Colors.gray300 }]}
+                    textStyle={{ color: currentTheme === 'light' ? Colors.gray700 : Colors.gray300 }}
                     accessibilityRole='button'
                     accessibilityLabel="Cancel changes"
                     accessibilityHint='Returns to the previous screen without saving changes'
@@ -319,7 +319,7 @@ const styles = StyleSheet.create({
         borderRadius: 60,
         marginBottom: 16,
         overflow: 'hidden',
-        backgroundColor: Colors.lightGray,
+        backgroundColor: Colors.gray300,
     },
     profileImage: {
         width: '100%',
@@ -360,7 +360,6 @@ const styles = StyleSheet.create({
     },
     sectionSubtitle: {
         fontSize: 14,
-        color: Colors.accent,
         marginBottom: 12,
     },
     errorText: {
@@ -375,10 +374,6 @@ const styles = StyleSheet.create({
     cancelButton: {
         marginTop: 12,
         backgroundColor: 'transparent',
-        borderColor: Colors.mediumGray,
         borderWidth: 1,
-    },
-    cancelButtonText: {
-        color: Colors.mediumGray,
     },
 })
