@@ -1,11 +1,34 @@
-export default {
-    primary: "#46216E",
-    // oldSecondary: "#7C3AED",
-    secondary: "#6B21A8",
-    // oldAccent: "#71717A",
-    accent: "#52525B",
+/* -------------------------------------------------------
+ COLORS (WCAG AA Compliant)
+----------------------------------------------------- */
+export default{
+    // Brand
+    primary: "#46216E", // Brand purple (used for buttons, accents)
+    primaryDark: "#2D1457", // Deeper purple for dark mode or emphasis
+    primaryLight: "#EEE6FA", // Soft accessible purple background
 
-    /* General Colors */
+    secondary: "#6B21A8", // Secondary purple
+    secondaryDark: "#4A1580",
+
+    // Grayscale
+    gray100: "#FAFAFA", // Light background
+    gray200: "#F2F2F2", // App background / cards
+    gray300: "#E0E0E0", // Borders, dividers
+    gray400: "#C2C2C2", // Subtle borders
+    gray500: "#9A9A9A", // Disabled text
+    gray600: "#6E6E6E", // Secondary text
+    gray700: "#4A4A4A", // Primary body text
+    gray800: "#2E2E2E", // Strong text
+    gray900: "#1A1A1A", // Headings
+
+    // Feedback
+    success: "#2E8B57",
+    warning: "#D97706",
+    error: "#CC0000",
+    info: "#1E88E5",
+    emergency: "#D7263D",
+
+    // General
     white: "#FFFFFF",
     black: "#000000",
     red: "#F44336",
@@ -13,58 +36,17 @@ export default {
     green: "#4CAF50",
     yellow: "#FBC02D",
     orange: "#FF9800",
-    // oldYellow: "#FFEB3B",
 
-    /* Other Colors */
-    info: "#2196F3", // Blue 500
-    success: "#4CAF50",
-    error: "#E53935", // Red 500
-    emergency: "#D7263D", // Red 600
-
-    /* Gray Variants */
-    lightGray: "#E0E0E0",
-    mediumGray: "#666666",
-    darkGray: "#424242",
-    // oldMediumGray: "#9E9E9E",
-
-    /* Purple Variants */
-    lightPurple: "#EEE6FA", // Soft purple for light mode
-    darkPurple: "#2D1457", // Deep purple for dark mode
-    // oldLightPurple: "#F3E8FF",
-
-    /* Container Colors */
+    // Backgrounds
+    background: "#FFFFFF",
+    backgroundAlt: "#FAFAFA",
     lightContainer: "#F5F5F5",
     darkContainer: "#121212",
 
-    /* Border Colors */
+    // Borders
     borderLight: "#E0E0E0",
     borderDark: "#424242",
 
+    // Utility
     transparent: "transparent",
 };
-
-//   primary: "#46216E",        // Deep, rich purple
-//   secondary: "#6B21A8",      // More contrast than original
-//   accent: "#52525B",         // Deeper accent for UI clarity
-
-//   lightPurple: "#EEE6FA",    // Accessible soft purple
-//   darkPurple: "#2D1457",     // For dark mode or contrast
-
-//   lightGray: "#E0E0E0",
-//   mediumGray: "#666666",     // Better for text/icon contrast
-//   darkGray: "#424242",
-
-//   lightContainer: "#F5F5F5",
-//   darkContainer: "#121212",
-
-//   borderLight: "#E0E0E0",
-//   borderDark: "#424242",
-
-//   white: "#FFFFFF",
-//   black: "#000000",
-
-//   red: "#F44336",
-//   green: "#4CAF50",
-//   blue: "#2196F3",
-//   yellow: "#FBC02D",         // Improved accessibility
-//   orange: "#FF9800"
