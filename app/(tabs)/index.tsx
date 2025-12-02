@@ -288,24 +288,26 @@ export default function HomeScreen() {
                         Setup & Tips
                     </Text>
 
-                    <TouchableOpacity
-                        style={[styles.taskCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.gray800 }]}
-                        onPress={() => router.push('/profileSetup')}
-                        activeOpacity={0.7}
-                    >
-                        <View style={styles.taskIconContainer}>
-                            <Ionicons name="person-add" size={32} color={Colors.blue} />
-                        </View>
-                        <View style={styles.taskTextContainer}>
-                            <Text style={[styles.taskTitle, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole='text' accessibilityLabel='Profile Setup'>
-                                Profile Setup
-                            </Text>
-                            <Text style={[styles.taskDescription, { color: currentTheme === 'light' ? Colors.gray700 : Colors.gray300 }]} accessibilityRole='text' accessibilityLabel='Complete your profile setup to enhance your experience'>
-                                Complete your profile setup to enhance your experience.
-                            </Text>
-                        </View>
-                        <Ionicons name="chevron-forward" size={24} color={currentTheme === 'light' ? Colors.black : Colors.white} />
-                    </TouchableOpacity>
+                    {getProfileCompleteness() < 100 && (
+                        <TouchableOpacity
+                            style={[styles.taskCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.gray800 }]}
+                            onPress={() => router.push('/profileSetup')}
+                            activeOpacity={0.7}
+                        >
+                            <View style={styles.taskIconContainer}>
+                                <Ionicons name="person-add" size={32} color={Colors.blue} />
+                            </View>
+                            <View style={styles.taskTextContainer}>
+                                <Text style={[styles.taskTitle, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole='text' accessibilityLabel='Profile Setup'>
+                                    Profile Setup
+                                </Text>
+                                <Text style={[styles.taskDescription, { color: currentTheme === 'light' ? Colors.gray700 : Colors.gray300 }]} accessibilityRole='text' accessibilityLabel='Complete your profile setup to enhance your experience'>
+                                    Complete your profile setup to enhance your experience.
+                                </Text>
+                            </View>
+                            <Ionicons name="chevron-forward" size={24} color={currentTheme === 'light' ? Colors.black : Colors.white} />
+                        </TouchableOpacity>
+                    )}
 
                     <TouchableOpacity
                         style={[styles.taskCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.gray800 }]}
