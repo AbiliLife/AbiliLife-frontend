@@ -1,3 +1,16 @@
+/* 
+  THIS IS THE FILE FOR THE SPLASH SCREEN WITH SHORT ANIMATION AND NAVIGATION LOGIC
+  IT HANDLES THE ANIMATION USING REANIMATED AND NAVIGATES BASED ON AUTHENTICATION STATUS
+*/
+
+// Tests todo:
+// 1. Make sure splash screen shows correctly on app launch.
+// 2. Verify animation plays smoothly without glitches. make sure it loops while auth is loading.
+// 3. Confirm navigation to main app or welcome screen based on auth status.
+
+// If is first time user, after splash screen, navigate to welcome screen. 
+// If authenticated, navigate to main app.
+
 import { useContext, useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
@@ -9,7 +22,11 @@ import Animated, {
   withSequence,
   Easing,
 } from 'react-native-reanimated';
+
+// Assets & Constants
 import Colors from '@/constants/Colors';
+
+// Context and Store
 import { ThemeContext } from '@/contexts/ThemeContext';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -18,6 +35,8 @@ SplashScreen.preventAutoHideAsync();
 
 export default function Splash() {
   const router = useRouter();
+
+  // Obtain context and store values
   const { currentTheme } = useContext(ThemeContext);
   const { isAuthenticated, isAuthLoading } = useAuth();
 
@@ -60,7 +79,8 @@ export default function Splash() {
         if (isAuthenticated) {
           router.replace('/(tabs)');
         } else {
-          router.replace('/simple-test'); // Go to test screen first
+          // router.replace('/simple-test'); // Go to test screen first TESTING ONLY
+          router.replace('/(onboarding)/welcome');
         }
       }, 2000); // Short delay for smooth transition
     }
@@ -71,7 +91,7 @@ export default function Splash() {
       <Animated.Text style={[styles.textLarge, { color: currentTheme === 'light' ? Colors.primary : Colors.white }, animatedStyle]}>
         AbiliLife
       </Animated.Text>
-      <Animated.Text style={[styles.version, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }, animatedStyle]}>
+      <Animated.Text style={[styles.version, { color: currentTheme === 'light' ? Colors.gray700 : Colors.gray300 }, animatedStyle]}>
         Early Access Version 1.0.0
       </Animated.Text>
     </View>
