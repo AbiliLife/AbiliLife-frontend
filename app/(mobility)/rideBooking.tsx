@@ -342,7 +342,7 @@ const RideBooking = () => {
                             accessibilityRole="button"
                             aria-label="Use Current Location Button"
                         >
-                            <Text style={{ color: currentTheme === 'light' ? Colors.secondary : Colors.lightGray, fontSize: 14 }}>
+                            <Text style={{ color: currentTheme === 'light' ? Colors.secondary : Colors.gray300, fontSize: 14 }}>
                                 Use Current Location
                             </Text>
                             <Ionicons name="locate" size={24} color={Colors.secondary} />
@@ -387,15 +387,15 @@ const RideBooking = () => {
                     >
                         When would you like to ride?
                     </Text>
-                    <View style={[styles.tabContainer, { backgroundColor: currentTheme === 'light' ? Colors.lightGray : Colors.mediumGray }]} accessible={true}>
+                    <View style={[styles.tabContainer, { backgroundColor: currentTheme === 'light' ? Colors.gray200 : Colors.gray600  }]} accessible={true}>
                         <TouchableOpacity
                             style={[
                                 styles.tab,
                                 {
                                     backgroundColor:
                                         rideTimeType === 'immediate'
-                                            ? (currentTheme === 'light' ? Colors.white : Colors.darkGray)
-                                            : (currentTheme === 'light' ? Colors.lightGray : Colors.mediumGray),
+                                            ? (currentTheme === 'light' ? Colors.white : Colors.gray800)
+                                            : (currentTheme === 'light' ? Colors.gray200 : Colors.gray600 ),
                                 },
                             ]}
                             onPress={() => setRideTimeType('immediate')}
@@ -409,7 +409,7 @@ const RideBooking = () => {
                                     styles.tabText,
                                     rideTimeType === 'immediate'
                                         ? (currentTheme === 'light' ? styles.activeTabText : { color: Colors.white })
-                                        : { color: currentTheme === 'light' ? Colors.primary : Colors.lightGray },
+                                        : { color: currentTheme === 'light' ? Colors.primary : Colors.gray300 },
                                 ]}
                             >
                                 Now
@@ -422,8 +422,8 @@ const RideBooking = () => {
                                 {
                                     backgroundColor:
                                         rideTimeType === 'scheduled'
-                                            ? (currentTheme === 'light' ? Colors.white : Colors.darkGray)
-                                            : (currentTheme === 'light' ? Colors.lightGray : Colors.mediumGray),
+                                            ? (currentTheme === 'light' ? Colors.white : Colors.gray800)
+                                            : (currentTheme === 'light' ? Colors.gray200 : Colors.gray600 ),
                                 },
                             ]}
                             onPress={() => setRideTimeType('scheduled')}
@@ -437,7 +437,7 @@ const RideBooking = () => {
                                     styles.tabText,
                                     rideTimeType === 'scheduled'
                                         ? (currentTheme === 'light' ? styles.activeTabText : { color: Colors.white })
-                                        : { color: currentTheme === 'light' ? Colors.primary : Colors.lightGray },
+                                        : { color: currentTheme === 'light' ? Colors.primary : Colors.gray300 },
                                 ]}
                             >
                                 Later
@@ -465,7 +465,7 @@ const RideBooking = () => {
                                     } />
                                     <Text style={[
                                         styles.dateTimeText,
-                                        { color: currentTheme === 'light' ? Colors.mediumGray : Colors.lightGray },
+                                        { color: currentTheme === 'light' ? Colors.gray500 : Colors.gray300 },
                                         scheduledDate && { color: currentTheme === 'light' ? Colors.secondary : Colors.white }
                                     ]}>
                                         {scheduledDate || "Select date"}
@@ -489,7 +489,7 @@ const RideBooking = () => {
                                     } />
                                     <Text style={[
                                         styles.dateTimeText,
-                                        { color: currentTheme === 'light' ? Colors.mediumGray : Colors.lightGray },
+                                        { color: currentTheme === 'light' ? Colors.gray500 : Colors.gray300 },
                                         scheduledTime && { color: currentTheme === 'light' ? Colors.secondary : Colors.white }
                                     ]}>
                                         {scheduledTime || "Select time"}
@@ -525,8 +525,8 @@ const RideBooking = () => {
                         <TouchableOpacity
                             style={[
                                 styles.toggleOption,
-                                { backgroundColor: currentTheme === 'light' ? Colors.lightGray : Colors.darkGray, borderWidth: 1 },
-                                ramp && { borderColor: currentTheme === 'light' ? Colors.secondary : Colors.white, backgroundColor: currentTheme === 'light' ? Colors.lightPurple : Colors.mediumGray, borderWidth: 2 }
+                                { backgroundColor: currentTheme === 'light' ? Colors.gray300 : Colors.gray800, borderWidth: 1 },
+                                ramp && { borderColor: currentTheme === 'light' ? Colors.secondary : Colors.white, backgroundColor: currentTheme === 'light' ? Colors.secondary : Colors.gray500, borderWidth: 2 }
                             ]}
                             onPress={() => setRamp(v => !v)}
                             accessible={true}
@@ -535,8 +535,12 @@ const RideBooking = () => {
                             accessibilityHint="Press to indicate if you need a ramp or lift for wheelchair access"
                             accessibilityState={{ checked: ramp }}
                         >
-                            <MaterialCommunityIcons name="wheelchair-accessibility" size={22} color={currentTheme === 'light' ? Colors.black : Colors.white} />
-                            <Text style={[styles.toggleLabel, { color: currentTheme === 'light' ? Colors.black : Colors.white }]}>
+                            <MaterialCommunityIcons name="wheelchair-accessibility" size={22} color={Colors.blue} />
+                            <Text style={[
+                                styles.toggleLabel, 
+                                { color: currentTheme === 'light' ? Colors.black : Colors.white },
+                                ramp && { color: Colors.white}
+                                ]}>
                                 Ramp/Lift
                             </Text>
                         </TouchableOpacity>
@@ -544,8 +548,8 @@ const RideBooking = () => {
                         <TouchableOpacity
                             style={[
                                 styles.toggleOption,
-                                { backgroundColor: currentTheme === 'light' ? Colors.lightGray : Colors.darkGray, borderWidth: 1 },
-                                transferAssist && { borderColor: currentTheme === 'light' ? Colors.secondary : Colors.white, backgroundColor: currentTheme === 'light' ? Colors.lightPurple : Colors.mediumGray, borderWidth: 2 }
+                                { backgroundColor: currentTheme === 'light' ? Colors.gray300 : Colors.gray800, borderWidth: 1 },
+                                transferAssist && { borderColor: currentTheme === 'light' ? Colors.secondary : Colors.white, backgroundColor: currentTheme === 'light' ? Colors.secondary : Colors.gray500, borderWidth: 2 }
                             ]}
                             onPress={() => setTransferAssist(v => !v)}
                             accessible={true}
@@ -554,8 +558,12 @@ const RideBooking = () => {
                             accessibilityHint="Press to indicate if you need assistance transferring into the vehicle"
                             accessibilityState={{ checked: transferAssist }}
                         >
-                            <MaterialCommunityIcons name="wheelchair-accessibility" size={22} color={currentTheme === 'light' ? Colors.black : Colors.white} />
-                            <Text style={[styles.toggleLabel, { color: currentTheme === 'light' ? Colors.black : Colors.white }]}>
+                            <MaterialCommunityIcons name="wheelchair-accessibility" size={22} color={Colors.blue} />
+                            <Text style={[
+                                styles.toggleLabel, 
+                                { color: currentTheme === 'light' ? Colors.black : Colors.white },
+                                transferAssist && { color: Colors.white}
+                                ]}>
                                 Transfer Assistance
                             </Text>
                         </TouchableOpacity>
@@ -563,8 +571,8 @@ const RideBooking = () => {
                         <TouchableOpacity
                             style={[
                                 styles.toggleOption,
-                                { backgroundColor: currentTheme === 'light' ? Colors.lightGray : Colors.darkGray, borderWidth: 1 },
-                                assistiveDevice && { borderColor: currentTheme === 'light' ? Colors.secondary : Colors.white, backgroundColor: currentTheme === 'light' ? Colors.lightPurple : Colors.mediumGray, borderWidth: 2 }
+                                { backgroundColor: currentTheme === 'light' ? Colors.gray300 : Colors.gray800, borderWidth: 1 },
+                                assistiveDevice && { borderColor: currentTheme === 'light' ? Colors.secondary : Colors.white, backgroundColor: currentTheme === 'light' ? Colors.secondary : Colors.gray500, borderWidth: 2 }
                             ]}
                             onPress={() => setAssistiveDevice(v => !v)}
                             accessible={true}
@@ -573,8 +581,12 @@ const RideBooking = () => {
                             accessibilityHint="Press to indicate if you need assistance with an assistive device"
                             accessibilityState={{ checked: assistiveDevice }}
                         >
-                            <FontAwesome5 name="walking" size={20} color={currentTheme === 'light' ? Colors.black : Colors.white} />
-                            <Text style={[styles.toggleLabel, { color: currentTheme === 'light' ? Colors.black : Colors.white }]}>
+                            <FontAwesome5 name="walking" size={20} color={Colors.blue} />
+                            <Text style={[
+                                styles.toggleLabel, 
+                                { color: currentTheme === 'light' ? Colors.black : Colors.white },
+                                assistiveDevice && { color: Colors.white}
+                                ]}>
                                 Assistive Device
                             </Text>
                         </TouchableOpacity>
@@ -582,8 +594,8 @@ const RideBooking = () => {
                         <TouchableOpacity
                             style={[
                                 styles.toggleOption,
-                                { backgroundColor: currentTheme === 'light' ? Colors.lightGray : Colors.darkGray, borderWidth: 1 },
-                                signLanguage && { borderColor: currentTheme === 'light' ? Colors.secondary : Colors.white, backgroundColor: currentTheme === 'light' ? Colors.lightPurple : Colors.mediumGray, borderWidth: 2 }
+                                { backgroundColor: currentTheme === 'light' ? Colors.gray300 : Colors.gray800, borderWidth: 1 },
+                                signLanguage && { borderColor: currentTheme === 'light' ? Colors.secondary : Colors.white, backgroundColor: currentTheme === 'light' ? Colors.secondary : Colors.gray500, borderWidth: 2 }
                             ]}
                             onPress={() => setSignLanguage(v => !v)}
                             accessible={true}
@@ -592,7 +604,7 @@ const RideBooking = () => {
                             accessibilityHint="Press to indicate if you need a driver who knows sign language"
                             accessibilityState={{ checked: signLanguage }}
                         >
-                            <MaterialCommunityIcons name="hand-peace" size={22} color={currentTheme === 'light' ? Colors.black : Colors.white} />
+                            <MaterialCommunityIcons name="hand-peace" size={22} color={Colors.blue} />
                             <Text style={[styles.toggleLabel, { color: currentTheme === 'light' ? Colors.black : Colors.white }]}>
                                 Sign Language
                             </Text>
@@ -601,8 +613,8 @@ const RideBooking = () => {
                         <TouchableOpacity
                             style={[
                                 styles.toggleOption,
-                                { backgroundColor: currentTheme === 'light' ? Colors.lightGray : Colors.darkGray, borderWidth: 1 },
-                                writtenCommunication && { borderColor: currentTheme === 'light' ? Colors.secondary : Colors.white, backgroundColor: currentTheme === 'light' ? Colors.lightPurple : Colors.mediumGray, borderWidth: 2 }
+                                { backgroundColor: currentTheme === 'light' ? Colors.gray300 : Colors.gray800, borderWidth: 1 },
+                                writtenCommunication && { borderColor: currentTheme === 'light' ? Colors.secondary : Colors.white, backgroundColor: currentTheme === 'light' ? Colors.secondary : Colors.gray500, borderWidth: 2 }
                             ]}
                             onPress={() => setWrittenCommunication(v => !v)}
                             accessible={true}
@@ -611,7 +623,7 @@ const RideBooking = () => {
                             accessibilityHint="Press to indicate if you prefer written communication with the driver"
                             accessibilityState={{ checked: writtenCommunication }}
                         >
-                            <Ionicons name="chatbox-ellipses" size={22} color={currentTheme === 'light' ? Colors.black : Colors.white} />
+                            <Ionicons name="chatbox-ellipses" size={22} color={Colors.blue} />
                             <Text style={[styles.toggleLabel, { color: currentTheme === 'light' ? Colors.black : Colors.white }]}>
                                 Written Communication
                             </Text>
@@ -631,7 +643,7 @@ const RideBooking = () => {
                             Additional Instructions
                         </Text>
                         <Text
-                            style={{ color: Colors.accent, fontSize: 13, marginBottom: 8 }}
+                            style={{ color: currentTheme === 'light' ? Colors.gray700 : Colors.gray300, fontSize: 13, marginBottom: 8 }}
                             accessibilityRole="text"
                             accessibilityLabel="Additional Instructions Hint"
                             accessibilityHint="Enter any special instructions for the driver"
@@ -654,7 +666,7 @@ const RideBooking = () => {
 
                     {/* Summary Preview Card */}
                     <View
-                        style={[styles.summaryCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}
+                        style={[styles.summaryCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.gray800 }]}
                         accessibilityRole="summary"
                         accessibilityLabel="Trip Summary"
                     >
@@ -684,28 +696,28 @@ const RideBooking = () => {
                         </View>
 
                         <View style={styles.summaryRow}>
-                            <MaterialCommunityIcons name="wheelchair-accessibility" size={24} color={ramp ? Colors.blue : Colors.accent} />
+                            <MaterialCommunityIcons name="wheelchair-accessibility" size={24} color={ramp ? Colors.blue : Colors.gray700} />
                             <Text style={[styles.summaryText, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole='text' accessibilityLabel={` Ramp/Lift Accessibility: ${ramp ? 'Yes' : 'No'}`}>
                                 Ramp: {ramp ? '✅' : '❌'}
                             </Text>
                         </View>
 
                         <View style={styles.summaryRow}>
-                            <FontAwesome5 name="walking" size={24} color={assistiveDevice ? Colors.blue : Colors.accent} />
+                            <FontAwesome5 name="walking" size={24} color={assistiveDevice ? Colors.blue : Colors.gray700} />
                             <Text style={[styles.summaryText, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole='text' accessibilityLabel={` Assistive Device Accessibility: ${assistiveDevice ? 'Yes' : 'No'}`}>
                                 Assistive Device: {assistiveDevice ? '✅' : '❌'}
                             </Text>
                         </View>
 
                         <View style={styles.summaryRow}>
-                            <MaterialCommunityIcons name="hand-peace" size={24} color={signLanguage ? Colors.blue : Colors.accent} />
+                            <MaterialCommunityIcons name="hand-peace" size={24} color={signLanguage ? Colors.blue : Colors.gray700} />
                             <Text style={[styles.summaryText, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole='text' accessibilityLabel={` Sign Language Accessibility: ${signLanguage ? 'Yes' : 'No'}`}>
                                 Sign Language: {signLanguage ? '✅' : '❌'}
                             </Text>
                         </View>
 
                         <View style={styles.summaryRow}>
-                            <Ionicons name="chatbox-ellipses" size={24} color={writtenCommunication ? Colors.blue : Colors.accent} />
+                            <Ionicons name="chatbox-ellipses" size={24} color={writtenCommunication ? Colors.blue : Colors.gray700} />
                             <Text style={[styles.summaryText, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole='text' accessibilityLabel={` Written Communication Accessibility: ${writtenCommunication ? 'Yes' : 'No'}`}>
                                 Written Communication: {writtenCommunication ? '✅' : '❌'}
                             </Text>
@@ -717,7 +729,7 @@ const RideBooking = () => {
                                 <Ionicons name="chatbox-ellipses" size={24} color={Colors.secondary} />
                                 <Text style={[styles.summaryText, { color: currentTheme === 'light' ? Colors.black : Colors.white }]}>
                                     Notes:
-                                    <Text style={{ fontStyle: 'italic', color: Colors.accent }}>
+                                    <Text style={{ fontStyle: 'italic', color: Colors.gray700 }}>
                                         {' '}
                                         {instructions}
                                     </Text>
@@ -852,7 +864,6 @@ const styles = StyleSheet.create({
     tabContainer: {
         flexDirection: 'row',
         borderRadius: 12,
-        backgroundColor: Colors.lightGray,
         padding: 4,
     },
     tab: {
@@ -910,7 +921,6 @@ const styles = StyleSheet.create({
     toggleLabel: {
         fontSize: 13,
         marginTop: 4,
-        color: Colors.accent,
         textAlign: 'center',
     },
     summaryCard: {
@@ -954,7 +964,6 @@ const styles = StyleSheet.create({
     },
     sosText: {
         fontSize: 15,
-        color: Colors.accent,
     },
     sosButton: {
         fontSize: 16,

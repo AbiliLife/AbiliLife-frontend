@@ -87,7 +87,7 @@ const MobilityHomeScreen = () => {
       await WebBrowser.openBrowserAsync(url, {
         presentationStyle: WebBrowser.WebBrowserPresentationStyle.FORM_SHEET,
         controlsColor: Colors.blue,
-        toolbarColor: currentTheme === 'light' ? Colors.white : Colors.darkGray,
+        toolbarColor: currentTheme === 'light' ? Colors.white : Colors.gray800,
         showTitle: true,
       })
     } catch (error) {
@@ -135,7 +135,7 @@ const MobilityHomeScreen = () => {
 
         {/* Private Ride Card */}
         <TouchableOpacity
-          style={[styles.card, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}
+          style={[styles.card, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.gray800 }]}
           onPress={() => router.push('/rideBooking')}
           accessible={true}
           accessibilityLabel="Private Ride with Ace Mobility"
@@ -154,7 +154,7 @@ const MobilityHomeScreen = () => {
               <Text style={[styles.cardTitle, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole="header" accessibilityLabel="Private Ride with Ace Mobility">
                 Request a Private Ride
               </Text>
-              <Text style={[styles.cardDescription, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel="Book a private accessible ride with Ace Mobility">
+              <Text style={[styles.cardDescription, { color: currentTheme === 'light' ? Colors.gray700 : Colors.gray300 }]} accessibilityRole="text" accessibilityLabel="Book a private accessible ride with Ace Mobility">
                 Book a private accessible ride with Ace Mobility
               </Text>
             </View>
@@ -163,7 +163,7 @@ const MobilityHomeScreen = () => {
 
         {/* Schedule Ride Card */}
         <TouchableOpacity
-          style={[styles.card, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}
+          style={[styles.card, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.gray800 }]}
           onPress={() => router.push('/(mobility)/rideBooking')}
           accessible={true}
           accessibilityLabel="Schedule a Ride"
@@ -176,7 +176,7 @@ const MobilityHomeScreen = () => {
               <Text style={[styles.cardTitle, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole="header" accessibilityLabel="Schedule a Ride">
                 Schedule a Ride
               </Text>
-              <Text style={[styles.cardDescription, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel="Plan and schedule transportation in advance">
+              <Text style={[styles.cardDescription, { color: currentTheme === 'light' ? Colors.gray700 : Colors.gray300 }]} accessibilityRole="text" accessibilityLabel="Plan and schedule transportation in advance">
                 Plan and schedule transportation in advance with Ace Mobility
               </Text>
             </View>
@@ -185,7 +185,7 @@ const MobilityHomeScreen = () => {
 
         {/* Public Transport Card */}
         <TouchableOpacity
-          style={[styles.card, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray, height: 150 }]}
+          style={[styles.card, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.gray800, height: 150 }]}
           onPress={() => router.push('/(mobility)/publicTransport')}
           accessible={true}
           accessibilityLabel="Public Transport"
@@ -198,7 +198,7 @@ const MobilityHomeScreen = () => {
               <Text style={[styles.cardTitle, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole="header" accessibilityLabel="Public Transport">
                 Public Transport
               </Text>
-              <Text style={[styles.cardDescription, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel="Get information about accessible public transportation options">
+              <Text style={[styles.cardDescription, { color: currentTheme === 'light' ? Colors.gray700 : Colors.gray300 }]} accessibilityRole="text" accessibilityLabel="Get information about accessible public transportation options">
                 Get information about accessible public transportation options
               </Text>
               <Text style={{ color: Colors.info, fontWeight: '500' }} accessibilityRole="text" accessibilityLabel="">
@@ -249,7 +249,7 @@ const MobilityHomeScreen = () => {
           {miniServices.map((service) => (
             <TouchableOpacity
               key={service.id}
-              style={[styles.serviceCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}
+              style={[styles.serviceCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.gray800 }]}
               onPress={() => {
                 if (service.link) {
                   handleExternalLinkPress(service.link, service.title);
@@ -272,7 +272,7 @@ const MobilityHomeScreen = () => {
               <Text style={[styles.serviceTitle, { color: currentTheme === 'light' ? Colors.black : Colors.white }]} accessibilityRole="text" accessibilityLabel={service.title}>
                 {service.title}
               </Text>
-              <Text style={[styles.serviceDescription, { color: currentTheme === 'light' ? Colors.accent : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel={service.description}>
+              <Text style={[styles.serviceDescription, { color: currentTheme === 'light' ? Colors.gray700 : Colors.gray300 }]} accessibilityRole="text" accessibilityLabel={service.description}>
                 {service.description}
               </Text>
             </TouchableOpacity>
@@ -383,7 +383,6 @@ const styles = StyleSheet.create({
   serviceDescription: {
     fontSize: 14,
     textAlign: 'center',
-    color: Colors.accent,
   },
 
   betaBadgeContainer: {

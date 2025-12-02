@@ -51,7 +51,7 @@ const allServices: ServiceCategory[] = [
         description: 'Employment & Financial Inclusion (Our Promise)',
         icon: 'briefcase-outline',
         iconType: 'materialcommunity',
-        iconColor: Colors.lightGray, // Light Gray color
+        iconColor: Colors.gray300, // Light Gray color
         // Note: This path is currently not implemented
         path: '/employment',
     },
@@ -61,7 +61,7 @@ const allServices: ServiceCategory[] = [
         description: 'Inclusive Education & Skills Training (Our Promise)',
         icon: 'book',
         iconType: 'ionicons',
-        iconColor: Colors.lightGray, // Light Gray color
+        iconColor: Colors.gray300, // Light Gray color
         // Note: This path is currently not implemented
         path: '/education',
     },
@@ -71,7 +71,7 @@ const allServices: ServiceCategory[] = [
         description: 'Insurance & Financial Support (Our Promise)',
         icon: 'shield',
         iconType: 'materialcommunity',
-        iconColor: Colors.lightGray, // Light Gray color
+        iconColor: Colors.gray300, // Light Gray color
         // Note: This path is currently not implemented
         path: '/insurance',
     },
@@ -137,7 +137,7 @@ export default function ServicesScreen() {
                 accessible={true}
                 accessibilityHint="Scroll through to explore all services"
             >
-                <Text style={{ fontSize: 14, marginVertical: 16 }}>
+                <Text style={{ fontSize: 14, marginVertical: 16, color: currentTheme === 'light' ? Colors.gray700 : Colors.gray300 }}>
                     We are dedicated to providing accessible services for all. Abililife has 5 main service categories, each designed to enhance the quality of life for individuals with disabilities.
                     {`\n`}{`\n`}
                     Explore our offerings below:
@@ -150,7 +150,7 @@ export default function ServicesScreen() {
                 </View>
 
                 <TouchableOpacity
-                    style={[styles.newServiceCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}
+                    style={[styles.newServiceCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.gray800 }]}
                     onPress={() => router.push('/mobility')}
                     activeOpacity={0.5}
                     accessibilityRole='button'
@@ -164,7 +164,7 @@ export default function ServicesScreen() {
                         <Text style={[styles.sectionTitle, { color: currentTheme === 'light' ? Colors.black : Colors.white }]}>
                             AbiliLife Mobility
                         </Text>
-                        <Text style={{ fontSize: 14, color: Colors.accent, marginTop: 4 }}>
+                        <Text style={{ fontSize: 14, color: currentTheme === 'light' ? Colors.gray700 : Colors.gray300, marginTop: 4 }}>
                             Book a private ride, schedule a trip, or request a ride for someone else. See Public Transport options in your area.
                         </Text>
                     </View>
@@ -185,7 +185,7 @@ export default function ServicesScreen() {
                     renderItem={({ item }) => (
                         <TouchableOpacity
                             key={item.id}
-                            style={[styles.serviceCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}
+                            style={[styles.serviceCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.gray800 }]}
                             onPress={() => item.path && router.push(item.path)}
                             activeOpacity={0.5}
                             disabled
@@ -193,11 +193,11 @@ export default function ServicesScreen() {
                             <View style={{ marginBottom: 8 }}>
                                 {renderServiceIcon(item)}
                             </View>
-                            <Text style={[styles.serviceTitle, { textAlign: 'center', color: (item.title !== 'AbiliLife Care' && item.title !== 'AbiliLife Access') ? Colors.mediumGray : (currentTheme === 'light' ? Colors.primary : Colors.white) }]}>
+                            <Text style={[styles.serviceTitle, { textAlign: 'center', color: (item.title !== 'AbiliLife Care' && item.title !== 'AbiliLife Access') ? Colors.gray500 : (currentTheme === 'light' ? Colors.primary : Colors.white) }]}>
                                 {item.title}
                             </Text>
                             {item.description && (
-                                <Text style={[styles.serviceTitle, { fontSize: 12, color: (item.title !== 'AbiliLife Care' && item.title !== 'AbiliLife Access') ? Colors.mediumGray : (currentTheme === 'light' ? Colors.secondary : Colors.accent), marginTop: 4, textAlign: 'center' }]}>
+                                <Text style={[styles.serviceTitle, { fontSize: 12, color: (item.title !== 'AbiliLife Care' && item.title !== 'AbiliLife Access') ? Colors.gray500 : (currentTheme === 'light' ? Colors.secondary : Colors.gray300), marginTop: 4, textAlign: 'center' }]}>
                                     {item.description}
                                 </Text>
                             )}
@@ -205,7 +205,7 @@ export default function ServicesScreen() {
                     )}
                     contentContainerStyle={{ paddingBottom: 16 }}
                     ListEmptyComponent={
-                        <Text style={{ textAlign: 'center', color: Colors.mediumGray }}>
+                        <Text style={{ textAlign: 'center', color: currentTheme === 'light' ? Colors.gray700 : Colors.gray300, marginTop: 20 }}>
                             No services available at the moment.
                         </Text>
                     }
@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
         marginBottom: 16,
         alignItems: 'center',
         justifyContent: 'center',
-        shadowColor: Colors.darkGray,
+        shadowColor: Colors.gray800,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
         marginBottom: 16,
         flexDirection: 'row',
         alignItems: 'center',
-        shadowColor: Colors.darkGray,
+        shadowColor: Colors.gray800,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,

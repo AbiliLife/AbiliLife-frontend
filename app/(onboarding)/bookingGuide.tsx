@@ -105,10 +105,10 @@ export default function BookingGuide() {
                                         {step.subSteps.map((subStep, subIdx) => (
                                             <View key={subIdx} style={styles.subStepItem}>
                                                 {/* <Text style={styles.bulletPoint}>•</Text> */}
-                                                <Text style={[styles.bulletPoint, { color: currentTheme === 'light' ? Colors.darkGray : Colors.lightGray }]}>
+                                                <Text style={[styles.bulletPoint, { color: currentTheme === 'light' ? Colors.gray800 : Colors.gray300 }]} accessibilityRole='text' accessibilityLabel='Bullet point'>
                                                     •
                                                 </Text>
-                                                <Text style={[styles.subStepText, { color: currentTheme === 'light' ? Colors.darkGray : Colors.lightGray }]} accessibilityRole='text' accessibilityLabel={`Sub-step ${subIdx + 1} of ${step.subSteps?.length}: ${subStep}`}>
+                                                <Text style={[styles.subStepText, { color: currentTheme === 'light' ? Colors.gray800 : Colors.gray300 }]} accessibilityRole='text' accessibilityLabel={`Sub-step ${subIdx + 1} of ${step.subSteps?.length}: ${subStep}`}>
                                                     {subStep}
                                                 </Text>
                                             </View>
@@ -121,7 +121,7 @@ export default function BookingGuide() {
                 </View>
             </View>
 
-            <View style={styles.navigationContainer}>
+            <View style={[styles.navigationContainer, { borderTopColor: currentTheme === 'light' ? Colors.borderLight : Colors.borderDark }]}>
                 <TouchableOpacity
                     style={styles.navButton}
                     onPress={currentSlide === 0 ? cancelGuide : goToPreviousSlide}
@@ -136,7 +136,7 @@ export default function BookingGuide() {
                             color={currentTheme === 'light' ? Colors.blue : Colors.white}
                         />
                     )}
-                    <Text style={[styles.navButtonText, { color: currentSlide === 0 ? Colors.mediumGray : currentTheme === 'light' ? Colors.blue : Colors.white }]}>
+                    <Text style={[styles.navButtonText, { color: currentSlide === 0 ? Colors.gray500 : currentTheme === 'light' ? Colors.blue : Colors.white }]}>
                         {currentSlide === 0 ? 'Cancel' : 'Previous'}
                     </Text>
                 </TouchableOpacity>
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
     },
     description: {
         fontSize: 16,
-        color: Colors.accent,
+        color: Colors.gray700,
         textAlign: 'center',
         lineHeight: 24,
     },

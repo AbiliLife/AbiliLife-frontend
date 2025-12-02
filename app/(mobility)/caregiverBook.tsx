@@ -441,8 +441,8 @@ const CaregiverBooking = () => {
                         <TouchableOpacity
                             style={[
                                 styles.toggleOption,
-                                { backgroundColor: currentTheme === 'light' ? Colors.lightGray : Colors.darkGray, borderWidth: 1 },
-                                ramp && { borderColor: currentTheme === 'light' ? Colors.secondary : Colors.white, backgroundColor: currentTheme === 'light' ? Colors.lightPurple : Colors.mediumGray, borderWidth: 2 }
+                                { backgroundColor: currentTheme === 'light' ? Colors.gray300 : Colors.gray800, borderWidth: 1 },
+                                ramp && { borderColor: currentTheme === 'light' ? Colors.secondary : Colors.white, backgroundColor: currentTheme === 'light' ? Colors.secondary : Colors.gray500, borderWidth: 2 }
                             ]}
                             onPress={() => setRamp(v => !v)}
                             accessible={true}
@@ -460,8 +460,8 @@ const CaregiverBooking = () => {
                         <TouchableOpacity
                             style={[
                                 styles.toggleOption,
-                                { backgroundColor: currentTheme === 'light' ? Colors.lightGray : Colors.darkGray, borderWidth: 1 },
-                                transferAssist && { borderColor: currentTheme === 'light' ? Colors.secondary : Colors.white, backgroundColor: currentTheme === 'light' ? Colors.lightPurple : Colors.mediumGray, borderWidth: 2 }
+                                { backgroundColor: currentTheme === 'light' ? Colors.gray300 : Colors.gray800, borderWidth: 1 },
+                                transferAssist && { borderColor: currentTheme === 'light' ? Colors.secondary : Colors.white, backgroundColor: currentTheme === 'light' ? Colors.secondary : Colors.gray500, borderWidth: 2 }
                             ]}
                             onPress={() => setTransferAssist(v => !v)}
                             accessible={true}
@@ -479,8 +479,8 @@ const CaregiverBooking = () => {
                         <TouchableOpacity
                             style={[
                                 styles.toggleOption,
-                                { backgroundColor: currentTheme === 'light' ? Colors.lightGray : Colors.darkGray, borderWidth: 1 },
-                                assistiveDevice && { borderColor: currentTheme === 'light' ? Colors.secondary : Colors.white, backgroundColor: currentTheme === 'light' ? Colors.lightPurple : Colors.mediumGray, borderWidth: 2 }
+                                { backgroundColor: currentTheme === 'light' ? Colors.gray300 : Colors.gray800, borderWidth: 1 },
+                                assistiveDevice && { borderColor: currentTheme === 'light' ? Colors.secondary : Colors.white, backgroundColor: currentTheme === 'light' ? Colors.secondary : Colors.gray500, borderWidth: 2 }
                             ]}
                             onPress={() => setAssistiveDevice(v => !v)}
                             accessible={true}
@@ -498,8 +498,8 @@ const CaregiverBooking = () => {
                         <TouchableOpacity
                             style={[
                                 styles.toggleOption,
-                                { backgroundColor: currentTheme === 'light' ? Colors.lightGray : Colors.darkGray, borderWidth: 1 },
-                                signLanguage && { borderColor: currentTheme === 'light' ? Colors.secondary : Colors.white, backgroundColor: currentTheme === 'light' ? Colors.lightPurple : Colors.mediumGray, borderWidth: 2 }
+                                { backgroundColor: currentTheme === 'light' ? Colors.gray300 : Colors.gray800, borderWidth: 1 },
+                                signLanguage && { borderColor: currentTheme === 'light' ? Colors.secondary : Colors.white, backgroundColor: currentTheme === 'light' ? Colors.secondary : Colors.gray500, borderWidth: 2 }
                             ]}
                             onPress={() => setSignLanguage(v => !v)}
                             accessible={true}
@@ -517,8 +517,8 @@ const CaregiverBooking = () => {
                         <TouchableOpacity
                             style={[
                                 styles.toggleOption,
-                                { backgroundColor: currentTheme === 'light' ? Colors.lightGray : Colors.darkGray, borderWidth: 1 },
-                                writtenCommunication && { borderColor: currentTheme === 'light' ? Colors.secondary : Colors.white, backgroundColor: currentTheme === 'light' ? Colors.lightPurple : Colors.mediumGray, borderWidth: 2 }
+                                { backgroundColor: currentTheme === 'light' ? Colors.gray300 : Colors.gray800, borderWidth: 1 },
+                                writtenCommunication && { borderColor: currentTheme === 'light' ? Colors.secondary : Colors.white, backgroundColor: currentTheme === 'light' ? Colors.secondary : Colors.gray500, borderWidth: 2 }
                             ]}
                             onPress={() => setWrittenCommunication(v => !v)}
                             accessible={true}
@@ -536,8 +536,8 @@ const CaregiverBooking = () => {
                         <TouchableOpacity
                             style={[
                                 styles.toggleOption,
-                                { backgroundColor: currentTheme === 'light' ? Colors.lightGray : Colors.darkGray, borderWidth: 1 },
-                                notSure && { borderColor: currentTheme === 'light' ? Colors.secondary : Colors.white, backgroundColor: currentTheme === 'light' ? Colors.lightPurple : Colors.mediumGray, borderWidth: 2 }
+                                { backgroundColor: currentTheme === 'light' ? Colors.gray300 : Colors.gray800, borderWidth: 1 },
+                                notSure && { borderColor: currentTheme === 'light' ? Colors.secondary : Colors.white, backgroundColor: currentTheme === 'light' ? Colors.secondary : Colors.gray500, borderWidth: 2 }
                             ]}
                             onPress={() => setNotSure(v => !v)}
                             accessible={true}
@@ -596,7 +596,7 @@ const CaregiverBooking = () => {
                             accessibilityRole="button"
                             aria-label="Use Current Location Button"
                         >
-                            <Text style={{ color: currentTheme === 'light' ? Colors.secondary : Colors.lightGray, fontSize: 14 }}>
+                            <Text style={{ color: currentTheme === 'light' ? Colors.secondary : Colors.gray300, fontSize: 14 }}>
                                 Use Current Location
                             </Text>
                             <Ionicons name="locate" size={24} color={Colors.secondary} />
@@ -640,15 +640,15 @@ const CaregiverBooking = () => {
                     >
                         When would they(him/her) like to ride?
                     </Text>
-                    <View style={[styles.tabContainer, { backgroundColor: currentTheme === 'light' ? Colors.lightGray : Colors.mediumGray }]} accessible={true}>
+                    <View style={[styles.tabContainer, { backgroundColor: currentTheme === 'light' ? Colors.gray200 : Colors.gray600  }]} accessible={true}>
                         <TouchableOpacity
                             style={[
                                 styles.tab,
                                 {
                                     backgroundColor:
                                         rideTimeType === 'immediate'
-                                            ? (currentTheme === 'light' ? Colors.white : Colors.darkGray)
-                                            : (currentTheme === 'light' ? Colors.lightGray : Colors.mediumGray),
+                                            ? (currentTheme === 'light' ? Colors.white : Colors.gray800)
+                                            : (currentTheme === 'light' ? Colors.gray200 : Colors.gray600 ),
                                 },
                             ]}
                             onPress={() => setRideTimeType('immediate')}
@@ -662,7 +662,7 @@ const CaregiverBooking = () => {
                                     styles.tabText,
                                     rideTimeType === 'immediate'
                                         ? (currentTheme === 'light' ? styles.activeTabText : { color: Colors.white })
-                                        : { color: currentTheme === 'light' ? Colors.primary : Colors.lightGray },
+                                        : { color: currentTheme === 'light' ? Colors.primary : Colors.gray300 },
                                 ]}
                             >
                                 Now
@@ -675,8 +675,8 @@ const CaregiverBooking = () => {
                                 {
                                     backgroundColor:
                                         rideTimeType === 'scheduled'
-                                            ? (currentTheme === 'light' ? Colors.white : Colors.darkGray)
-                                            : (currentTheme === 'light' ? Colors.lightGray : Colors.mediumGray),
+                                            ? (currentTheme === 'light' ? Colors.white : Colors.gray800)
+                                            : (currentTheme === 'light' ? Colors.gray200 : Colors.gray600 ),
                                 },
                             ]}
                             onPress={() => setRideTimeType('scheduled')}
@@ -690,7 +690,7 @@ const CaregiverBooking = () => {
                                     styles.tabText,
                                     rideTimeType === 'scheduled'
                                         ? (currentTheme === 'light' ? styles.activeTabText : { color: Colors.white })
-                                        : { color: currentTheme === 'light' ? Colors.primary : Colors.lightGray },
+                                        : { color: currentTheme === 'light' ? Colors.primary : Colors.gray300 },
                                 ]}
                             >
                                 Later
@@ -718,7 +718,7 @@ const CaregiverBooking = () => {
                                     } />
                                     <Text style={[
                                         styles.dateTimeText,
-                                        { color: currentTheme === 'light' ? Colors.mediumGray : Colors.lightGray },
+                                        { color: currentTheme === 'light' ? Colors.gray500 : Colors.gray300 },
                                         scheduledDate && { color: currentTheme === 'light' ? Colors.secondary : Colors.white }
                                     ]}>
                                         {scheduledDate || "Select date"}
@@ -742,7 +742,7 @@ const CaregiverBooking = () => {
                                     } />
                                     <Text style={[
                                         styles.dateTimeText,
-                                        { color: currentTheme === 'light' ? Colors.mediumGray : Colors.lightGray },
+                                        { color: currentTheme === 'light' ? Colors.gray500 : Colors.gray300 },
                                         scheduledTime && { color: currentTheme === 'light' ? Colors.secondary : Colors.white }
                                     ]}>
                                         {scheduledTime || "Select time"}
@@ -832,7 +832,7 @@ const CaregiverBooking = () => {
                             onChangeText={setInstructions}
                             multiline
                             numberOfLines={5}
-                            style={[styles.instructionInput, { backgroundColor: currentTheme === 'light' ? Colors.lightGray : Colors.darkGray, color: currentTheme === 'light' ? Colors.black : Colors.white }]}
+                            style={[styles.instructionInput, { backgroundColor: currentTheme === 'light' ? Colors.gray300 : Colors.gray800, color: currentTheme === 'light' ? Colors.black : Colors.white }]}
                             accessibilityLabel="Special Instructions Input"
                             accessibilityHint="Enter any special instructions for the driver"
                         />
@@ -840,7 +840,7 @@ const CaregiverBooking = () => {
 
                     {/* Summary Preview Card */}
                     <View
-                        style={[styles.summaryCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray }]}
+                        style={[styles.summaryCard, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.gray800 }]}
                         accessibilityRole="summary"
                         accessibilityLabel="Trip Summary"
                     >
@@ -1063,7 +1063,7 @@ const styles = StyleSheet.create({
     tabContainer: {
         flexDirection: 'row',
         borderRadius: 12,
-        backgroundColor: Colors.lightGray,
+        backgroundColor: Colors.gray300,
         padding: 4,
     },
     tab: {
@@ -1121,7 +1121,7 @@ const styles = StyleSheet.create({
     toggleLabel: {
         fontSize: 13,
         marginTop: 4,
-        color: Colors.accent,
+        // color: Colors.accent,
         textAlign: 'center',
     },
     radioRow: {
@@ -1141,7 +1141,7 @@ const styles = StyleSheet.create({
         height: 22,
         borderRadius: 11,
         borderWidth: 2,
-        borderColor: Colors.accent,
+        // borderColor: Colors.accent,
         alignItems: 'center',
         justifyContent: 'center',
         marginRight: 8,

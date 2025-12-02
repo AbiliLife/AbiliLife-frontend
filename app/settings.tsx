@@ -47,7 +47,7 @@ export default function SettingsScreen() {
                 headerLargeTitle: Platform.OS === 'ios',
                 headerShadowVisible: false,
             }} />
-                <Text style={styles.subtitle} accessibilityRole='header' accessibilityLabel='Settings subtitle'>
+                <Text style={[styles.subtitle, { color: currentTheme === 'light' ? Colors.gray700 : Colors.gray300 }]} accessibilityRole='header' accessibilityLabel='Settings subtitle'>
                     Customize your experience
                 </Text>
 
@@ -57,7 +57,7 @@ export default function SettingsScreen() {
                 </Text>
             </View>
 
-            <View style={[styles.settingRow, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray, borderColor: currentTheme === 'light' ? Colors.borderLight : Colors.borderDark }]}>
+            <View style={[styles.settingRow, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.gray800, borderColor: currentTheme === 'light' ? Colors.borderLight : Colors.borderDark }]}>
                 <View style={styles.settingLabelContainer}>
                     <Ionicons name="moon" size={24} color={Colors.secondary} />
                     <Text style={[styles.settingLabel, { color: currentTheme === 'light' ? Colors.primary : Colors.white }]}>
@@ -67,7 +67,7 @@ export default function SettingsScreen() {
                 <Switch
                     value={currentTheme === 'dark'}
                     onValueChange={() => toggleTheme(currentTheme === 'dark' ? 'light' : 'dark')}
-                    trackColor={{ false: Colors.lightGray, true: Colors.secondary }}
+                    trackColor={{ false: Colors.gray300, true: Colors.secondary }}
                     thumbColor={Colors.white}
                     accessibilityRole='switch'
                     accessibilityLabel='Toggle Dark Mode'
@@ -84,7 +84,7 @@ export default function SettingsScreen() {
             <TouchableOpacity
                 style={[
                     styles.settingRow,
-                    { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray, borderColor: currentTheme === 'light' ? Colors.borderLight : Colors.borderDark },
+                    { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.gray800, borderColor: currentTheme === 'light' ? Colors.borderLight : Colors.borderDark },
                     !isSystemTheme && currentTheme === 'light' && styles.selectedRow
                 ]}
                 activeOpacity={0.7}
@@ -106,7 +106,7 @@ export default function SettingsScreen() {
             </TouchableOpacity>
 
             <TouchableOpacity
-                style={[styles.settingRow, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray, borderColor: currentTheme === 'light' ? Colors.borderLight : Colors.borderDark }, !isSystemTheme && currentTheme === 'dark' && styles.selectedRow]}
+                style={[styles.settingRow, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.gray800, borderColor: currentTheme === 'light' ? Colors.borderLight : Colors.borderDark }, !isSystemTheme && currentTheme === 'dark' && styles.selectedRow]}
                 activeOpacity={0.7}
                 onPress={() => toggleTheme('dark')}
             >
@@ -126,7 +126,7 @@ export default function SettingsScreen() {
             </TouchableOpacity>
 
             <TouchableOpacity
-                style={[styles.settingRow, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.darkGray, borderColor: currentTheme === 'light' ? Colors.borderLight : Colors.borderDark }, isSystemTheme && styles.selectedRow]}
+                style={[styles.settingRow, { backgroundColor: currentTheme === 'light' ? Colors.white : Colors.gray800, borderColor: currentTheme === 'light' ? Colors.borderLight : Colors.borderDark }, isSystemTheme && styles.selectedRow]}
                 activeOpacity={0.7}
                 onPress={toggleSystemTheme}
             >
@@ -155,7 +155,6 @@ const styles = StyleSheet.create({
     },
     subtitle: {
         fontSize: 16,
-        color: Colors.accent,
     },
     sectionHeader: {
         flexDirection: 'row',
@@ -171,7 +170,6 @@ const styles = StyleSheet.create({
     },
     sectionSubtitle: {
         fontSize: 14,
-        color: Colors.accent,
         paddingHorizontal: 4,
     },
     settingRow: {
@@ -183,7 +181,6 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         marginBottom: 12,
         borderWidth: 1,
-        borderColor: Colors.mediumGray,
         backgroundColor: Colors.white,
     },
     settingLabelContainer: {
