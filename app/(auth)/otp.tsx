@@ -20,7 +20,7 @@ import { useOnboardingStore } from '@/store/onboardingStore';
 
 // Utility Functions
 import { formatHiddenPhoneNumber, formatPhoneNumber } from '@/utils/formatPhone';
-import { formatTime } from '@/utils/formatTimer';
+import { formatTime } from '@/utils/formatDateTime';
 
 // Beta Badge - for pilot mode
 const BetaBadge = () => {
@@ -170,7 +170,7 @@ export default function OTPVerificationScreen() {
                     accessibilityHint="An image representing the OTP verification process"
                 />
 
-                <Text style={[styles.subtitle, { color: currentTheme === 'light' ? Colors.black : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel={`Verify your phone number to continue. We've sent a 6-digit code to ${user.phone}`}>
+                <Text style={[styles.subtitle, { color: currentTheme === 'light' ? Colors.gray700 : Colors.gray300 }]} accessibilityRole="text" accessibilityLabel={`Verify your phone number to continue. We've sent a 6-digit code to ${user.phone}`}>
                     We've sent a 6-digit code to{`\n`}
                     <Text style={styles.contactInfo}>
                         {formatHiddenPhoneNumber(user.phone)}
@@ -185,7 +185,7 @@ export default function OTPVerificationScreen() {
                 />
 
                 <View style={styles.resendContainer}>
-                    <Text style={[styles.resendText, { color: currentTheme === 'light' ? Colors.black : Colors.lightGray }]} accessibilityRole="text" accessibilityLabel="Didn't receive the code?">
+                    <Text style={[styles.resendText, { color: currentTheme === 'light' ? Colors.gray700 : Colors.gray300 }]} accessibilityRole="text" accessibilityLabel="Didn't receive the code?">
                         Didn't receive the code?{' '}
                     </Text>
                     <TouchableOpacity
@@ -220,7 +220,7 @@ export default function OTPVerificationScreen() {
                 }}
             />
 
-            <View style={[styles.footer, { borderTopColor: currentTheme === 'light' ? Colors.lightGray : Colors.darkGray }]}>
+            <View style={[styles.footer, { borderTopColor: currentTheme === 'light' ? Colors.borderLight : Colors.borderDark }]}>
                 <Button
                     title="Verify"
                     onPress={handleVerify}
@@ -243,7 +243,6 @@ const styles = StyleSheet.create({
     },
     subtitle: {
         fontSize: 16,
-        color: Colors.accent,
         textAlign: 'center',
         lineHeight: 24,
     },
@@ -266,7 +265,7 @@ const styles = StyleSheet.create({
         color: Colors.secondary,
     },
     resendButtonDisabled: {
-        color: Colors.mediumGray,
+        color: Colors.gray600,
     },
     errorText: {
         color: Colors.error,
