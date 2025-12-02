@@ -85,7 +85,6 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     modalText: {
-        color: Colors.accent,
         marginBottom: 29,
     },
     cancelText: {
