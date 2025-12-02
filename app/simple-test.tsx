@@ -147,7 +147,7 @@ export default function SimpleTestScreen() {
             </ScrollView>
 
             <View style={styles.infoContainer}>
-                <Ionicons name="information-circle-outline" size={24} color={Colors.mediumGray} />
+                <Ionicons name="information-circle-outline" size={24} color={Colors.gray500} />
                 <Text style={styles.infoText}>
                     We have added this simple network diagnostics tool to help identify connectivity issues with our backend services. This can be useful if you encounter problems logging in or accessing certain features. The tests include checking connectivity to a public API (httpbin.org) and our own backend health and login endpoints. If any tests fail, please check your internet connection or contact support for further assistance.
                 </Text>
@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
     },
     subtitle: {
         fontSize: 14,
-        color: Colors.mediumGray,
+        color: Colors.gray500,
         textAlign: 'center',
     },
     statusContainer: {
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
     status: {
         fontSize: 16,
         fontWeight: '500',
-        color: Colors.darkGray,
+        color: Colors.gray800,
     },
     loadingDot: {
         marginLeft: 8,
@@ -231,22 +231,22 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: 'bold',
         marginBottom: 4,
-        color: Colors.darkGray,
+        color: Colors.gray800,
     },
     testResult: {
         fontSize: 13,
-        color: Colors.mediumGray,
+        color: Colors.gray500,
         lineHeight: 18,
     },
     infoContainer: {
         marginBottom: 20,
         padding: 12,
         borderRadius: 8,
-        backgroundColor: Colors.lightGray,
+        backgroundColor: Colors.gray300,
     },
     infoText: {
         fontSize: 14,
-        color: Colors.mediumGray,
+        color: Colors.gray500,
         lineHeight: 20,
     },
     footer: {
@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     retryButton: {
-        backgroundColor: Colors.lightGray,
+        backgroundColor: Colors.gray300,
     },
     continueButton: {
         backgroundColor: Colors.primary,
